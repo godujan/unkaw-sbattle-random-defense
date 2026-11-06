@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "운의전쟁 — 운빨 디펜스",
+  "short_name": "운의전쟁",
+  "description": "4×4 속성 영웅 디펜스 · 이지 40, 노멀 60, 하드 80 랭킹",
+  "lang": "ko",
+  "start_url": "./?source=homescreen",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fff2d7",
+  "theme_color": "#f7c978",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ]
+}
