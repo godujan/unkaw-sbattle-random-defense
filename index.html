@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090f22"><title>운의전쟁 v1.5 · 컴팩트 모바일</title>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090f22"><title>운의전쟁 v1.5.1 · 온라인 랭킹</title>
 <style>
 :root{--bg:#080e20;--card:#131e36;--line:#304362;--text:#eef5ff;--muted:#a3b6d6;--gold:#ffd77c}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--text);background:radial-gradient(ellipse at 45% -12%,#243e6b,#080e20 64%);font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif;-webkit-tap-highlight-color:transparent}button,select{font:inherit}button{touch-action:manipulation}button:focus-visible,select:focus-visible{outline:3px solid #f5c46c;outline-offset:2px}
@@ -223,6 +223,7 @@ body.focus-game #gameScreen .new-power-identity{flex:0 0 auto!important;min-widt
 #homeScreen .landing-cover{background-position:center 43%!important;background-size:cover!important}
 
 /* v1.5 mobile card portraits and interface */
+.rankentry{background:#fff;border-radius:11px;margin:6px 0;display:flex;align-items:center;gap:9px;padding:10px 9px;border:1px solid #e8dbbd}.rankpos{flex:0 0 28px;font-weight:900;font-size:16px}.rankdetails{min-width:0;flex:1;display:flex;flex-direction:column}.rankdetails b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rankdetails small{font-size:10px;color:#917e62;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rankscore{text-align:right}.rankscore strong{color:#ed6699;font-size:14px}.rankscore small{display:block;color:#947f67;font-size:10px}
 .odds-rich-row{display:grid;grid-template-columns:66px 61px minmax(0,1fr) 64px;gap:4px;align-items:center;padding:9px 4px;border-bottom:1px solid #d6c39e;color:#51351f;font-size:11px}.odds-rich-row .rarityname{background:var(--tier);border-radius:14px;padding:5px 3px;font-weight:900;color:#fff;text-align:center;text-shadow:0 1px 2px #3339}.oddsrate{font-size:12px;font-weight:900}.oddsrate small,.oddsservice small{display:block;font-size:9px;opacity:.72}.oddsheroes{display:flex;align-items:center;justify-content:space-between;gap:2px;min-width:0}.oddsheroes img{height:43px;min-width:0;width:20%;object-fit:cover;object-position:50% 26%;border:1px solid var(--tier);border-radius:7px;background:#f1e7d4}.oddsservice{text-align:center;font-weight:750;white-space:nowrap}.short-code{display:flex;gap:6px}.short-code input{flex:1;min-width:0;text-align:center;font-size:17px;font-weight:800;letter-spacing:1px;background:#f4e9c9!important;color:#624a32!important;border:1px solid #c9b589!important}.short-code button{flex:0 0 56px;border:1px solid #d9ad54;border-radius:10px;background:#fff1c2;color:#714b29;font-weight:800}.ranktabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:12px 0}.ranktabs button{border-radius:18px;border:1px solid #ddcdb1;background:#f2e6cd;color:#73513b;padding:10px 0;font-weight:900}.ranktabs button.active{background:#f66f9e;color:white;border-color:#d64a85}.ranklist{border-radius:12px;background:#fcf7e9;color:#5b4632;padding:14px;min-height:145px;margin-bottom:12px;font-size:13px;line-height:1.7}.ranklist .myrank{border:2px solid #f8cb60;border-radius:12px;background:#ffefa9;padding:12px}.ranklist .offline{background:#e9edf4;padding:12px;border-radius:12px;color:#627083}.ranking-card{max-height:88dvh;overflow-y:auto;background:linear-gradient(#fffef8,#ffefcb)!important;color:#5c3b22!important}.ranking-card .btn{display:block;width:100%;margin:8px 0}.hero-portrait-square{border-radius:10px;object-fit:cover;object-position:50% 30%;box-shadow:0 2px 7px #0005}.ranklist p{margin:5px 0}
 </style><link rel="icon" href="./icon.svg" type="image/svg+xml"><link rel="manifest" href="./manifest.webmanifest"></head><body>
 <header><div><h1>⚔️ 운의전쟁 <small style="font-size:15px;color:#90c6ff">v1.5</small></h1><div class="subtitle">5속성 개별 강화 · 처치당 1원 · 60초 자동 웨이브 · 이메일 링크 계정 · 모바일</div></div><div class="header-tags"><span class="tag">8등급</span><span class="tag">1~16 순차 배치</span><span class="tag">최대 4배속</span><span class="tag">모바일 대응</span></div></header>
@@ -255,7 +256,7 @@ body.focus-game #gameScreen .new-power-identity{flex:0 0 auto!important;min-widt
 </div></div>
 <div id="gameMenu" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-label="게임 메뉴"><div class="game-menu-card"><div class="game-menu-top"><b>☰ 게임 메뉴</b><button id="closeGameMenu" type="button" aria-label="메뉴 닫기">✕</button></div><button class="btn primary" id="menuContinue">▶ 게임 계속</button><button class="btn gold" id="menuUpgrades">⚔ 속성 강화</button><button class="btn" id="menuPause">⏯ 일시정지 / 재개</button><button class="btn" id="menuOdds">ℹ 8등급 소환 확률표</button><button class="btn outlined" id="menuRankings">🏆 랭킹</button><button class="btn outlined" id="menuProfile">◉ 내 프로필</button><button class="btn danger" id="menuHome">⌂ 홈으로 이동</button></div></div>
 <div id="oddsModal" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-label="영웅 뽑기 확률"><div class="game-menu-card"><div class="game-menu-top"><b>🎲 영웅 뽑기 확률</b><button id="closeOdds" type="button" aria-label="확률표 닫기">✕</button></div><div id="oddsRows" class="odds-rows"></div><p class="odds-note">표의 수치는 1웨이브 기준 기본 확률입니다. 후반 웨이브에는 등급 보정이 적용되어 실제 등장 확률이 달라집니다.</p><button class="btn primary" id="oddsBack">확인</button></div></div>
-<div id="rankingModal" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-label="운의전쟁 랭킹"><div class="game-menu-card ranking-card"><div class="game-menu-top"><b>🏆 랭킹</b><button type="button" id="rankClose">✕</button></div><p class="muted">시즌 · 오늘 · 내 기록</p><div class="ranktabs"><button type="button" data-rank="season" class="active">🏆 시즌</button><button type="button" data-rank="today">📅 오늘</button><button type="button" data-rank="mine">👤 내 기록</button></div><div id="rankList" class="ranklist" aria-live="polite"></div><button id="rankToProfile" class="btn outlined">내 프로필 보기</button><button id="rankBack" class="btn primary">닫기</button></div></div>
+<div id="rankingModal" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-label="운의전쟁 랭킹"><div class="game-menu-card ranking-card"><div class="game-menu-top"><b>🏆 랭킹</b><button type="button" id="rankClose">✕</button></div><p class="muted">시즌(14일) · 오늘(한국시간) · 내 기록 · 베타 랭킹</p><div class="ranktabs"><button type="button" data-rank="season" class="active">🏆 시즌</button><button type="button" data-rank="today">📅 오늘</button><button type="button" data-rank="mine">👤 내 기록</button></div><div id="rankList" class="ranklist" aria-live="polite"></div><button id="rankToProfile" class="btn outlined">내 프로필 보기</button><button id="rankBack" class="btn primary">닫기</button></div></div>
 <div id="authModal" class="auth-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="authHeading"><div class="auth-card"><button id="authClose" class="auth-close" aria-label="닫기">×</button><span class="microbadge">MAGIC LINK SIGN IN</span><h2 id="authHeading">이메일 링크로 로그인</h2><p>이메일로 전송된 인증 링크를 누르면 계정이 연결됩니다. 닉네임은 자동 부여되며 이후에도 유지됩니다.</p><label for="emailInput">이메일 주소</label><input id="emailInput" type="email" autocomplete="email" placeholder="you@example.com"><button id="sendLink" class="btn primary auth-send">인증 링크 보내기</button><p id="authFeedback" role="status" class="muted"></p><p class="auth-footnote">보안 로그인은 최초 이메일 링크 인증으로 진행합니다. Supabase 설정 전에는 게스트 이용만 가능합니다. 플레이어 코드 16자리 자체는 로그인 인증 수단이 아닙니다.</p></div></div>
 <script src="./auth-config.js"></script>
 <script>
@@ -488,11 +489,27 @@ function ensurePlayerCode(){
  }
  return code;
 }
-function renderRankings(scope='season'){
+function formatRankItem(r){const mine=loggedIn&&authUser?.id===r.user_id;const pos=Number(r.rank)||0;const level=Math.max(0,Math.min(7,Number(r.best_tier)||0));const el=typeof r.element_levels==='object'&&r.element_levels?r.element_levels:{};const desc=keys.map(k=>elements[k].icon+(Number(el[k])||0)).join(' ');return `<div class="rankentry ${mine?'myrank':''}"><span class="rankpos">${pos===1?'🥇':pos===2?'🥈':pos===3?'🥉':pos}</span><div class="rankdetails"><b>${esc(r.nickname||'영웅')}${mine?' (나)':''}</b><small>${desc} · 최고 ${tierNames[level]}</small></div><div class="rankscore"><strong>${Math.floor(Number(r.score)||0).toLocaleString()}점</strong><small>R${Number(r.wave)||0}</small></div></div>`}
+let currentRankingRequest=0;
+async function renderRankings(scope='season'){
+ const seq=++currentRankingRequest;
  document.querySelectorAll('[data-rank]').forEach(b=>b.classList.toggle('active',b.dataset.rank===scope));
  const node=$('rankList');const name=esc(player.nickname||'방랑자');
- if(scope==='mine')node.innerHTML=`<div class="myrank"><b>👤 ${name}</b><p>최고 웨이브: ${Number(player.best_wave)||0} / 80</p><p>노멀 클리어: ${Number(player.normal_wins)||0}회</p><p>누적 처치: ${Number(player.kills||0).toLocaleString()}마리</p><p>게임 플레이: ${Number(player.plays)||0}판</p></div>`;
- else node.innerHTML='<div class="offline"><b>'+ (scope==='season'?'🏆 시즌 랭킹':'📅 오늘의 랭킹')+'</b><p>현재 공개 랭킹 서버가 연결되지 않았습니다.</p><p>가짜 이용자나 임의 점수는 표시하지 않습니다. Supabase 랭킹 기능이 연결되면 실제 기록을 표시합니다.</p></div>';
+ const localScore=Math.max(0,...(player.recent||[]).map(r=>Number(r.score)||0));
+ const localInfo=`<div class="myrank"><b>👤 ${name}</b><p>이 기기 최고점수: ${localScore.toLocaleString()}점</p><p>최고 웨이브: ${Number(player.best_wave)||0} / 80</p><p>노멀 클리어: ${Number(player.normal_wins)||0}회</p><p>누적 처치: ${Number(player.kills||0).toLocaleString()}마리</p><p>게임 플레이: ${Number(player.plays)||0}판</p></div>`;
+ if(!authConfigured){node.innerHTML=(scope==='mine'?localInfo:'')+'<div class="offline"><b>🔗 서버 연동 설정 필요</b><p>실제 랭킹은 Supabase 프로젝트 연결 후 활성화됩니다. 설정 전에는 다른 플레이어의 점수나 순위를 표시하지 않습니다.</p></div>';return;}
+ if(scope==='mine'&&!loggedIn){node.innerHTML=localInfo+'<div class="offline">다른 기기에서도 내 온라인 순위를 보려면 이메일 링크 로그인이 필요합니다.</div>';return;}
+ node.textContent='온라인 랭킹을 불러오는 중…';
+ try{
+   const token=loggedIn?await validToken():null;
+   const data=await baseRequest('/rest/v1/rpc/fortune_rankings',{method:'POST',body:{p_scope:scope},token});
+   if(seq!==currentRankingRequest||!Array.isArray(data))return;
+   let html=(scope==='mine'?localInfo:'');
+   if(!data.length){html+='<div class="offline">'+(scope==='mine'?'아직 온라인에 제출한 노멀 기록이 없습니다.':'아직 등록된 랭킹 기록이 없습니다.')+'</div>'}
+   else html+=data.slice(0,101).map(formatRankItem).join('');
+   html+='<p class="muted" style="padding:8px;text-align:center">베타 랭킹 · 로그인 기록만 집계 · 서버 검증 전까지 점수 조작 방지가 완전하지 않습니다.</p>';
+   node.innerHTML=html;
+ }catch(err){if(seq!==currentRankingRequest)return;node.innerHTML=(scope==='mine'?localInfo:'')+'<div class="offline">랭킹 조회 실패: '+esc(err.message||'Supabase 연결을 확인하세요')+'</div>';}
 }
 function showRankings(scope='season'){$('rankingModal').classList.remove('hidden');renderRankings(scope)}
 function hideRankings(){$('rankingModal').classList.add('hidden')}
@@ -520,10 +537,17 @@ function persistRecord(){
  }else storeLocal();
 }
 function finishRecord(won){if(!activeSessionStarted)return;activeSessionStarted=false;
- const run={difficulty:state.difficulty,won:!!won,wave:state.wave,kills:state.kills,boon:state.boon.id,at:new Date().toISOString()};
+ const score=Math.max(0,Math.round(state.wave*100+state.kills*3+(won?400:0)));const run={difficulty:state.difficulty,won:!!won,wave:state.wave,kills:state.kills,boon:state.boon.id,score,at:new Date().toISOString()};
  player.plays=Number(player.plays||0)+1;player.kills=Number(player.kills||0)+state.kills;player.wins=Number(player.wins||0)+(won?1:0);player.best_wave=Math.max(Number(player.best_wave||0),state.wave);player.normal_wins=Number(player.normal_wins||0)+(won&&state.difficulty==='normal'?1:0);
  if(won&&state.difficulty==='normal'&&!(player.titles||[]).includes('노멀의 수호자'))player.titles=[...(player.titles||[]),'노멀의 수호자'];
- player.recent=[run,...(player.recent||[])].slice(0,8);persistRecord();renderProfile();renderHome();
+ player.recent=[run,...(player.recent||[])].slice(0,8);persistRecord();renderProfile();renderHome();if(loggedIn&&authConfigured&&state.difficulty==='normal'){submitFortuneRun(run).then(()=>{log('🏆 온라인 랭킹 기록 등록 완료');}).catch(err=>{console.warn('랭킹 기록 제출 실패:',err.message);log('⚠ 랭킹 서버 등록 실패: '+(err.message||'서버 설정 확인'));});}
+}
+async function submitFortuneRun(run){
+ if(!loggedIn||!authUser?.id||!authConfigured)return;
+ const token=await validToken();
+ const detail={};for(const k of keys)detail[k]=Number(state.elementLv[k])||0;
+ const record={user_id:authUser.id,nickname:String(player.nickname||'영웅').slice(0,16),score:Number(run.score)||0,wave:Number(run.wave)||0,kills:Number(run.kills)||0,best_tier:Number(state.bestTier)||0,element_levels:detail,finished_at:run.at,difficulty:'normal'};
+ await baseRequest('/rest/v1/fortune_run_results',{method:'POST',body:record,token,prefer:'return=minimal'});
 }
 function authError(data,status){return new Error(data?.msg||data?.message||data?.error_description||data?.error||('인증 서비스 오류 '+status))}
 async function baseRequest(path,{method='GET',body,token,prefer}={}){
