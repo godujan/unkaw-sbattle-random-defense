@@ -617,8 +617,18 @@ function makeCanonicalCard(element,tier){
   const cx=c.getContext('2d',{alpha:true});if(!cx)return null;
   cx.imageSmoothingEnabled=true;cx.imageSmoothingQuality='high';
   const side=Math.min(source.naturalWidth,source.naturalHeight);
-  // Pixel-exact top square: same original area as the large on-board unit.
-  cx.drawImage(source,0,0,side,side,0,0,256,256);
+  // Compose the SAME complete square card, including its rarity frame.
+  // Gallery <img> and deployed canvas both consume this exact PNG bitmap.
+  cx.save();cx.beginPath();cx.roundRect(5,5,246,246,13);cx.clip();
+  cx.drawImage(source,0,0,side,side,5,5,246,246);cx.restore();
+  const glow=tierColors[tier];
+  const edge=cx.createLinearGradient(0,0,256,256);
+  edge.addColorStop(0,'#fff9e9');edge.addColorStop(.22,glow);
+  edge.addColorStop(.65,tier>=5?'#ffe5a8':glow);edge.addColorStop(1,glow);
+  cx.strokeStyle=edge;cx.lineWidth=tier>=5?9:7;
+  cx.beginPath();cx.roundRect(8,8,240,240,13);cx.stroke();
+  cx.strokeStyle='#fffbeecb';cx.lineWidth=2.2;
+  cx.beginPath();cx.roundRect(15,15,226,226,9);cx.stroke();
   const src=c.toDataURL('image/png');const image=new Image();image.src=src;
   canonicalCards[id]={src,image};
   return canonicalCards[id];
@@ -1022,17 +1032,13 @@ function drawUnits(){for(const u of state.units){
   ctx.fillText(e.icon,p.x,p.y+10);
  }
  ctx.restore();
- // Subtle rarity edging rather than the oversized crown/metal decoration.
- ctx.save();
- ctx.lineWidth=tier>=5?3.6:2.6;
- ctx.strokeStyle=tierColors[tier];
- ctx.shadowColor=tierColors[tier];
- ctx.shadowBlur=tier>=5?(tier===7?18:12):(selected?10:3);
- rounded(left-1.3,top-1.3,cardWidth+2.6,cardHeight+2.6,8);ctx.stroke();
- ctx.shadowBlur=0;
- ctx.lineWidth=1.15;ctx.strokeStyle='#fff8dfd8';
- rounded(left+2,top+2,cardWidth-4,cardHeight-4,6);ctx.stroke();
- ctx.restore();
+ // Shared cached card already includes its complete rarity frame.
+ // A selected card gets a separate gameplay highlight; never paint over its face.
+ if(selected){
+  ctx.save();ctx.lineWidth=2;ctx.strokeStyle='#fffbe8';
+  ctx.shadowColor=tierColors[tier];ctx.shadowBlur=12;
+  rounded(left-2,top-2,cardWidth+4,cardHeight+4,9);ctx.stroke();ctx.restore();
+ }
  // The source card already includes the element emblem and printed character name.
  // Only the stack count is overlaid; the card artwork itself stays fully visible.
  const countText='×'+Number(u.count||1).toLocaleString('ko-KR');
