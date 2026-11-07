@@ -144,3 +144,19 @@
  body.focus-game #gameScreen .compact-selected{display:none!important}
  body.focus-game #gameScreen .res-card{height:56px!important;min-height:56px!important;max-height:56px!important}
 }
+
+/* Preserve both essential top-right controls while fitting the 3 statistic chips. */
+@media (max-width:800px), (max-height:850px){
+ body.focus-game #gameScreen .mobile-quick-head{
+   justify-content:flex-end!important;gap:3px!important;
+ }
+ body.focus-game #gameScreen .mobile-quick-head #quickMenu,
+ body.focus-game #gameScreen .mobile-quick-head #quickOdds{
+   display:flex!important;align-items:center!important;justify-content:center!important;
+   flex:none!important;width:43px!important;min-width:43px!important;
+   height:31px!important;min-height:31px!important;
+   margin:0!important;padding:0 2px!important;
+   font-size:10px!important;border-radius:9px!important;
+ }
+ body.focus-game #gameScreen .stats{width:calc(100% - 96px)!important}
+}
