@@ -176,3 +176,13 @@
 #gameScreen .result-rank{display:flex;justify-content:space-between;gap:8px;padding:5px;border-top:1px solid #5e4b51;font-size:12px}
 #gameScreen .result-rank b{color:#ffdd8b}
 #gameScreen #resultRankBtn{margin:4px;min-height:42px}
+
+/* v1.5.8 — full-card safety: preserve all existing source art. */
+#oddsModal #oddsRows .odds-portrait{aspect-ratio:128/151!important;overflow:hidden!important;}
+#oddsModal #oddsRows .odds-portrait img{
+ position:static!important;display:block!important;inset:auto!important;
+ top:auto!important;left:auto!important;width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;min-height:0!important;
+ object-fit:contain!important;object-position:center center!important;
+ transform:none!important;aspect-ratio:128/151!important;
+}
