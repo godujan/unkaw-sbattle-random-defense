@@ -509,6 +509,105 @@ body.home-active #homeScreen .landing-actions #homePractice{background:linear-gr
 #oddsModal .oddsheroes{direction:ltr!important}
 #oddsModal .odds-portrait{min-width:0;line-height:0}
 #oddsModal .odds-portrait:focus-visible{outline:3px solid #e6b958;outline-offset:2px}
+
+/* v1.5.15 — consistent rarity framing from Common to Creation */
+#oddsModal .odds-rich-row{--grade:var(--tier)!important;border-left:4px solid var(--tier)!important}
+#oddsModal .odds-rich-row .rarityname{
+ color:#fff!important;background:linear-gradient(150deg,var(--tier),color-mix(in srgb,var(--tier),#1b1537 30%))!important;
+ border:1px solid #ffffffab!important;border-radius:9px!important;text-shadow:0 1px 2px #33243ab9!important;font-weight:1000!important
+}
+#oddsModal .odds-rich-row .oddsrate{color:#60422d!important}
+#oddsModal .odds-portrait{
+ --grade:var(--tier);border:2px solid var(--tier)!important;background:var(--tier)!important;
+ padding:3px!important;box-shadow:0 0 0 1px #fffaf0,inset 0 0 0 1px #fffd,0 0 7px color-mix(in srgb,var(--tier),transparent 46%)!important;
+ isolation:isolate
+}
+#oddsModal .odds-portrait img{position:relative!important;z-index:2!important;box-shadow:none!important}
+#oddsModal .odds-portrait.tier-5{--tier:#ff973a!important}
+#oddsModal .odds-portrait.tier-6{--tier:#ffd04e!important}
+#oddsModal .odds-portrait.tier-7{--tier:#56e6f5!important}
+#oddsModal .odds-portrait.glow{border-width:3px!important;box-shadow:0 0 0 1px #fff9e8,0 0 11px var(--tier),0 0 18px color-mix(in srgb,var(--tier),transparent 35%)!important}
+#oddsModal .odds-portrait.glow::before{z-index:1!important;animation:fortune-rim-spin 2.5s linear infinite!important;opacity:.9}
+#oddsModal .odds-portrait.glow::after{
+ content:"";position:absolute;z-index:3;inset:0;pointer-events:none;
+ background:radial-gradient(ellipse 4px 4px at 9% 9%,#fff 30%,transparent 100%),radial-gradient(ellipse 3px 5px at 90% 12%,#fffce5 15%,transparent 100%),radial-gradient(ellipse 5px 3px at 91% 89%,#fff 25%,transparent 100%),radial-gradient(ellipse 3px 4px at 12% 91%,#fff 25%,transparent 100%);
+ filter:drop-shadow(0 0 4px var(--tier));animation:rarity-twinkle 1.5s ease-in-out infinite alternate
+}
+#oddsModal .odds-portrait.tier-6::after{animation-delay:-.5s}
+#oddsModal .odds-portrait.tier-7::after{animation-delay:-.9s}
+@keyframes rarity-twinkle{0%{opacity:.35;filter:drop-shadow(0 0 3px var(--tier))}100%{opacity:1;filter:drop-shadow(0 0 8px var(--tier))}}
+#unitSheet .sheet-hero img,#gameScreen #compactSelectedSummary img,#gameScreen .selected .entry img{
+ border:2.5px solid var(--grade,#9db3d0)!important;
+ box-shadow:0 0 0 1px #fff9,0 0 7px var(--grade,#8fa5c0)!important
+}
+.tier-card-glow{animation:detail-tier-sparkle 2.2s ease-in-out infinite alternate}
+@keyframes detail-tier-sparkle{from{filter:brightness(1)}to{filter:brightness(1.16)}}
+/* Selling is an explicit action on the far right of the selected-card detail bar. */
+#sell,#quickSell{display:none!important}
+#gameScreen .compact-main{
+ display:grid!important;grid-template-columns:minmax(0,1fr) 83px!important;
+ align-items:center!important;gap:5px!important;min-width:0!important
+}
+#gameScreen #compactSelectedSummary{
+ min-width:0!important;width:100%!important;max-width:100%!important;overflow:hidden!important;
+ display:flex!important;align-items:center!important;gap:5px!important;padding:0!important
+}
+#gameScreen #compactSelectedSummary .choice-body{flex:1;min-width:0!important;max-width:100%!important;overflow:hidden!important}
+#gameScreen #compactSelectedSummary .choice-body b{max-width:100%!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#gameScreen #compactSelectedSummary .choice-body small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#detailSell{
+ display:flex;align-items:center;justify-content:center;min-width:0!important;width:83px;max-width:83px;
+ min-height:28px;height:28px;padding:2px 3px;white-space:nowrap;
+ font:900 10px system-ui,sans-serif;border:1.5px solid #e2ac65;border-radius:9px;
+ color:#74411f;background:linear-gradient(#ffe8b7,#f1b76c);box-shadow:0 2px 0 #be8654;cursor:pointer
+}
+#detailSell:disabled{opacity:.48;cursor:not-allowed;filter:grayscale(.4)}
+body.focus-game #gameScreen .compact-selected{
+ box-sizing:border-box!important;display:block!important;padding:3px 6px!important;margin:2px 4px!important;
+ min-height:46px!important;height:46px!important;max-height:46px!important;overflow:hidden!important
+}
+body.focus-game #gameScreen .compact-choice-head{height:12px!important;line-height:12px!important;margin:0 0 2px!important}
+body.focus-game #gameScreen #compactSelectedSummary{height:25px!important;min-height:25px!important}
+body.focus-game #gameScreen #compactSelectedSummary img{width:24px!important;height:24px!important;border-radius:6px!important}
+body.focus-game #gameScreen .compact-main #detailSell{height:26px!important;min-height:26px!important;font-size:10px!important}
+@media(max-height:670px){
+ body.focus-game #gameScreen .compact-selected{display:block!important;min-height:42px!important;height:42px!important;max-height:42px!important}
+}
+#mobileGamebar,body.focus-game #mobileGamebar{
+ grid-template-columns:minmax(0,.82fr) minmax(0,1.15fr) minmax(0,1fr)!important;
+ gap:5px!important;padding:4px 6px calc(5px + env(safe-area-inset-bottom))!important
+}
+#mobileGamebar #mSpeed{grid-column:1!important}
+#mobileGamebar #mSummon{grid-column:2!important}
+#mobileGamebar #mMerge{grid-column:3!important}
+body.focus-game #mobileGamebar .btn{min-height:43px!important;height:43px!important;padding:3px 2px!important}
+body.focus-game #gameScreen .wrap{padding-bottom:56px!important}
+#gameScreen .sidebar .actions{gap:6px!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+#gameScreen .sidebar .actions .btn{min-height:40px!important;padding:5px 6px!important;font-size:12px!important}
+#gameScreen .sidebar .panel{padding:10px!important}
+#gameScreen .sidebar .speed-switch{margin:5px 0!important;gap:3px!important}
+/* Dense, readable detail bottom sheet; rightmost action remains Sell. */
+#unitSheet .unit-sheet{padding:8px 11px calc(9px + env(safe-area-inset-bottom))!important;max-height:91dvh!important}
+#unitSheet .sheet-handle{margin-bottom:6px!important}
+#unitSheet .unit-sheet-head{margin-bottom:6px!important;font-size:15px!important}
+#unitSheet .unit-sheet-head button{min-height:31px!important;min-width:31px!important;height:31px!important}
+#unitSheet .sheet-hero{gap:9px!important;margin-bottom:7px!important}
+#unitSheet .sheet-hero img{height:63px!important;width:63px!important;border-radius:10px!important}
+#unitSheet .sheet-hero h3{font-size:17px!important;margin-bottom:3px!important}
+#unitSheet .sheet-hero p{font-size:11px!important;line-height:1.35!important}
+#unitSheet .sheet-stat-grid{gap:5px!important;margin-bottom:7px!important}
+#unitSheet .sheet-stat{padding:6px!important}
+#unitSheet .sheet-stat strong{font-size:14px!important;margin-top:2px!important}
+#unitSheet .sheet-target{padding:7px 8px!important;margin-bottom:7px!important}
+#unitSheet .sheet-target p{display:none!important}
+#unitSheet .sheet-explain{padding:8px!important;margin-bottom:7px!important;font-size:11px!important;line-height:1.47!important}
+#unitSheet .sheet-actions{display:grid!important;grid-template-columns:minmax(0,1fr) 112px!important;gap:6px!important}
+#unitSheet #sheetSell{justify-self:end!important;width:112px!important;min-width:0!important;white-space:nowrap!important}
+#unitSheet .sheet-actions .btn{min-height:41px!important;padding:6px 7px!important;font-size:11px!important}
+@media(max-width:390px){#gameScreen .compact-main{grid-template-columns:minmax(0,1fr) 77px!important}#detailSell{width:77px!important;max-width:77px!important}}
+@media(prefers-reduced-motion:reduce){
+ #oddsModal .odds-portrait.glow::before,#oddsModal .odds-portrait.glow::after,.tier-card-glow{animation:none!important}
+}
 </style></head><body>
 <header><div><h1>⚔️ 운의전쟁 <small style="font-size:15px;color:#90c6ff">v1.5.15</small></h1><div class="subtitle">5속성 강화 · 몬스터 누적 · 자동 게스트 저장 · 20칸 배치 · 모바일</div></div><div class="header-tags"><span class="tag">8등급</span><span class="tag">1~20 순차 배치</span><span class="tag">최대 4배속</span><span class="tag">모바일 대응</span></div></header>
 <nav class="topnav" aria-label="화면 이동"><button type="button" class="navitem active" id="navHome">⌂ 메인</button><button type="button" class="navitem" id="navGame">⚔ 게임</button><button type="button" class="navitem" id="navProfile">◉ 프로필</button><span class="navspacer"></span><button type="button" class="navitem loginNav" id="navLogin">👤 자동 접속</button></nav>
