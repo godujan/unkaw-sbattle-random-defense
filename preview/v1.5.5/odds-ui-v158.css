@@ -19,3 +19,147 @@
 #oddsModal .oddsservice small{font-size:clamp(9px,1.5vw,14px)!important}
 #oddsModal .odds-note{font-size:clamp(10px,1.5vw,14px)!important;line-height:1.5!important;padding:11px!important}
 @media(max-width:540px){#oddsModal .game-menu-card{padding:9px 6px!important}#oddsModal .game-menu-top{height:54px;min-height:54px}#oddsModal .game-menu-top b{font-size:22px!important}#oddsModal .odds-legend{font-size:9px;padding:3px 5px 6px}#oddsModal .odds-rich-row{grid-template-columns:minmax(58px,1.2fr) minmax(45px,.85fr) minmax(130px,3.15fr) minmax(52px,1fr)!important;column-gap:3px!important;padding:7px 2px!important}#oddsModal .rarityname{font-size:10px!important;min-height:28px;padding-left:8px!important}#oddsModal .oddsrate{font-size:16px!important}#oddsModal .oddsrate small{font-size:8px!important}#oddsModal .oddsheroes{gap:2px!important}#oddsModal .odds-portrait{border-width:1.5px!important;border-radius:5px!important}#oddsModal .oddsservice{font-size:8px!important;padding:4px 1px;border-radius:6px}#oddsModal .oddsservice small{font-size:8px!important}}
+
+/* v1.5.8.2 layout correction — each rarity stays on ONE horizontal row.
+   Reuse exact existing portraitSrc(element,tier) assets; show face crops
+   in the table, not the full 128x151 card with printed nameplate. */
+#oddsModal .game-menu-card{
+ width:min(850px,calc(100vw - 10px))!important;
+ max-width:calc(100vw - 10px)!important;
+ max-height:calc(100dvh - 10px)!important;
+ overflow-x:hidden!important;
+ overflow-y:auto!important;
+ padding:clamp(7px,1.7vw,18px)!important;
+}
+#oddsModal #oddsRows{
+ display:block!important;
+ overflow:hidden!important;
+ width:100%!important;
+ box-sizing:border-box!important;
+}
+#oddsModal #oddsRows .odds-rich-row{
+ display:grid!important;
+ grid-template-columns:22% 13% 52% 13%!important;
+ align-items:center!important;
+ column-gap:0!important;
+ row-gap:0!important;
+ min-height:0!important;
+ width:100%!important;
+ max-width:100%!important;
+ box-sizing:border-box!important;
+ padding:clamp(5px,.9vw,10px) clamp(2px,.5vw,5px)!important;
+ overflow:hidden!important;
+}
+#oddsModal #oddsRows .odds-rich-row>*{
+ min-width:0!important;
+ max-width:100%!important;
+ box-sizing:border-box!important;
+ margin:0!important;
+}
+#oddsModal #oddsRows .rarityname{
+ display:flex!important;
+ flex-wrap:nowrap!important;
+ align-items:center!important;
+ justify-content:center!important;
+ white-space:nowrap!important;
+ font-size:clamp(10px,2.3vw,19px)!important;
+ padding:5px 1px 5px 9px!important;
+ min-height:0!important;
+ border-radius:9px!important;
+}
+#oddsModal #oddsRows .oddsrate{
+ display:block!important;
+ text-align:center!important;
+ font-size:clamp(16px,3.2vw,29px)!important;
+ line-height:1.07!important;
+ letter-spacing:-.7px!important;
+}
+#oddsModal #oddsRows .oddsrate small{
+ display:block!important;
+ margin-top:4px!important;
+ font-size:clamp(8px,1.6vw,13px)!important;
+ white-space:nowrap!important;
+ letter-spacing:-.35px!important;
+}
+#oddsModal #oddsRows .oddsheroes{
+ display:grid!important;
+ grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ gap:clamp(2px,.6vw,7px)!important;
+ align-items:center!important;
+ width:100%!important;
+ min-width:0!important;
+ max-width:100%!important;
+ overflow:hidden!important;
+}
+#oddsModal #oddsRows .odds-portrait{
+ display:block!important;
+ min-width:0!important;
+ width:100%!important;
+ max-width:100%!important;
+ height:auto!important;
+ aspect-ratio:1/1!important;
+ padding:0!important;
+ overflow:hidden!important;
+ box-sizing:border-box!important;
+ position:relative!important;
+ border:clamp(1px,.35vw,3px) solid var(--tier)!important;
+ border-radius:clamp(4px,.9vw,10px)!important;
+ background:var(--tier)!important;
+}
+#oddsModal #oddsRows .odds-portrait img{
+ position:absolute!important;
+ display:block!important;
+ top:-7%!important;
+ left:-16%!important;
+ width:132%!important;
+ height:auto!important;
+ min-height:0!important;
+ max-height:none!important;
+ aspect-ratio:auto!important;
+ object-fit:fill!important;
+ object-position:top center!important;
+ border:0!important;
+ border-radius:0!important;
+ padding:0!important;
+ margin:0!important;
+ transform:none!important;
+ background:transparent!important;
+}
+#oddsModal #oddsRows .oddsservice{
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:center!important;
+ justify-content:center!important;
+ width:100%!important;
+ min-height:0!important;
+ padding:clamp(3px,.9vw,9px) 1px!important;
+ margin:0!important;
+ border-radius:clamp(5px,1vw,12px)!important;
+ line-height:1.2!important;
+ font-size:clamp(8px,1.65vw,16px)!important;
+ font-weight:900!important;
+ letter-spacing:-.4px!important;
+ white-space:nowrap!important;
+}
+#oddsModal #oddsRows .oddsservice small{
+ display:block!important;
+ margin:2px 0 0!important;
+ font-size:clamp(8px,1.4vw,13px)!important;
+ line-height:1.2!important;
+ letter-spacing:-.2px!important;
+}
+#oddsModal .odds-legend{display:none!important}
+#oddsModal .game-menu-top{min-height:clamp(45px,7vw,70px)!important;height:auto!important;margin-bottom:7px!important}
+#oddsModal .game-menu-top b{font-size:clamp(19px,4.2vw,36px)!important}
+#oddsModal .odds-note{font-size:clamp(10px,1.5vw,13px)!important}
+@media(max-width:540px){
+ #oddsModal .game-menu-card{padding:7px 5px!important}
+ #oddsModal #oddsRows .odds-rich-row{grid-template-columns:22% 14% 50% 14%!important;padding:5px 2px!important}
+ #oddsModal #oddsRows .rarityname{font-size:clamp(9px,2.45vw,13px)!important;padding:4px 0 4px 7px!important}
+ #oddsModal #oddsRows .rarityname::before{left:1px!important;font-size:8px!important}
+ #oddsModal #oddsRows .oddsrate{font-size:clamp(14px,4vw,19px)!important}
+ #oddsModal #oddsRows .oddsrate small{font-size:clamp(7px,2vw,10px)!important;margin-top:2px!important}
+ #oddsModal #oddsRows .oddsservice{font-size:clamp(8px,2.2vw,11px)!important;padding:3px 0!important}
+ #oddsModal #oddsRows .oddsservice small{font-size:clamp(7px,2vw,10px)!important}
+ #oddsModal #oddsRows .odds-portrait{border-radius:5px!important}
+}
