@@ -326,7 +326,7 @@ const tierNames=['커먼','언커먼','레어','유니크','에픽','신화','�
 const tierColors=['#bfc5d0','#54df83','#558dff','#b77eff','#ef58ff','#ff695e','#ffbe54','#73f7e5'];
 const baseTierOdds=[43,28,15,8,4,1.5,.4,.1];
 const catalogKeys=["fire","water","ice","lightning","wind"];
-const catalogNames=[["불씨 수련생","물결 수련생","서리 수련생","뇌광 수련생","새순 수련생"],["홍염 도제","수류 도제","빙꽃 도제","섬전 도제","풍엽 도제"],["화염 기사","해류 검사","빙결 마도사","뇌전 기사","질풍 궁수"],["작열 용병","심해 선인","설화 무녀","천둥 정령","폭풍 레인저"],["염룡의 검사","파도 성기사","빙정의 여제","뇌왕의 참모","풍신의 무희"],["화염의 군주","해선의 제자","빙왕의 여왕","천둥의 선관","질풍의 수호자"],["불멸의 화룡","심해의 군주","영원의 설녀","번개의 제왕","창공의 성왕"],["창조신 이그니스","창조신 네레우스","창조신 글라시아","창조신 토르벨","창조신 실피드"]];
+const catalogNames=[["불씨 수련생","물결 수련생","서리 수련생","뇌광 수련생","새순 수련생"],["홍염 도제","수류 도제","빙꽃 도제","섬전 도제","풍엽 도제"],["화염 기사","해류 검사","빙결 마도사","뇌전 기사","질풍 궁수"],["작열 용병","심해 선인","설화 무녀","천둥 전령","폭풍 레인저"],["염룡의 검사","파도 성기사","빙정의 여제","뇌왕의 참모","풍신의 무희"],["화염의 군주","해선의 제자","빙왕의 여왕","천둥의 선관","질풍의 수호자"],["불멸의 화룡","심해의 군주","영원의 설녀","번개의 제왕","창공의 성왕"],["창조신 이그니스","창조신 네레우스","창조신 글라시아","창조신 토르벨","창조신 실피드"]];
 function cardName(t,k){return catalogNames[t][catalogKeys.indexOf(k)]}
 function portraitHTML(t,key){const col=catalogKeys.indexOf(key);return '<span class="unit-portrait" role="img" aria-label="'+cardName(t,key)+'" style="--atlas-col:'+col+';--atlas-row:'+t+'"><img src="'+(heroImageData[key]||heroImageData.water)+'" alt="" loading="lazy"></span>';}
 
