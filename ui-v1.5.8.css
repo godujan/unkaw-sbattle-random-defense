@@ -1,0 +1,65 @@
+/* 운의전쟁 v1.5.8 — v1.5.7 visual-only fantasy UI skin.
+   Deliberately no battle, economy, wave, or unit logic overrides. */
+:root{--rpg-gold:#e5bb73;--rpg-cream:#fff7e9;--rpg-ink:#422b27;--rpg-purple:#6f3ca9}
+body{background:radial-gradient(ellipse at 50% 0%,#27324b,#10142c 48%,#090d1d);color:#f8e6ce}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(circle at 15% 12%,#b79b4b19,transparent 26%),radial-gradient(circle at 85% 65%,#7a4dd022,transparent 30%)}
+header{border-bottom:1px solid #b9956044}
+header h1,.menu-caption{color:#ffe4a4!important;text-shadow:0 2px 9px #0008}
+.tag{background:linear-gradient(130deg,#2a2740,#171d36);border-color:#97754f;color:#f0d6af}
+.topnav{border-bottom:1px solid #b78d5d66;padding-bottom:10px}
+.navitem{background:linear-gradient(150deg,#2b2a46,#171b31);border:1px solid #947448;color:#f3ddbe;border-radius:12px;box-shadow:inset 0 1px #ffffff15,0 3px 8px #0004}
+.navitem.active{background:linear-gradient(120deg,#7554aa,#39295f)!important;border-color:#e8c886;color:#fff6e6;box-shadow:0 0 13px #c28eff48,inset 0 1px #fff7}
+.btn{border:1px solid #a3855e;background:linear-gradient(155deg,#433750,#232139);color:#fff1da;box-shadow:inset 0 1px #fff4,0 3px 10px #0004}
+.btn.primary{background:linear-gradient(140deg,#9767ce,#533081);border-color:#ebd1ff}
+.btn.gold{background:linear-gradient(140deg,#cf974b,#7a482a);border-color:#ffd994}
+.btn.teal{background:linear-gradient(130deg,#2c807e,#22545d);border-color:#96dcca}
+.panel,.stat,.arena,.underarena,.selected,.portal-card{background:linear-gradient(155deg,#252842f5,#151a2ff5);border-color:#8e704b;box-shadow:inset 0 1px #ffffff1a,0 9px 25px #0004}
+.panel h2{color:#ffdf9c}.muted,.section-note,.subtitle{color:#d2c1b3}
+#homeScreen .landing-hero{border:2px solid #cbaa6e;border-radius:24px;box-shadow:0 0 0 4px #7e573e55,0 20px 70px #0009}
+#homeScreen .landing-body h2{font-family:Georgia,'Malgun Gothic',serif;text-shadow:0 4px 18px #000b}
+#homeScreen .portal-card{border:1px solid #ad875e;border-radius:18px}
+#homeScreen .portal-card h3{color:#ffe6b2}
+#gameScreen .stats{gap:6px}
+#gameScreen .stat{border-radius:13px;background:linear-gradient(155deg,#302c41,#171a2f);border:1px solid #b08b56;min-height:52px}
+#gameScreen .stat span{color:#e9cda6}#gameScreen .stat strong{color:#fff5e6}
+#gameScreen .arena{border:3px solid #dfb77b!important;outline:2px solid #654726;outline-offset:-8px;border-radius:21px!important;box-shadow:inset 0 0 24px #fff6,0 8px 30px #090b20}
+#gameScreen .arena-top .pill{border:1px solid #c39b68;background:#1c1f35e8;color:#ffdfa5;box-shadow:0 4px 12px #0007}
+#gameScreen .timer-track{border:1px solid #986945;background:#181525}
+#gameScreen #timerBar{background:linear-gradient(90deg,#7cd4ff,#a783f2,#fdd68a)}
+#gameScreen .resonance-bar{background:linear-gradient(135deg,#fff9e9,#f1dec6)!important;color:#5f3d28!important;border:2px solid #d8ac70!important;box-shadow:0 3px 12px #0003}
+#gameScreen .resonance-bar b{color:#6a3c30}
+#gameScreen .mobile-power,#gameScreen .compact-selected{border:1px solid #bb985d!important;box-shadow:0 3px 12px #0004}
+#gameScreen .underarena{font-size:11px;line-height:1.5;padding:7px 11px}
+#gameScreen .mobile-quick-head{border:1px solid #b99059;border-radius:13px;background:linear-gradient(110deg,#26253e,#171b32);box-shadow:0 3px 9px #0005}
+#gameScreen .mobile-menu-btn{border-color:#c19c6c;color:#ffeac0}
+#mobileGamebar{background:linear-gradient(180deg,#302640ef,#121525f9)!important;border-top:2px solid #d6a95d!important;box-shadow:0 -8px 24px #0008}
+#mobileGamebar .btn{border-radius:13px}
+#gameMenu .game-menu-card,#upgradePopup .compact-popup-inner,.unit-sheet{border:2px solid #c7a16e;background:linear-gradient(140deg,#312947,#171b2e);box-shadow:0 20px 70px #000b}
+#gameMenu .game-menu-top{color:#ffe0a6}
+#oddsModal{padding:12px;align-items:center;overflow-y:auto;background:#070819e5;backdrop-filter:blur(9px);z-index:60}
+#oddsModal .game-menu-card{width:min(900px,100%);max-height:min(95dvh,1160px);overflow-y:auto;gap:10px;border:5px double #d2a65f;border-radius:29px;padding:clamp(11px,2.6vw,26px);background:radial-gradient(ellipse at 50% -5%,#fffefc,#fff7e9 50%,#f3dfc6 100%);box-shadow:0 0 0 3px #66472b,0 0 0 6px #e3c18c,0 30px 80px #000c;color:#4a2d20}
+#oddsModal .game-menu-top{position:relative;justify-content:center;min-height:75px;border-bottom:2px solid #d9b78a;color:#4e2f1f}
+#oddsModal .game-menu-top b{font-family:Georgia,'Malgun Gothic',serif;font-size:clamp(23px,4vw,40px);letter-spacing:-1px;text-shadow:0 2px #fff}
+#oddsModal .game-menu-top b:before,#oddsModal .game-menu-top b:after{content:'✦';color:#bd8534;margin:0 10px;font-size:.65em}
+#oddsModal #closeOdds{position:absolute;right:0;top:0;width:42px;height:42px;background:linear-gradient(#353854,#171b2f);border:2px solid #e2bd7f;border-radius:12px;color:white;font-size:21px}
+#oddsModal .odds-rows{display:grid;gap:0}
+#oddsModal .odds-row{display:grid;grid-template-columns:minmax(98px,1.3fr) minmax(75px,.8fr) minmax(180px,4.8fr) minmax(82px,1.12fr);gap:clamp(5px,1vw,12px);align-items:center;border:0;border-bottom:1px solid #ddc7a9;background:transparent;border-radius:0;padding:clamp(8px,1.1vw,12px) 3px;color:#40271b}
+#oddsModal .odds-tier{display:flex;align-items:center;gap:6px;min-width:0}
+#oddsModal .odds-gem{width:clamp(24px,4vw,40px);height:clamp(24px,4vw,40px);display:grid;place-items:center;flex:none;background:linear-gradient(135deg,#fff9,transparent 40%),var(--tier);border:3px ridge #fff8;border-radius:7px;box-shadow:0 2px 8px #5539;transform:rotate(45deg);color:white;font-size:20px}
+#oddsModal .odds-tier strong{color:white!important;font-size:clamp(12px,1.8vw,19px);white-space:nowrap;padding:7px 8px;margin-left:4px;border-radius:5px 17px 17px 5px;background:linear-gradient(140deg,#ffffff45,transparent 45%),var(--tier);box-shadow:inset 0 0 0 2px #fff8,0 3px 5px #5535;text-shadow:0 1px 2px #362131}
+#oddsModal .odds-chance b{display:block;font-size:clamp(18px,3vw,32px);line-height:1.1;color:#48291c;font-weight:900;font-variant-numeric:tabular-nums}
+#oddsModal .odds-chance small{display:block;margin-top:3px;font-size:clamp(9px,1.3vw,14px);color:#5b3a29;white-space:nowrap}
+#oddsModal .odds-heroes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(2px,.6vw,8px);min-width:0}
+#oddsModal .odds-portrait{position:relative;aspect-ratio:1;min-width:0;border:3px solid var(--tier);border-radius:11px;overflow:hidden;background:var(--tier);box-shadow:0 3px 5px #0005,inset 0 0 0 2px #fff8}
+#oddsModal .odds-portrait img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 25%}
+#oddsModal .odds-portrait span{position:absolute;left:1px;top:1px;font-size:clamp(9px,1.5vw,16px);filter:drop-shadow(0 1px 3px #000)}
+#oddsModal .odds-portrait.myth{border-color:#ff873c;box-shadow:0 0 0 2px #ffc473,0 0 13px #ff884599}
+#oddsModal .odds-portrait.origin{border-color:#ffd148;box-shadow:0 0 0 2px #ffefa0,0 0 13px #e7a63b99}
+#oddsModal .odds-portrait.creation{border-color:#b268ff;box-shadow:0 0 0 2px #e5b0ff,0 0 15px #bc55f9cc}
+#oddsModal .odds-merging{background:#fff9f0aa;border:1px solid #e7d0b2;border-radius:12px;text-align:center;padding:7px 2px;display:grid;gap:3px}
+#oddsModal .odds-merging b{font-size:clamp(10px,1.7vw,17px);color:#422719}
+#oddsModal .odds-merging small{font-size:clamp(10px,1.5vw,14px);white-space:nowrap;color:#543b30}
+#oddsModal .odds-note{color:#604732;font-size:clamp(11px,1.5vw,14px);line-height:1.5;border-top:1px solid #d1ad7a;padding-top:12px}
+#oddsModal #oddsBack{border-color:#caa168;background:linear-gradient(135deg,#9d6a38,#56351d);color:#fff3da}
+@media(max-width:800px){body.focus-game #gameScreen .wrap{max-width:520px!important}#gameScreen .stat{min-height:46px}#gameScreen .arena{border-radius:18px!important}#gameScreen .mobile-quick-head{margin:2px 4px 7px;padding:5px}}
+@media(max-width:540px){#oddsModal{padding:5px}#oddsModal .game-menu-card{max-height:96dvh;padding:9px 7px;border-radius:17px}#oddsModal .game-menu-top{min-height:55px}#oddsModal .game-menu-top b{font-size:22px}#oddsModal .game-menu-top b:before,#oddsModal .game-menu-top b:after{margin:0 3px}#oddsModal #closeOdds{width:33px;height:33px;font-size:16px}#oddsModal .odds-row{grid-template-columns:minmax(64px,1.25fr) minmax(47px,.78fr) minmax(133px,3.15fr) minmax(55px,1fr);gap:3px;padding:8px 1px}#oddsModal .odds-gem{width:20px;height:20px;border-width:2px;border-radius:3px;font-size:11px}#oddsModal .odds-tier{gap:1px}#oddsModal .odds-tier strong{font-size:10px;padding:5px 3px;margin-left:1px}#oddsModal .odds-chance b{font-size:17px}#oddsModal .odds-chance small{font-size:9px}#oddsModal .odds-heroes{gap:2px}#oddsModal .odds-portrait{border-width:2px;border-radius:5px}#oddsModal .odds-portrait span{font-size:8px}#oddsModal .odds-merging{gap:1px;padding:4px 0;border-radius:5px}#oddsModal .odds-merging b,#oddsModal .odds-merging small{font-size:9px}}
