@@ -449,7 +449,7 @@ const roles={
  wind:[['새순 수련생','풍엽 견습생'],['질풍 궁수','회오리 정찰자'],['폭풍 무희','창공 수호자'],['녹풍 군주','태풍 심판관'],['태풍 초월자','성풍 지배자'],['무한 폭풍왕','영원의 질풍 여제']]
 };
 const roleByTier={"fire":["불씨 수련생","홍염 도제","화염 기사","작열 용병","염룡의 검사","화염의 군주","불멸의 화룡","창조신 이그니스"],"water":["물결 수련생","수류 도제","해류 검사","심해 선인","파도 성기사","해신의 제자","심해의 군주","창조신 네레이스"],"ice":["서리 수련생","빙꽃 도제","빙결 마도사","설화 무녀","빙정의 여제","빙왕의 여왕","영원의 설녀","창조신 글라시아"],"lightning":["뇌광 수련생","섬전 도제","뇌전 기사","천둥 전령","뇌광의 참모","천둥의 선관","번개의 제왕","창조신 토르벨"],"wind":["새순 수련생","풍엽 도제","질풍 궁수","폭풍 레인저","풍신의 무희","질풍의 수호자","창공의 성왕","창조신 실피드"]};
-const difficulties={easy:{label:'이지',waves:40,hp:.64,speed:.83,count:.83,life:31},normal:{label:'노멀',waves:60,hp:1,speed:1,count:1,life:26},hard:{label:'하드 · 랭킹',waves:80,hp:1.43,speed:1.12,count:1.12,life:21}};
+const difficulties={easy:{label:'이지',waves:40,hp:.64,speed:.83,life:31},normal:{label:'노멀',waves:60,hp:1,speed:1,life:26},hard:{label:'하드 · 랭킹',waves:80,hp:1.43,speed:1.12,life:21}};
 const boonPool=[
  {id:'rich',name:'황금빛 행운',desc:'시작 영압 +35',icon:'💰'},
  {id:'power',name:'용사의 가호',desc:'모든 속성 공격력 +18%',icon:'⚔️'},
@@ -471,6 +471,7 @@ function drawImageCover(ctx,img,dx,dy,dw,dh){const iw=img.naturalWidth||img.widt
 const heroImages={};
 for(const key of Object.keys(portraitAssets)){const image=new Image();image.src=portraitAssets[key];heroImages[key]=image;}
 const track=[{x:65,y:72},{x:655,y:72},{x:655,y:647},{x:65,y:647},{x:65,y:72}];
+const MONSTERS_PER_WAVE=40; // Fixed monster count across all difficulties and waves.
 const SPAWN_WINDOW_SECONDS=29.5; // Complete wave spawning before the 30-second mark.
 let state,prevTime=0,nextUnitId=1,notices=[],idleStars=[];
 // Graphics modes only affect visual quality. Simulation steps and combat math stay identical.
@@ -583,7 +584,7 @@ function updateResonanceUI(){
 }
 
 function rateOf(u){return clamp((1.03-Math.min(13,u.tier)*.027)/(elements[u.element].rate*(state.boon.id==='speed'?1.16:1)),.19,1.25)}
-function startWave(){state.mode='wave';state.time=0;state.spawned=0;const def=difficulties[state.difficulty];state.spawnTarget=Math.round((46+state.wave*2.35+Math.floor(state.wave/10)*2.0)*def.count);state.spawnClock=0;log('🚨 '+state.wave+' / '+state.maxWave+' 웨이브 시작 · 30초 출현 / 30초 전투');toast(state.wave+'웨이브 시작!');sync()}
+function startWave(){state.mode='wave';state.time=0;state.spawned=0;state.spawnTarget=MONSTERS_PER_WAVE;state.spawnClock=0;log('🚨 '+state.wave+' / '+state.maxWave+' 웨이브 시작 · 몬스터 40마리 / 30초 출현');toast(state.wave+'웨이브 시작!');sync()}
 function finish(win){finishRecord(win);state.mode=win?'won':'over';state.paused=false;$('difficultySelect').disabled=false;let extra='';if(win&&state.difficulty==='normal'){state.titles.normal=true;safeWrite(state.titles);drawTitleStatus();extra='<br><b style="color:#ffe08a">🏆 노멀의 수호자 칭호 획득!</b>'}if(win&&state.difficulty==='hard')extra='<br>🏆 하드 랭킹 도전 완료! 로그인 상태면 점수가 제출됩니다.';else if(win&&state.difficulty==='easy')extra='<br>이지 40웨이브 완주! 노멀 60웨이브도 도전해 보세요.';$('modalTitle').textContent=win?'🏆 '+state.maxWave+'웨이브 클리어!':'💀 방어선 붕괴';$('modalText').innerHTML='최종 웨이브 <b>'+state.wave+'</b> · 처치 <b>'+state.kills+'</b> · 최고 희귀도 <b>'+tierNames[state.bestTier]+'</b><br>랜덤 혜택: '+state.boon.name+extra;$('modalStart').textContent='새 게임 시작';$('overlay').classList.remove('hidden');log(win?'🏆 모든 웨이브 방어 성공!':'💀 게임 오버');sync()}
 function completeWave(){// 60초 종료 시 잔류 적은 방어선을 통과한 것으로 간주
 const remaining=state.enemies.length+(state.spawnTarget-state.spawned);if(remaining>0){const lost=Math.min(10,Math.ceil(remaining/9));state.life-=lost;state.leaks+=remaining;toast('⏰ 제한시간 초과! 생명 -'+lost);log('⏰ 남은 적 '+remaining+'명 · 생명 -'+lost)}state.enemies=[];if(state.life<=0){state.life=0;finish(false);return}if(state.wave>=state.maxWave){finish(true);return}state.wave++;startWave();}
