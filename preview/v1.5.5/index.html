@@ -804,6 +804,7 @@ function resultHtml(){
 }
 function finish(win,reason=''){
  if(state.mode==='won'||state.mode==='over')return;
+ clearBattleSnapshot();
  state.finishReason=reason||(win?'최종 보스 클리어':'게임 종료');
  state.finalScore=scoreDetails(win);
  finishRecord(win);
@@ -1069,16 +1070,133 @@ function drawSelectedRange(){
  ctx.restore();
 }
 function draw(){ctx.save();if(graphicsMode==='high'){ctx.shadowColor='#fff6b7';ctx.shadowBlur=2;}if(state.shake>0)ctx.translate((Math.random()-.5)*state.shake,(Math.random()-.5)*state.shake);drawBackground();drawBoard();drawSelectedRange();drawUnits();for(const e of state.enemies)drawMonster(e);drawFx();drawBoonAura();drawNotices();ctx.restore()}
-function frame(now){const realDt=clamp((now-(prevTime||now))/1000,0,.065);prevTime=now;let timeLeft=realDt*state.speed;while(timeLeft>0){const slice=Math.min(.041,timeLeft);update(slice);timeLeft-=slice;if(state.mode!=='wave'||state.paused)break;}if(!state.paused){for(const n of notices)n.time-=realDt;notices=notices.filter(n=>n.time>0)}if(graphicsMode==='high'||now-prevVisualFrame>=33){draw();prevVisualFrame=now}requestAnimationFrame(frame)}
-function start(){if(state.mode!=='intro')reset();state.mode='wave';$('overlay').classList.add('hidden');$('difficultySelect').disabled=true;startWave();sync()}
+
+/* v1.5.13: resilient 10-minute background auto-battle.
+   Browsers suspend hidden pages; replay their elapsed wall time through the SAME
+   update() battle rules on return. This is not a server-side background process. */
+const BATTLE_SNAPSHOT_KEY='fortune_war_inflight_v1513';
+const MAX_BACKGROUND_MS=10*60*1000;
+let backgroundHeld=false,backgroundMarkedAt=0,catchupActive=false,lastSnapshotWrite=0;
+function clearBattleSnapshot(){
+ try{localStorage.removeItem(BATTLE_SNAPSHOT_KEY)}catch{}
+}
+function persistBattleSnapshot(mark=Date.now()){
+ if(!state||state.mode!=='wave'||state.paused)return;
+ try{
+  const snapshot={version:1,at:mark,unitCounter:nextUnitId,active:true,screen:activeScreen,state};
+  localStorage.setItem(BATTLE_SNAPSHOT_KEY,JSON.stringify(snapshot));
+  lastSnapshotWrite=mark;
+ }catch(err){console.warn('Battle autosave unavailable',err)}
+}
+function readBattleSnapshot(){
+ try{
+  const snapshot=JSON.parse(localStorage.getItem(BATTLE_SNAPSHOT_KEY)||'null');
+  return snapshot&&snapshot.version===1&&snapshot.state?.mode==='wave'?snapshot:null;
+ }catch{return null}
+}
+function applyBattleSnapshot(snapshot){
+ if(!snapshot||!snapshot.state||!difficulties[snapshot.state.difficulty])return false;
+ state=snapshot.state;
+ state.fx=Array.isArray(state.fx)?state.fx:[];
+ state.shots=Array.isArray(state.shots)?state.shots:[];
+ state.floaters=Array.isArray(state.floaters)?state.floaters:[];
+ state.enemies=Array.isArray(state.enemies)?state.enemies:[];
+ state.units=Array.isArray(state.units)?state.units:[];
+ nextUnitId=Math.max(Number(snapshot.unitCounter)||1,1,...state.units.map(u=>Number(u.id||0)+1));
+ activeSessionStarted=Boolean(snapshot.active);
+ $('difficultySelect').value=state.difficulty;
+ $('homeDifficulty').value=state.difficulty;
+ $('difficultySelect').disabled=true;
+ $('overlay').classList.add('hidden');
+ state.paused=false;return true;
+}
+function onBackgroundTimeout(){
+ backgroundHeld=false;catchupActive=false;backgroundMarkedAt=0;
+ if(state?.mode==='wave'){
+  finish(false,'10분 이상 이탈 · 다시 시작');
+  toast('⌛ 자리를 비운 시간이 10분을 넘어 게임이 종료됐습니다');
+ }
+ clearBattleSnapshot();
+}
+function catchUpBattle(elapsedMs){
+ const ms=Math.max(0,Number(elapsedMs)||0);
+ if(ms>MAX_BACKGROUND_MS){onBackgroundTimeout();return}
+ if(state?.mode!=='wave'||state.paused){backgroundHeld=false;return}
+ if(ms<100){backgroundHeld=false;persistBattleSnapshot();return}
+ catchupActive=true;backgroundHeld=true;
+ let simulated=0;
+ const totalSeconds=ms/1000*Math.max(1,Number(state.speed)||1);
+ // 60ms simulation chunks preserve enemy movement, cooldown and kill rules.
+ // Time-slice replay to keep the phone responsive after a long absence.
+ function drain(){
+  if(document.hidden){catchupActive=false;backgroundHeld=true;return}
+  const deadline=performance.now()+11;
+  let steps=0;
+  while(simulated<totalSeconds&&steps<300&&performance.now()<deadline&&state.mode==='wave'){
+   const dt=Math.min(.06,totalSeconds-simulated);
+   update(dt);simulated+=dt;steps++;
+  }
+  if(state.mode!=='wave'||simulated>=totalSeconds){
+   catchupActive=false;backgroundHeld=false;
+   prevTime=performance.now();
+   if(state.mode==='wave'){persistBattleSnapshot();sync()}
+   return;
+  }
+  requestAnimationFrame(drain);
+ }
+ requestAnimationFrame(drain);
+}
+function startBackgroundHold(){
+ if(!state||state.mode!=='wave'||state.paused||backgroundHeld)return;
+ backgroundMarkedAt=Date.now();backgroundHeld=true;
+ persistBattleSnapshot(backgroundMarkedAt);
+}
+function finishBackgroundHold(){
+ if(!backgroundHeld||catchupActive)return;
+ const began=backgroundMarkedAt||Date.now();backgroundMarkedAt=0;
+ catchUpBattle(Math.max(0,Date.now()-began));
+}
+document.addEventListener('visibilitychange',()=>{
+ if(document.hidden)startBackgroundHold();else finishBackgroundHold();
+});
+window.addEventListener('pagehide',()=>{
+ if(state?.mode==='wave'&&!state.paused){
+  // Keep original departure timestamp if the page was already hidden.
+  persistBattleSnapshot(backgroundMarkedAt||Date.now());
+ }
+});
+window.addEventListener('pageshow',()=>{
+ if(!document.hidden)finishBackgroundHold();
+});
+function restoreBackgroundBattle(){
+ const snap=readBattleSnapshot();if(!snap)return false;
+ const elapsed=Math.max(0,Date.now()-(Number(snap.at)||0));
+ if(elapsed>MAX_BACKGROUND_MS){
+  clearBattleSnapshot();
+  toast('⌛ 이전 게임이 10분을 초과하여 종료됐습니다. 새로 시작해 주세요');
+  return false;
+ }
+ if(!applyBattleSnapshot(snap)){clearBattleSnapshot();return false}
+ setScreen('game');fitBattlefield();backgroundHeld=true;
+ catchUpBattle(elapsed);
+ toast('⚔ 진행 중이던 전투를 자동으로 복원합니다');
+ return true;
+}
+
+function frame(now){const realDt=clamp((now-(prevTime||now))/1000,0,.065);prevTime=now;
+ if(document.hidden||backgroundHeld||catchupActive){requestAnimationFrame(frame);return}
+ if(state.mode==='wave'&&!state.paused&&Date.now()-lastSnapshotWrite>5000)persistBattleSnapshot();
+ let timeLeft=realDt*state.speed;while(timeLeft>0){const slice=Math.min(.041,timeLeft);update(slice);timeLeft-=slice;if(state.mode!=='wave'||state.paused)break;}if(!state.paused){for(const n of notices)n.time-=realDt;notices=notices.filter(n=>n.time>0)}if(graphicsMode==='high'||now-prevVisualFrame>=33){draw();prevVisualFrame=now}requestAnimationFrame(frame)}
+function start(){clearBattleSnapshot();if(state.mode!=='intro')reset();state.mode='wave';$('overlay').classList.add('hidden');$('difficultySelect').disabled=true;startWave();sync()}
 const speedValues=[1,1.5,2,3,4];function setSpeed(n){if(state.mode!=='wave')return;if(!speedValues.includes(n))return;state.speed=n;sync()}
 function pause(){if(state.mode!=='wave')return;state.paused=!state.paused;sync()}
-function restart(){if(state.mode==='wave'&&!confirm('현재 게임을 포기하고 새로운 판을 시작할까요?'))return;state.mode='intro';$('difficultySelect').disabled=false;$('overlay').classList.remove('hidden');$('modalTitle').textContent='✨ 새로운 방어전';$('modalText').innerHTML='새 게임을 시작하면 랜덤 혜택이 다시 추첨됩니다.<br><b>노멀 난이도 60웨이브 클리어</b> 시 칭호 획득!';$('modalStart').textContent='게임 시작';$('resultSummary').classList.add('hidden');$('resultRankBtn').classList.add('hidden');reset()}
+function restart(){clearBattleSnapshot();if(state.mode==='wave'&&!confirm('현재 게임을 포기하고 새로운 판을 시작할까요?'))return;state.mode='intro';$('difficultySelect').disabled=false;$('overlay').classList.remove('hidden');$('modalTitle').textContent='✨ 새로운 방어전';$('modalText').innerHTML='새 게임을 시작하면 랜덤 혜택이 다시 추첨됩니다.<br><b>노멀 난이도 60웨이브 클리어</b> 시 칭호 획득!';$('modalStart').textContent='게임 시작';$('resultSummary').classList.add('hidden');$('resultRankBtn').classList.add('hidden');reset()}
 cvs.addEventListener('pointerup',event=>{if(state.mode!=='wave'||state.paused)return;const rect=cvs.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width*W,y=(event.clientY-rect.top)/rect.height*H,c=Math.floor((x-BX)/(CELL+GAP)),r=Math.floor((y-BY)/(CELL_H+GAP));if(c<0||r<0||c>=GRID||r>=ROWS)return;const sx=BX+c*(CELL+GAP),sy=BY+r*(CELL_H+GAP);if(x>sx+CELL||y>sy+CELL_H)return;const chosen=state.units.find(u=>u.c===c&&u.r===r);if(chosen){state.selected=chosen.id;sync()}else summonAt(c,r)});
-$('menuFullscreen').onclick=()=>{toggleQuickMenu(false);requestGameFullscreen()};$('menuGraphics').onclick=()=>{applyGraphicsMode(graphicsMode==='high'?'standard':'high');toast(graphicsMode==='high'?'✨ 고사양 모드 활성화':'⚡ 기본 모드 활성화')};$('closeUnitSheet').onclick=closeUnitInfo;document.getElementById('unitSheet').addEventListener('click',ev=>{if(ev.target.id==='unitSheet')closeUnitInfo()});$('sheetUpgrade').onclick=()=>{const u=getSelected();if(!u)return;upgradeElement(u.element);showUnitInfo()};$('sheetSell').onclick=()=>{sell();closeUnitInfo()};$('summon').onclick=summon;$('merge').onclick=merge;$('income').onclick=income;$('sell').onclick=sell;$('speed').onclick=()=>setSpeed(speedValues[(speedValues.indexOf(state.speed)+1)%speedValues.length]);$('pause').onclick=pause;$('restart').onclick=()=>{activeSessionStarted=false;restart()};$('modalStart').onclick=()=>{activeSessionStarted=true;start()};$('mSummon').onclick=summon;$('mMerge').onclick=merge;$('mSpeed').onclick=()=>setSpeed(speedValues[(speedValues.indexOf(state.speed)+1)%speedValues.length]);$('mPause').onclick=pause;
+$('menuFullscreen').onclick=()=>{toggleQuickMenu(false);requestGameFullscreen()};$('menuGraphics').onclick=()=>{applyGraphicsMode(graphicsMode==='high'?'standard':'high');toast(graphicsMode==='high'?'✨ 고사양 모드 활성화':'⚡ 기본 모드 활성화')};$('closeUnitSheet').onclick=closeUnitInfo;document.getElementById('unitSheet').addEventListener('click',ev=>{if(ev.target.id==='unitSheet')closeUnitInfo()});$('sheetUpgrade').onclick=()=>{const u=getSelected();if(!u)return;upgradeElement(u.element);showUnitInfo()};$('sheetSell').onclick=()=>{sell();closeUnitInfo()};$('summon').onclick=summon;$('merge').onclick=merge;$('income').onclick=income;$('sell').onclick=sell;$('speed').onclick=()=>setSpeed(speedValues[(speedValues.indexOf(state.speed)+1)%speedValues.length]);$('pause').onclick=pause;$('restart').onclick=()=>{activeSessionStarted=false;restart()};$('modalStart').onclick=()=>{requestGameFullscreen();activeSessionStarted=true;start()};$('mSummon').onclick=summon;$('mMerge').onclick=merge;$('mSpeed').onclick=()=>setSpeed(speedValues[(speedValues.indexOf(state.speed)+1)%speedValues.length]);$('mPause').onclick=pause;
 $('difficultySelect').addEventListener('change',()=>{if(state.mode==='wave')return;$('homeDifficulty').value=$('difficultySelect').value;reset()});
 document.addEventListener('keydown',event=>{if(event.target.matches('select,input,textarea'))return;const k=event.key.toLowerCase();if(k==='s')summon();if(k==='m')merge();if(k==='p')pause();if(['1','2','3','4','5'].includes(k))setSpeed(speedValues[Number(k)-1])});
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&state.mode==='wave'&&!state.paused){state.paused=true;sync()}});
+// Background/restore handling is installed below with wall-clock catch-up.
+
 
 
 // --- GitHub Pages compatible authentication (Supabase Auth magic link + RLS profile sync) ---
@@ -1156,11 +1274,18 @@ function renderProfile(){
 }
 function syncHomeDifficulty(){const mode=$('homeDifficulty').value;$('difficultySelect').value=mode;if(state.mode==='intro')reset();$('homeStart').textContent=mode==='hard'?'🏆 하드 80W 도전':mode==='easy'?'⚔ 이지 40W 도전':'⚔ 노멀 60W 도전';}
 function requestGameFullscreen(){
- // Fullscreen is user-gesture gated; iOS Safari may not support it.
- try{const el=document.documentElement;if(!document.fullscreenElement&&typeof el.requestFullscreen==='function'){el.requestFullscreen({navigationUI:'hide'}).catch(()=>{})}}catch{}
+ // Trigger only in a real tap/click handler. CSS fullscreen remains the iOS fallback.
+ try{
+  if(document.fullscreenElement)return;
+  const el=document.documentElement;
+  if(typeof el.requestFullscreen==='function'){
+   const request=el.requestFullscreen({navigationUI:'hide'});
+   if(request&&typeof request.catch==='function')request.catch(()=>{});
+  }else if(typeof el.webkitRequestFullscreen==='function'){el.webkitRequestFullscreen();}
+ }catch(err){console.info('Browser fullscreen unavailable; viewport game layout is active.',err)}
 }
-function startFromHome(){if(state.mode==='wave'&&!confirm('진행 중인 게임을 포기하고 새 게임을 시작할까요?'))return;activeSessionStarted=true;$('difficultySelect').value=$('homeDifficulty').value;reset();setScreen('game');fitBattlefield();start()}
-function resumeGame(){setScreen('game');fitBattlefield();if(state.mode==='intro'){activeSessionStarted=true;start()}else if(state.mode==='wave'&&state.paused){state.paused=false;sync()}}
+function startFromHome(){requestGameFullscreen();if(state.mode==='wave'&&!confirm('진행 중인 게임을 포기하고 새 게임을 시작할까요?'))return;activeSessionStarted=true;$('difficultySelect').value=$('homeDifficulty').value;reset();setScreen('game');fitBattlefield();start()}
+function resumeGame(){requestGameFullscreen();setScreen('game');fitBattlefield();if(state.mode==='intro'){activeSessionStarted=true;start()}else if(state.mode==='wave'&&state.paused){state.paused=false;sync()}}
 function persistRecord(){
  if(loggedIn){
   const snapshot=JSON.parse(JSON.stringify(player));
@@ -1321,7 +1446,7 @@ $('heroPreviewModal').addEventListener('click',e=>{if(e.target===$('heroPreviewM
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('heroPreviewModal').classList.contains('hidden'))$('heroPreviewModal').classList.add('hidden')});
 $('gameMenu').addEventListener('click',e=>{if(e.target===$('gameMenu'))toggleQuickMenu(false)});
 $('oddsModal').addEventListener('click',e=>{if(e.target===$('oddsModal'))toggleOdds(false)});
-renderPortraits();renderUpgrades();initCompactLayout();applyGraphicsMode(graphicsMode);reset();renderProfile();renderHome();setScreen('home');syncHomeDifficulty();bootstrapAuth();requestAnimationFrame(frame);
+renderPortraits();renderUpgrades();initCompactLayout();applyGraphicsMode(graphicsMode);reset();renderProfile();renderHome();setScreen('home');syncHomeDifficulty();restoreBackgroundBattle();bootstrapAuth();requestAnimationFrame(frame);
 })();
 
 </script></body></html>
