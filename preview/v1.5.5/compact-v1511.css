@@ -1,0 +1,146 @@
+/* 운의전쟁 v1.5.11 — mobile layout density & artwork fidelity.
+   Scope: existing preview/v1.5.5 only. Original hero assets and combat retained. */
+@media (max-width:800px), (max-height:850px) {
+  body.focus-game,body.focus-game #gameScreen {
+    height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;
+  }
+  body.focus-game #gameScreen .wrap {
+    box-sizing:border-box!important;
+    display:flex!important;flex-direction:column!important;
+    justify-content:flex-start!important;
+    width:100%!important;max-width:490px!important;
+    height:100dvh!important;min-height:0!important;
+    margin:0 auto!important;
+    padding:0 3px calc(57px + env(safe-area-inset-bottom))!important;
+    gap:0!important;overflow-y:auto!important;overflow-x:hidden!important;
+    overscroll-behavior:contain;
+    scrollbar-width:none;
+  }
+  body.focus-game #gameScreen .wrap::-webkit-scrollbar {display:none}
+  body.focus-game #gameScreen .mobile-quick-head {
+    height:36px!important;min-height:36px!important;flex:0 0 36px!important;
+    padding:1px 3px!important;margin:0!important;
+    display:flex!important;align-items:center!important;
+    background:transparent!important;border:0!important;box-shadow:none!important;
+  }
+  body.focus-game #gameScreen .mobile-quick-head .menu-caption {display:none!important}
+  body.focus-game #gameScreen .mobile-quick-head #quickMenu {display:none!important}
+  body.focus-game #gameScreen .mobile-quick-head #quickOdds {
+    height:31px!important;min-height:31px!important;width:47px!important;
+    min-width:47px!important;margin-left:auto!important;
+    border-radius:9px!important;padding:1px!important;font-size:10px!important;
+  }
+  body.focus-game #gameScreen .stats {
+    display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    width:calc(100% - 55px)!important;max-width:none!important;
+    position:absolute!important;top:0!important;left:3px!important;
+    height:36px!important;margin:0!important;padding:0!important;gap:3px!important;
+    background:transparent!important;z-index:10!important;
+  }
+  body.focus-game #gameScreen .stats .stat {
+    min-width:0!important;min-height:34px!important;height:34px!important;
+    padding:2px 4px!important;margin:0!important;
+    display:flex!important;flex-direction:column!important;align-items:center!important;
+    justify-content:center!important;border:1px solid #d1aa77!important;
+    background:linear-gradient(#fffdf6,#f7e8cf)!important;
+    border-radius:10px!important;box-shadow:0 1px 2px #a9834f66!important;
+  }
+  body.focus-game #gameScreen .stats .stat span {font-size:9px!important;line-height:11px!important;color:#896b4d!important}
+  body.focus-game #gameScreen .stats .stat strong {font-size:14px!important;line-height:16px!important;color:#594030!important;white-space:nowrap!important}
+  body.focus-game #gameScreen .stats .stat:nth-child(2),
+  body.focus-game #gameScreen .stats .stat:nth-child(4),
+  body.focus-game #gameScreen .stats .stat:nth-child(6) {display:none!important}
+  body.focus-game #gameScreen .layout {
+    display:block!important;flex:0 0 auto!important;
+    width:100%!important;min-height:0!important;
+    height:auto!important;margin:0!important;padding:0!important;
+    overflow:visible!important;
+  }
+  body.focus-game #gameScreen .left {
+    display:block!important;flex:none!important;
+    width:100%!important;margin:0!important;padding:0!important;min-height:0!important;
+  }
+  body.focus-game #gameScreen .arena {
+    display:block!important;box-sizing:border-box!important;
+    width:min(100%,var(--arena-size,410px))!important;
+    max-width:100%!important;height:auto!important;min-height:0!important;
+    margin:0 auto!important;padding:0!important;
+    border:3px solid #e0b47a!important;border-radius:16px!important;
+    box-shadow:0 2px 4px #b58e6680,0 0 0 1px #fff0cc!important;
+  }
+  body.focus-game #gameScreen #game {
+    display:block!important;width:100%!important;height:auto!important;
+    aspect-ratio:720/850!important;
+    margin:0 auto!important;padding:0!important;object-fit:contain!important;
+  }
+  body.focus-game #gameScreen .arena-top {top:3px!important;left:3px!important;right:3px!important}
+  body.focus-game #gameScreen .timer-track {margin:0!important;height:2px!important}
+  body.focus-game #gameScreen .resonance-strip {
+    min-height:22px!important;height:auto!important;
+    margin:1px 1px 0!important;padding:2px 5px!important;
+    border-radius:8px!important;line-height:14px!important;
+    font-size:9px!important;gap:3px!important;
+  }
+  body.focus-game #gameScreen .resonance-strip small {font-size:9px!important}
+  body.focus-game #gameScreen .resonance-hub.mobile-power{
+    box-sizing:border-box!important;flex:0 0 auto!important;
+    width:calc(100% - 2px)!important;min-height:0!important;height:auto!important;
+    margin:2px 1px 0!important;padding:4px 5px!important;
+    border-radius:12px!important;
+  }
+  body.focus-game #gameScreen .resonance-hub .power-head {
+    height:19px!important;min-height:19px!important;
+    padding:0 2px!important;margin:0 0 2px!important;
+  }
+  body.focus-game #gameScreen .resonance-hub .power-head strong {font-size:11px!important}
+  body.focus-game #gameScreen .resonance-hub .power-head small {font-size:8px!important}
+  body.focus-game #gameScreen .resonance-hub .power-head .boost-open{
+    padding:2px 4px!important;min-height:19px!important;height:19px!important;
+    font-size:9px!important;
+  }
+  body.focus-game #gameScreen .resonance-cards {
+    display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:3px!important;margin:0!important;
+  }
+  body.focus-game #gameScreen .res-card {
+    height:62px!important;min-height:62px!important;max-height:62px!important;
+    padding:2px 1px!important;gap:0!important;border-radius:8px!important;
+    overflow:hidden!important;
+  }
+  body.focus-game #gameScreen .res-card .res-emblem{font-size:14px!important;line-height:15px!important}
+  body.focus-game #gameScreen .res-card .res-name{font-size:9px!important;line-height:11px!important}
+  body.focus-game #gameScreen .res-card .res-orbs{height:5px!important}
+  body.focus-game #gameScreen .res-card .res-grade{width:9px!important;height:10px!important;font-size:7px!important}
+  body.focus-game #gameScreen .res-card .res-grades{min-height:11px!important;max-height:11px!important}
+  body.focus-game #gameScreen .res-card small{font-size:8px!important;line-height:10px!important}
+  body.focus-game #gameScreen .compact-selected {
+    box-sizing:border-box!important;flex:0 0 auto!important;
+    width:calc(100% - 2px)!important;height:auto!important;min-height:43px!important;
+    margin:2px 1px 0!important;padding:3px 6px!important;border-radius:10px!important;
+  }
+  body.focus-game #gameScreen .compact-choice-head{height:15px!important;min-height:15px!important;margin:0!important;font-size:9px!important}
+  body.focus-game #gameScreen #compactSelectedSummary{
+    min-height:19px!important;max-height:35px!important;margin:0!important;
+    line-height:1.2!important;overflow:hidden!important;
+  }
+  body.focus-game #gameScreen #compactSelectedSummary img{width:25px!important;height:27px!important}
+  body.focus-game #gameScreen .sidebar,body.focus-game #gameScreen .underarena {display:none!important}
+  body.focus-game #mobileGamebar{
+    box-sizing:border-box!important;position:fixed!important;
+    bottom:0!important;left:50%!important;right:auto!important;
+    transform:translateX(-50%)!important;
+    width:100%!important;max-width:490px!important;
+    margin:0!important;padding:3px 4px calc(3px + env(safe-area-inset-bottom))!important;
+    gap:4px!important;border-top:1px solid #d7aa6e!important;
+    z-index:50!important;
+  }
+  body.focus-game #mobileGamebar .btn{
+    height:47px!important;min-height:47px!important;
+    padding:3px 2px!important;border-radius:10px!important;
+    font-size:12px!important;line-height:1.1!important;
+  }
+}
+@media (max-height:690px){
+ body.focus-game #gameScreen .compact-selected{display:none!important}
+ body.focus-game #gameScreen .res-card{height:56px!important;min-height:56px!important;max-height:56px!important}
+}
