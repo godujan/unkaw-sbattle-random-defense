@@ -830,7 +830,8 @@ const elements={
 const keys=['water','fire','ice','lightning','wind'];
 const tierNames=['커먼','언커먼','레어','유니크','에픽','신화','태초','창조'];
 const tierColors=['#b9c3d6','#45ce78','#458fff','#9867f5','#f255b3','#ff973a','#ffd04e','#56e6f5'];
-const baseTierOdds=[43,28,15,8,4,1.5,.4,.1]; const SALE_VALUES=[3,6,12,25,50,100,200,400];
+// All base odds sum to 100%, even at higher waves.
+const baseTierOdds=[45,29,15.5,7,3,.42,.07,.01]; const SALE_VALUES=[3,6,12,25,50,100,200,400];
 const GRADE_ATTACK=[11,20,42,125,370,1100,3350,10500];
 const GRADE_ARMOR_REDUCE=[.10,.13,.16,.19,.22,.25,.28,.30];
 const GRADE_FIRE_SPLASH=[.10,.18,.27,.38,.52,.68,.84,1.00];
@@ -1025,6 +1026,11 @@ function showUnitInfo(){const u=getSelected();if(!u)return;const e=elements[u.el
 <div class="sheet-stat-grid"><div class="sheet-stat"><span>⚔ 공격력 / 1타</span><strong>${dmg.toLocaleString()}</strong></div><div class="sheet-stat"><span>⏱ 공격 간격</span><strong>${rate.toFixed(2)}초</strong></div><div class="sheet-stat"><span>🎯 공격 범위</span><strong>${range}</strong></div><div class="sheet-stat"><span>💥 초당 공격력 (예상)</span><strong>${Math.round(dmg/rate).toLocaleString()}</strong></div><div class="sheet-stat"><span>✨ 공명 등급 수 / 보너스</span><strong>${u.cluster}등급 · ⚔ +${resonanceLevel(u)} / 🎯 +${resonanceRange(u.element)}</strong></div><div class="sheet-stat"><span>⬆ 속성 강화</span><strong>Lv.${buff}/30</strong></div></div>
 <div class="sheet-target"><b>🎯 공격 대상 우선순위</b><div class="target-options"><button type="button" data-target="front" class="${(u.targetMode||'front')==='front'?'active':''}">선두 적</button><button type="button" data-target="near" class="${u.targetMode==='near'?'active':''}">가까운 적</button><button type="button" data-target="strong" class="${u.targetMode==='strong'?'active':''}">체력 높은 적</button></div><p>공격 범위 안에서 누구를 먼저 때릴지 선택합니다. 기본값은 선두 적입니다.</p></div>
 <div class="sheet-explain"><b>공격 방식 · ${desc.mode}</b><br>${desc.detail}<br><br><b>공격 대상</b> · ${desc.target}<br><b>속성 추가 효과</b> · ${desc.effect}<br><b>연계 강화</b> · ${e.name} 공격 Lv.${buff}+공명${resonanceAttack(u.element)} / 사거리 구매 ${state.rangeLv[u.element]}/2 +공명${resonanceRange(u.element)} (1레벨=7%) / 다음 공격 강화 ${cost}원<br><b>공명</b> · 같은 속성에서 서로 다른 등급 3종: 공격 강화 +2레벨 / 5종: 공격 강화 +4레벨과 사거리 +1레벨 (같은 등급 중복 제외)</div>`;
+if(u.tier===6||u.tier===7){
+ const p=document.createElement('p');p.className='summon-blessing';
+ p.textContent=u.tier===6?'🌟 태초 소환: '+e.name+' 공격 강화 +1레벨 (최대 30)':'🌌 창조 소환: '+e.name+' 다음 소환 확률 '+(elementSummonChances()[u.element]*100).toFixed(1)+'% (+5%p/회, 최대 +20%p)';
+ document.getElementById('unitSheetContent').append(p);
+}
 const up=document.getElementById('sheetUpgrade');up.textContent=`${e.icon} ${e.name} 강화 · ${cost}원`;up.disabled=state.mode!=='wave'||state.paused||buff>=30||state.coins<cost;
 document.getElementById('sheetSell').disabled=state.mode!=='wave'||state.paused;document.getElementById('sheetSell').textContent='🪙 1명 판매 +'+SALE_VALUES[u.tier];
 document.querySelectorAll('#unitSheet [data-target]').forEach(btn=>btn.onclick=()=>{u.targetMode=btn.dataset.target;showUnitInfo();sync()});document.getElementById('unitSheet').classList.remove('hidden')}
@@ -1041,13 +1047,45 @@ function applyBoon(){if(state.boon.id==='life')state.life+=8;
 $('boonName').textContent='✨ '+state.boon.icon+' '+state.boon.name;$('boonDesc').textContent=state.boon.desc;}
 function updateCompactChoice(u){const box=$('compactSelectedSummary');if(!box)return;if(!u){box.innerHTML='<span class="compact-empty">영웅을 터치하면 정보가 나와요.</span>';return}const e=elements[u.element],d=attackDescriptions[u.element];box.innerHTML=`<img class="${u.tier>=5?'tier-card-glow':''}" style="--grade:${tierColors[u.tier]}" alt="" src="${canonicalCardSource(u.element,u.tier)}"><div class="choice-body"><b style="color:${tierColors[u.tier]}">${e.icon} ${u.name} · ${tierNames[u.tier]} ×${(u.count||1).toLocaleString('ko-KR')}</b><small>⚔ ${Math.round(damageOf(u)).toLocaleString()} · 🎯 ${Math.round(rangeOf(u))} · ⏱ ${rateOf(u).toFixed(2)}초</small><small>${d.name} · 판매 1명 +${SALE_VALUES[u.tier]}원 · ⚔ 공명+${resonanceAttack(u.element)}</small></div>`}
 function initCompactLayout(){const b=$('expandUnitInfo');if(b)b.addEventListener('click',()=>{if(getSelected())showUnitInfo();else toast('먼저 캐릭터를 선택하세요')});}
-function reset(){const chosen=$('difficultySelect').value,difficulty=difficulties[chosen]?chosen:'normal',def=difficulties[difficulty];state={mode:'intro',moveMode:false,moveFromId:null,difficulty,maxWave:def.waves,wave:1,time:0,seconds:60,speed:1,paused:false,coins:30,life:def.life,units:[],enemies:[],fx:[],shots:[],floaters:[],kills:0,summons:0,spawned:0,spawnTarget:0,spawnClock:0,selected:null,elementLv:{water:0,fire:0,ice:0,lightning:0,wind:0},rangeLv:{water:0,fire:0,ice:0,lightning:0,wind:0},incomeLv:0,bestTier:0,leaks:0,bossCleared:false,bossWins:0,finishReason:'',finalScore:null,boon:chooseBoon(),titles:safeRead(),shake:0,uiAccum:0};nextUnitId=1;notices=[];applyBoon();setDifficultyText();drawTitleStatus();log('새 게임 준비 완료 · '+def.label+' 난이도');log('이번 판 혜택: '+state.boon.name);sync();}
-function rollTier(){const weights=baseTierOdds;const sum=weights.reduce((a,b)=>a+b,0);let x=Math.random()*sum,index=0;for(let i=0;i<weights.length;i++){if((x-=weights[i])<=0){index=i;break}}const shift=Math.min(4,Math.floor((state.wave-1)/16));const luck=state.boon.id==='luck'&&Math.random()<.38?1:0;return Math.min(tierNames.length-1,shift+index+luck)}
-function createUnit(c,r,tier,key){const element=key||keys[rand(5)];return{id:nextUnitId++,c,r,tier,element,name:roleByTier[element][tier],count:1,paid:10,cool:Math.random()*.2,flash:0,cluster:1,charge:0,attackCount:0,targetMode:'front'}}
+function reset(){const chosen=$('difficultySelect').value,difficulty=difficulties[chosen]?chosen:'normal',def=difficulties[difficulty];state={mode:'intro',moveMode:false,moveFromId:null,difficulty,maxWave:def.waves,wave:1,time:0,seconds:60,speed:1,paused:false,coins:30,life:def.life,units:[],enemies:[],fx:[],shots:[],floaters:[],kills:0,summons:0,spawned:0,spawnTarget:0,spawnClock:0,selected:null,elementLv:{water:0,fire:0,ice:0,lightning:0,wind:0},creationBlessings:{water:0,fire:0,ice:0,lightning:0,wind:0},rangeLv:{water:0,fire:0,ice:0,lightning:0,wind:0},incomeLv:0,bestTier:0,leaks:0,bossCleared:false,bossWins:0,finishReason:'',finalScore:null,boon:chooseBoon(),titles:safeRead(),shake:0,uiAccum:0};nextUnitId=1;notices=[];applyBoon();setDifficultyText();drawTitleStatus();log('새 게임 준비 완료 · '+def.label+' 난이도');log('이번 판 혜택: '+state.boon.name);sync();}
+function rollTier(){
+ // Wave scaling only slightly improves rare odds; it never forcibly shifts entire rarity tiers.
+ const late=Math.min(.6,Math.max(0,(state.wave-1)/100));
+ const weights=baseTierOdds.map((chance,t)=>chance*(t>=5?1+late:1)*(state.boon.id==='luck'&&t>=3?1.2:1));
+ let x=Math.random()*weights.reduce((a,b)=>a+b,0);
+ for(let t=0;t<weights.length;t++){x-=weights[t];if(x<0)return t}
+ return 0;
+}
+function elementSummonChances(){
+ // Each creation summon grants +5 percentage points to its own element, capped at +20pp.
+ const blessings=state.creationBlessings||{},bonuses={};
+ for(const k of keys)bonuses[k]=Math.min(4,Math.max(0,Number(blessings[k])||0))*.05;
+ const total=keys.reduce((sum,k)=>sum+bonuses[k],0);
+ return Object.fromEntries(keys.map(k=>[k,Math.max(0,.2+bonuses[k]-(total-bonuses[k])/(keys.length-1))]));
+}
+function rollElement(){
+ const odds=elementSummonChances();let x=Math.random();
+ for(const k of keys){x-=odds[k];if(x<=0)return k}
+ return keys[keys.length-1];
+}
+function createUnit(c,r,tier,key){const element=key||rollElement();return{id:nextUnitId++,c,r,tier,element,name:roleByTier[element][tier],count:1,paid:10,cool:Math.random()*.2,flash:0,cluster:1,charge:0,attackCount:0,targetMode:'front'}}
 function addOrStack(unit){const existing=state.units.find(v=>v.tier===unit.tier&&v.element===unit.element&&v.name===unit.name);if(existing){existing.count=Math.min(Number.MAX_SAFE_INTEGER,(existing.count||1)+(unit.count||1));existing.paid=(existing.paid||10)+(unit.paid||10);state.selected=existing.id;const p=pos(existing);burst(p.x,p.y,tierColors[unit.tier],10,46);toast('✨ '+existing.name+' 중복 합체 ×'+existing.count);return existing}state.units.push(unit);state.selected=unit.id;return unit}
 function summonAt(c,r,preRolled=null){if(state.mode!=='wave'||state.paused)return;
  if(!freeCells().length||state.units.some(u=>u.c===c&&u.r===r)){toast('⛔ 20칸 만석 · 추가 소환 불가! 합성 또는 판매로 빈 칸 확보');sync();return}
- const cost=summonCost();if(state.coins<cost){toast('영압이 부족합니다');return}state.coins-=cost;state.summons++;const u=preRolled||createUnit(c,r,rollTier());u.paid=cost;const target=addOrStack(u);state.bestTier=Math.max(state.bestTier,u.tier);recalcClusters();burst(pos(target).x,pos(target).y,elements[target.element].color,12,45);if(u.tier>=5){toast('🌟 '+tierNames[u.tier]+' 영웅 등장!');announceLegendary(u);}log(`🎲 ${tierNames[u.tier]} ${elements[u.element].name} ${u.name} ×${target.count} (#${slotNumber(target.c,target.r)})`);sync()}
+ const cost=summonCost();if(state.coins<cost){toast('영압이 부족합니다');return}state.coins-=cost;state.summons++;const u=preRolled||createUnit(c,r,rollTier());u.paid=cost;const target=addOrStack(u);state.bestTier=Math.max(state.bestTier,u.tier);recalcClusters();burst(pos(target).x,pos(target).y,elements[target.element].color,12,45);if(u.tier===6){
+  const old=state.elementLv[u.element]||0;
+  state.elementLv[u.element]=Math.min(30,old+1);
+  toast('🌟 태초 축복 · '+elements[u.element].name+' 공격 강화 +1'+(old>=30?' (최대 레벨)':''));
+  log('✨ 태초 소환 · '+elements[u.element].name+' 공격 Lv.'+old+'→'+state.elementLv[u.element]);
+ }
+ if(u.tier===7){
+  state.creationBlessings=state.creationBlessings||{};
+  state.creationBlessings[u.element]=Math.min(4,(state.creationBlessings[u.element]||0)+1);
+  const chance=(elementSummonChances()[u.element]*100).toFixed(1);
+  toast('🌌 창조 축복 · '+elements[u.element].name+' 소환 확률 '+chance+'%');
+  log('✨ 창조 소환 · '+elements[u.element].name+' 등장 확률 '+chance+'%');
+ }
+ if(u.tier>=5){toast('🌟 '+tierNames[u.tier]+' 영웅 등장!');announceLegendary(u);}log(`🎲 ${tierNames[u.tier]} ${elements[u.element].name} ${u.name} ×${target.count} (#${slotNumber(target.c,target.r)})`);sync()}
 function summon(){if(state.mode!=='wave'||state.paused)return;
  const free=freeCells();
  if(!free.length){toast('⛔ 20/20칸 만석 · 소환 비용 차감 없이 취소');sync();return}
@@ -1239,10 +1277,10 @@ function sync(){syncQuick();const playing=state.mode==='wave'&&!state.paused;con
 $('mSummon').disabled=!buttons.summon;$('mSummon').title=freeCells().length===0?'20칸 가득 · 뽑기 불가':'영웅 뽑기';$('summon').title=$('mSummon').title;$('mMerge').disabled=!buttons.merge;$('mSpeed').disabled=!['wave'].includes(state.mode);$('mPause').disabled=!['wave'].includes(state.mode);$('speed').disabled=!['wave'].includes(state.mode);$('pause').disabled=!['wave'].includes(state.mode);
 const moveBtn=$('moveModeToggle');if(moveBtn){const on=Boolean(state.moveMode);moveBtn.textContent=on?'⇄ 이동 ON':'⇄ 이동 OFF';moveBtn.classList.toggle('active',on);moveBtn.setAttribute('aria-pressed',String(on));moveBtn.setAttribute('aria-label',on?'캐릭터 이동 모드 끄기':'캐릭터 이동 모드 켜기');moveBtn.disabled=!playing}
  $('detailSell').disabled=!buttons.sell;$('detailSell').textContent=getSelected()?'🪙 판매 +'+SALE_VALUES[getSelected().tier]:'🪙 판매';$('summonCost').textContent='('+summonCost()+')';$('incomeCost').textContent='('+incomeCost()+')';$('incomeLevel').textContent='Lv.'+state.incomeLv;$('bestTier').textContent=tierNames[state.bestTier];$('phase').textContent=state.paused?'⏸ 일시정지':state.mode==='intro'?'● 시작 대기':state.mode==='wave'?'● '+difficulties[state.difficulty].label+' 진행 중':state.mode==='won'?'🏆 클리어':'● 종료';$('speed').textContent='⚡ '+state.speed+'배속';$('pause').textContent=state.paused?'▶ 계속하기':'⏸ 일시정지';$('mPause').textContent=state.paused?'▶ 계속':'⏸ 정지';$('mSpeed').textContent='⏩ '+state.speed+'×';const mergeOptions=availableMergeGroups(),mergeFocus=mergeOptions[0];
-$('mMerge').textContent=mergeOptions.length?'✨ 합성 가능 '+mergeOptions.length+'종':'🔀 합성';
-$('mMerge').classList.toggle('merge-ready',!!mergeOptions.length);
-$('merge').classList.toggle('merge-ready',!!mergeOptions.length);
-if($('mergeReadyHint')){$('mergeReadyHint').textContent=mergeFocus?'✨ 합성 가능 · '+elements[mergeFocus.element].name+' '+tierNames[mergeFocus.tier]+' ×3':'🎯 선택 캐릭터';$('mergeReadyHint').classList.toggle('ready',!!mergeFocus);}
+$('mMerge').textContent='🔀 합성';
+$('mMerge').classList.remove('merge-ready');
+$('merge').classList.remove('merge-ready');
+if($('mergeReadyHint')){$('mergeReadyHint').textContent='🎯 선택 캐릭터';$('mergeReadyHint').classList.remove('ready');}
 document.querySelectorAll('[data-speed]').forEach(b=>b.classList.toggle('active',Number(b.dataset.speed)===state.speed));
 for(const k of keys){const lv=state.elementLv[k],btn=$('up-'+k),rbtn=$('rng-'+k),rlv=state.rangeLv[k];
  btn.disabled=!playing||lv>=30||state.coins<elementCost(k);
@@ -1505,7 +1543,7 @@ function applyBattleSnapshot(snapshot){
  state.shots=Array.isArray(state.shots)?state.shots:[];
  state.floaters=Array.isArray(state.floaters)?state.floaters:[];
  state.enemies=Array.isArray(state.enemies)?state.enemies:[];
- state.units=Array.isArray(state.units)?state.units:[];
+ state.units=Array.isArray(state.units)?state.units:[];state.creationBlessings=state.creationBlessings||{water:0,fire:0,ice:0,lightning:0,wind:0};
  nextUnitId=Math.max(Number(snapshot.unitCounter)||1,1,...state.units.map(u=>Number(u.id||0)+1));
  activeSessionStarted=Boolean(snapshot.active);
  $('difficultySelect').value=state.difficulty;
