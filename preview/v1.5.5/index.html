@@ -1227,10 +1227,14 @@ document.querySelectorAll('[data-rank]').forEach(b=>b.addEventListener('click',(
 $('copyPlayerCode').onclick=async()=>{const code=$('publicPlayerCode').value;try{await navigator.clipboard.writeText(code);$('codeMessage').textContent='식별 코드 복사 완료 (계정 로그인 키는 아닙니다).'}catch{$('publicPlayerCode').select();$('codeMessage').textContent='식별 코드가 선택되었습니다.'}};
 function fitBattlefield(){
  if(!document.body.classList.contains('focus-game'))return;
- const v=window.visualViewport?.height||window.innerHeight,width=Math.min(window.innerWidth,490);
- const other=v<=700?231:228;
- const available=Math.max(308,v-other);
- const size=Math.max(260,Math.min(width-6,Math.floor(available*W/H)));
+ // Preserve the actual 720 × 850 canvas ratio. Reserve the compact HUD,
+ // resonance, selection panel and bottom controls before computing board width.
+ const v=window.visualViewport?.height||window.innerHeight;
+ const width=Math.min(window.innerWidth,490);
+ const short=v<660;
+ const reserved=39+25+(short?79:96)+(short?0:47)+59+12;
+ const usable=Math.max(250,v-reserved);
+ const size=Math.max(225,Math.min(width-8,Math.floor(usable*W/H)));
  $('gameScreen').style.setProperty('--arena-size',size+'px');
 }
 window.addEventListener('resize',fitBattlefield);window.visualViewport?.addEventListener('resize',fitBattlefield);
