@@ -622,9 +622,9 @@ wind:{name:'이중 타격형',mode:'기본 공격 2연타',detail:'한 공격 �
 function closeUnitInfo(){document.getElementById('unitSheet').classList.add('hidden')}
 function showUnitInfo(){const u=getSelected();if(!u)return;const e=elements[u.element],desc=attackDescriptions[u.element];const buff=state.elementLv[u.element];const dmg=Math.round(damageOf(u));const rate=rateOf(u);const range=Math.round(rangeOf(u));const tier=tierNames[u.tier];const cost=elementCost(u.element);document.getElementById('unitSheetContent').innerHTML=`
 <div class="sheet-hero" style="--rarity:${tierColors[u.tier]}"><img alt="${e.name} 영웅" src="${portraitSrc(u.element,u.tier)}"><div><h3 style="color:${tierColors[u.tier]}">${e.icon} ${u.name}</h3><p>${tier} · ${stageNames[stageIndex(u.tier)]}<br>${e.name} 속성 · ${desc.name}</p></div></div>
-<div class="sheet-stat-grid"><div class="sheet-stat"><span>⚔ 공격력 / 1타</span><strong>${dmg.toLocaleString()}</strong></div><div class="sheet-stat"><span>⏱ 공격 간격</span><strong>${rate.toFixed(2)}초</strong></div><div class="sheet-stat"><span>🎯 공격 범위</span><strong>${range}</strong></div><div class="sheet-stat"><span>💥 초당 공격력 (예상)</span><strong>${Math.round(dmg/rate).toLocaleString()}</strong></div><div class="sheet-stat"><span>✨ 공명 인원 / 보너스</span><strong>${u.cluster}명 · ⚔ +${resonanceLevel(u)} / 🎯 +${resonanceRange(u.element)}</strong></div><div class="sheet-stat"><span>⬆ 속성 강화</span><strong>Lv.${buff}/30</strong></div></div>
+<div class="sheet-stat-grid"><div class="sheet-stat"><span>⚔ 공격력 / 1타</span><strong>${dmg.toLocaleString()}</strong></div><div class="sheet-stat"><span>⏱ 공격 간격</span><strong>${rate.toFixed(2)}초</strong></div><div class="sheet-stat"><span>🎯 공격 범위</span><strong>${range}</strong></div><div class="sheet-stat"><span>💥 초당 공격력 (예상)</span><strong>${Math.round(dmg/rate).toLocaleString()}</strong></div><div class="sheet-stat"><span>✨ 공명 등급 수 / 보너스</span><strong>${u.cluster}등급 · ⚔ +${resonanceLevel(u)} / 🎯 +${resonanceRange(u.element)}</strong></div><div class="sheet-stat"><span>⬆ 속성 강화</span><strong>Lv.${buff}/30</strong></div></div>
 <div class="sheet-target"><b>🎯 공격 대상 우선순위</b><div class="target-options"><button type="button" data-target="front" class="${(u.targetMode||'front')==='front'?'active':''}">선두 적</button><button type="button" data-target="near" class="${u.targetMode==='near'?'active':''}">가까운 적</button><button type="button" data-target="strong" class="${u.targetMode==='strong'?'active':''}">체력 높은 적</button></div><p>공격 범위 안에서 누구를 먼저 때릴지 선택합니다. 기본값은 선두 적입니다.</p></div>
-<div class="sheet-explain"><b>공격 방식 · ${desc.mode}</b><br>${desc.detail}<br><br><b>공격 대상</b> · ${desc.target}<br><b>속성 추가 효과</b> · ${desc.effect}<br><b>연계 강화</b> · ${e.name} 공격 Lv.${buff}+공명${resonanceAttack(u.element)} / 사거리 구매 ${state.rangeLv[u.element]}/2 +공명${resonanceRange(u.element)} (1레벨=7%) / 다음 공격 강화 ${cost}원<br><b>공명</b> · 같은 속성 3명: 공격 강화 +2레벨 / 5명: 공격 강화 +4레벨과 사거리 +1레벨 (중복 합산 안 함)</div>`;
+<div class="sheet-explain"><b>공격 방식 · ${desc.mode}</b><br>${desc.detail}<br><br><b>공격 대상</b> · ${desc.target}<br><b>속성 추가 효과</b> · ${desc.effect}<br><b>연계 강화</b> · ${e.name} 공격 Lv.${buff}+공명${resonanceAttack(u.element)} / 사거리 구매 ${state.rangeLv[u.element]}/2 +공명${resonanceRange(u.element)} (1레벨=7%) / 다음 공격 강화 ${cost}원<br><b>공명</b> · 같은 속성에서 서로 다른 등급 3종: 공격 강화 +2레벨 / 5종: 공격 강화 +4레벨과 사거리 +1레벨 (같은 등급 중복 제외)</div>`;
 const up=document.getElementById('sheetUpgrade');up.textContent=`${e.icon} ${e.name} 강화 · ${cost}원`;up.disabled=state.mode!=='wave'||state.paused||buff>=30||state.coins<cost;
 document.getElementById('sheetSell').disabled=state.mode!=='wave'||state.paused;
 document.querySelectorAll('#unitSheet [data-target]').forEach(btn=>btn.onclick=()=>{u.targetMode=btn.dataset.target;showUnitInfo();sync()});document.getElementById('unitSheet').classList.remove('hidden')}
@@ -683,10 +683,14 @@ function merge(){
 function sell(){if(state.mode!=='wave'||state.paused)return;const u=getSelected();if(!u)return toast('판매할 영웅을 먼저 선택하세요');const n=Math.max(1,u.count||1),share=(u.paid||10)/n,refund=SALE_VALUES[u.tier]||3;state.coins+=refund;u.paid=Math.max(0,(u.paid||10)-share);u.count=n-1;if(u.count<=0){state.units=state.units.filter(v=>v!==u);state.selected=null;toast('🪙 '+u.name+' 판매 +'+refund+'원 · 빈 칸 확보')}else toast('🪙 '+u.name+' 1명 판매 +'+refund+'원 · 남은 ×'+u.count);recalcClusters();log(`🪙 ${u.name} 1명 판매 +${refund}원`);sync()}
 function upgradeElement(k){if(state.mode!=='wave'||state.paused)return;const lv=state.elementLv[k],cost=elementCost(k);if(lv>=30)return toast('최대 강화 레벨입니다');if(state.coins<cost)return toast('강화 영압이 부족합니다');state.coins-=cost;state.elementLv[k]++;toast(elements[k].name+' 공격 강화 Lv.'+state.elementLv[k]);log('⚔️ '+elements[k].name+' 속성 공격력 Lv.'+state.elementLv[k]);sync()}
 function income(){if(state.mode!=='wave'||state.paused)return;const cost=incomeCost();if(state.incomeLv>=12)return toast('방어벽 최고 레벨입니다');if(state.coins<cost)return toast('영압이 부족합니다');state.coins-=cost;state.incomeLv++;state.life+=2;log('🛡 방어벽 강화 Lv.'+state.incomeLv+' · 생명 +2');toast('🛡 생명 +2');sync()}
+// Number of copies and number of DISTINCT rarity grades serve separate purposes.
+// Each element + rarity combination contributes exactly one resonance mark.
 function elementCount(k){return state.units.reduce((a,u)=>a+(u.element===k?(u.count||1):0),0)}
-function resonanceAttack(k){const n=elementCount(k);return n>=5?4:n>=3?2:0}
-function resonanceRange(k){return elementCount(k)>=5?1:0}
-function recalcClusters(){const totals=Object.fromEntries(keys.map(k=>[k,elementCount(k)]));for(const u of state.units)u.cluster=totals[u.element]||0;}
+function resonanceTiers(k){return [...new Set(state.units.filter(u=>u.element===k&&(u.count||0)>0).map(u=>u.tier))].sort((a,b)=>a-b)}
+function resonanceCount(k){return resonanceTiers(k).length}
+function resonanceAttack(k){const n=resonanceCount(k);return n>=5?4:n>=3?2:0}
+function resonanceRange(k){return resonanceCount(k)>=5?1:0}
+function recalcClusters(){const totals=Object.fromEntries(keys.map(k=>[k,resonanceCount(k)]));for(const u of state.units)u.cluster=totals[u.element]||0;}
 function resonanceLevel(u){return resonanceAttack(u.element)}
 function damageOf(u){const n=state.elementLv[u.element],bonus=state.boon.id==='power'?.18:keys.includes(state.boon.id)&&state.boon.id===u.element?.32:0;return (u.count||1)*tierPower(u.tier)*elements[u.element].damage*(1+(n+resonanceAttack(u.element))*.22)*(1+bonus+(state.boon.id==='resonance'&&resonanceAttack(u.element)? .12:0))}
 function rangeOf(u){const bought=state.rangeLv[u.element]||0,bonus=resonanceRange(u.element);return (136+u.tier*5)*elements[u.element].range*(1+.07*(bought+bonus))*(state.boon.id==='range'?1.16:1)}
@@ -698,15 +702,20 @@ function upgradeRange(k){if(state.mode!=='wave'||state.paused)return;
 }
 function updateResonanceUI(){
  const target=$('resonanceStrip');if(!target)return;
- const active=keys.filter(k=>elementCount(k)>=3);
- target.innerHTML=active.length?'<b>✦ 공명</b> '+active.map(k=>{const e=elements[k],n=elementCount(k),atk=resonanceAttack(k),rg=resonanceRange(k);return '<span class="res-pill" style="--elem:'+e.color+'">'+e.icon+' '+n+'명 · ⚔+'+atk+(rg?' 🎯+1':'')+'</span>'}).join(''):'<b>✦ 공명 대기</b><small>같은 속성 3명=공+2 · 5명=공+4/사거리+1</small>';
+ const active=keys.filter(k=>resonanceCount(k)>=3);
+ target.innerHTML=active.length?'<b>✦ 등급 공명</b> '+active.map(k=>{
+  const e=elements[k],n=resonanceCount(k),atk=resonanceAttack(k),rg=resonanceRange(k),gradeNames=resonanceTiers(k).map(t=>tierNames[t]).join('·');
+  return '<span class="res-pill" style="--elem:'+e.color+'" title="'+gradeNames+'">'+e.icon+' '+n+'등급 · ⚔+'+atk+(rg?' 🎯+1':'')+'</span>'
+ }).join(''):'<b>✦ 공명 대기</b><small>같은 속성의 서로 다른 등급 3종=공+2 · 5종=공+4/사거리+1</small>';
 
  const cards=$('resonanceCards');if(cards){
-  const markup=keys.map(k=>{const e=elements[k],n=elementCount(k),atk=resonanceAttack(k),rg=resonanceRange(k);
+  const markup=keys.map(k=>{
+   const e=elements[k],tiers=resonanceTiers(k),n=tiers.length,atk=resonanceAttack(k),rg=resonanceRange(k);
    const tier=n>=5?'five':n>=3?'three':'idle';
-   const reward=n>=5?'공 +4 · 거리 +1':n>=3?'공 +2':'3명 공명 대기';
+   const reward=n>=5?'공 +4 · 사거리 +1':n>=3?'공 +2':'3등급 공명 대기';
+   const badges=tiers.length?tiers.map(t=>'<span class="res-grade" style="--grade:'+tierColors[t]+'" title="'+tierNames[t]+'">'+tierNames[t]+'</span>').join(''):'<span class="res-grade-empty">등급 카드 수집 중</span>';
    const orbs=Array.from({length:5},(_,i)=>'<i class="'+(i<n?'filled':'')+'"></i>').join('');
-   return `<button type="button" class="res-card ${tier}" data-element="${k}" style="--elem:${e.color}" aria-label="${e.name} ${n}명, ${reward}, 강화 열기"><span class="res-emblem">${e.icon}</span><span class="res-name">${e.name} <b>×${n}</b></span><span class="res-orbs">${orbs}</span><small>${reward}</small></button>`
+   return `<button type="button" class="res-card ${tier}" data-element="${k}" style="--elem:${e.color}" aria-label="${e.name} 서로 다른 등급 ${n}종, ${reward}, 강화 열기"><span class="res-emblem">${e.icon}</span><span class="res-name">${e.name} <b>${n}/5</b></span><span class="res-orbs">${orbs}</span><span class="res-grades">${badges}</span><small>${reward}</small></button>`
   }).join('');
   if(cards.innerHTML!==markup)cards.innerHTML=markup;
  }
@@ -813,7 +822,7 @@ $('quickSell').disabled=!buttons.sell;$('quickSell').textContent=getSelected()?'
 for(const k of keys){const lv=state.elementLv[k],btn=$('up-'+k),rbtn=$('rng-'+k),rlv=state.rangeLv[k];
  btn.disabled=!playing||lv>=30||state.coins<elementCost(k);
  $('level-'+k).textContent='Lv.'+lv+' +'+resonanceAttack(k);
- $('buff-'+k).textContent='×'+elementCount(k)+' · ⚔+'+resonanceAttack(k)+' 🎯+'+resonanceRange(k);
+ $('buff-'+k).textContent='×'+elementCount(k)+' / 등급 '+resonanceCount(k)+' · ⚔+'+resonanceAttack(k)+' 🎯+'+resonanceRange(k);
  btn.textContent=lv>=30?'공 MAX':'⚔ '+elementCost(k).toLocaleString();
  rbtn.disabled=!playing||rlv>=2||state.coins<rangeCost(k);
  rbtn.textContent=rlv>=2?'🎯 MAX':'🎯 '+rangeCost(k);
