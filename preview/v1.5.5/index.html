@@ -709,6 +709,37 @@ body.home-active #homeScreen .landing-actions #installAppBtn{grid-column:2!impor
 #gameScreen .summon-announcement strong{font-size:clamp(23px,6vw,42px);font-weight:1000;max-width:90%;line-height:1.2}
 @keyframes summon-screen-flash{0%{opacity:0;filter:brightness(2.5)}14%{opacity:1;filter:brightness(2.2)}55%{opacity:.9;filter:brightness(1.45)}100%{opacity:0;filter:brightness(1)}}
 @media(prefers-reduced-motion:reduce){#gameScreen .summon-announcement.active{animation:none;opacity:1;visibility:visible}}
+
+/* v1.5.21 — all 40 rarity cards remain in the modal's scrollable content flow */
+#oddsModal .game-menu-card{
+ display:flex!important;flex-direction:column!important;overflow-y:auto!important;
+ max-height:calc(100dvh - 16px)!important;overscroll-behavior:contain;
+}
+#oddsModal #oddsRows{
+ display:flex!important;flex-direction:column!important;
+ flex:0 0 auto!important;flex-shrink:0!important;overflow:visible!important;
+ height:max-content!important;min-height:max-content!important;max-height:none!important;
+}
+#oddsModal .odds-rich-row{
+ flex:0 0 auto!important;min-height:0!important;height:auto!important;
+}
+#oddsModal .oddsheroes .odds-portrait{flex:1 1 0!important;min-width:0!important}
+#oddsModal .odds-jump{
+ flex:0 0 auto!important;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:4px;margin:2px 0 7px;padding:0;
+}
+#oddsModal .odds-jump button{
+ min-width:0;min-height:28px;padding:3px 2px;white-space:nowrap;
+ background:#fff1d4;border:1.5px solid #d1a76c;border-radius:8px;
+ color:#704b36;font:900 11px system-ui,sans-serif;
+}
+#oddsModal .odds-jump button:active{background:#f1d7a6}
+#oddsModal .game-menu-top{position:sticky!important;top:-11px;z-index:12;background:#fff9ebee}
+#oddsModal .odds-note,#oddsModal #oddsBack{flex:0 0 auto!important}
+#unitSheet .summon-blessing{
+ margin:5px 0 8px;padding:7px 9px;border-radius:10px;
+ border:1px solid #e7b96f;background:#fff3d9;color:#74512f;font-weight:900;font-size:11px;
+}
 </style></head><body>
 <header><div><h1>⚔️ 운의전쟁 <small style="font-size:15px;color:#90c6ff">v1.5.20</small></h1><div class="subtitle">5속성 강화 · 몬스터 누적 · 자동 게스트 저장 · 20칸 배치 · 모바일</div></div><div class="header-tags"><span class="tag">8등급</span><span class="tag">1~20 순차 배치</span><span class="tag">최대 4배속</span><span class="tag">모바일 대응</span></div></header>
 <nav class="topnav" aria-label="화면 이동"><button type="button" class="navitem active" id="navHome">⌂ 메인</button><button type="button" class="navitem" id="navGame">⚔ 게임</button><button type="button" class="navitem" id="navProfile">◉ 프로필</button><span class="navspacer"></span><button type="button" class="navitem loginNav" id="navLogin">👤 자동 접속</button></nav>
@@ -739,7 +770,7 @@ body.home-active #homeScreen .landing-actions #installAppBtn{grid-column:2!impor
 <div class="sheet-actions"><button id="sheetUpgrade" class="btn primary" type="button">속성 공격 강화</button><button id="sheetSell" class="btn danger" type="button">🪙 선택 영웅 1명 판매</button></div>
 </div></div>
 <div id="gameMenu" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-label="게임 메뉴"><div class="game-menu-card"><div class="game-menu-top"><b>☰ 게임 메뉴</b><button id="closeGameMenu" type="button" aria-label="메뉴 닫기">✕</button></div><button class="btn primary" id="menuContinue">▶ 게임 계속</button><button class="btn graphics-toggle" type="button" id="menuGraphics" aria-pressed="false">✨ 그래픽: 기본 모드</button><button class="btn outlined" type="button" id="menuAudioToggle" aria-pressed="true">🔊 BGM · 효과음 ON</button><button class="btn outlined" type="button" id="menuFullscreen">⛶ 전체화면 사용하기 (선택)</button><p class="graphics-note">고사양 모드는 선명도·이펙트만 변경하며 전투력과 난이도는 동일합니다.</p><button class="btn gold" id="menuUpgrades">⚔ 속성 강화</button><button class="btn" id="menuPause">⏯ 일시정지 / 재개</button><button class="btn" id="menuOdds">ℹ 8등급 소환 확률표</button><button class="btn outlined" id="menuRankings">🏆 랭킹</button><button class="btn outlined" id="menuProfile">◉ 내 프로필</button><button class="btn danger" id="menuHome">⌂ 홈으로 이동</button></div></div>
-<div id="oddsModal" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-label="영웅 뽑기 확률"><div class="game-menu-card"><div class="game-menu-top"><b>✦ 영웅 뽑기 확률 ✦</b><button id="closeOdds" type="button" aria-label="확률표 닫기">✕</button></div><div class="odds-legend"><span>등급 · 등장 확률</span><span>5속성 영웅</span><span>합성·판매</span></div><div id="oddsRows" class="odds-rows"></div><p class="odds-note">등급별 테두리는 속성에 관계없이 동일합니다. 신화는 주황색, 태초는 금색, 창조는 청록색 빛나는 테두리와 별 반짝임이 적용됩니다. 표의 수치는 1웨이브 기준 기본 확률입니다. 후반 웨이브에는 등급 보정이 적용되어 실제 등장 확률이 달라집니다.</p><button class="btn primary" id="oddsBack">확인</button></div></div>
+<div id="oddsModal" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-label="영웅 뽑기 확률"><div class="game-menu-card"><div class="game-menu-top"><b>✦ 영웅 뽑기 확률 ✦</b><button id="closeOdds" type="button" aria-label="확률표 닫기">✕</button></div><div class="odds-legend"><span>등급 · 등장 확률</span><span>5속성 영웅</span><span>합성·판매</span></div><nav class="odds-jump" aria-label="등급 바로 이동"><button type="button" data-odds-jump="0">커먼~에픽</button><button type="button" data-odds-jump="5">신화</button><button type="button" data-odds-jump="6">태초</button><button type="button" data-odds-jump="7">창조</button></nav><div id="oddsRows" class="odds-rows"></div><p class="odds-note">등급별 테두리는 속성에 관계없이 동일합니다. 신화는 주황색, 태초는 금색, 창조는 청록색 빛나는 테두리와 별 반짝임이 적용됩니다. 표의 수치는 1웨이브 기준 기본 확률입니다. 후반 웨이브에는 등급 보정이 적용되어 실제 등장 확률이 달라집니다.</p><button class="btn primary" id="oddsBack">확인</button></div></div>
 <div id="heroPreviewModal" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-label="영웅 카드 원본 보기"><div class="hero-preview-card"><button id="heroPreviewClose" type="button" aria-label="카드 확대 닫기">✕</button><div id="heroPreviewTitle" class="hero-preview-title">영웅 카드</div><img id="heroPreviewImage" alt="영웅 카드 전체 이미지"><p id="heroPreviewDesc"></p><small>원본 카드 전체 보기 · 원화를 자르지 않습니다.</small></div></div>
 <div id="rankingModal" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-label="운의전쟁 랭킹"><div class="game-menu-card ranking-card"><div class="game-menu-top"><b>🏆 랭킹</b><button type="button" id="rankClose">✕</button></div><p class="muted">시즌(14일) · 오늘(한국시간) · 내 기록 · 베타 랭킹</p><div class="ranktabs"><button type="button" data-rank="season" class="active">🏆 시즌</button><button type="button" data-rank="today">📅 오늘</button><button type="button" data-rank="mine">👤 내 기록</button></div><div id="rankList" class="ranklist" aria-live="polite"></div><button id="rankToProfile" class="btn outlined">내 프로필 보기</button><button id="rankBack" class="btn primary">닫기</button></div></div>
 <div id="installHelpModal" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="installHeading"><div class="game-menu-card install-guide"><div class="game-menu-top"><b id="installHeading">📲 운의전쟁 홈 화면에 추가</b><button type="button" id="closeInstallHelp" aria-label="닫기">✕</button></div><p id="installInstructions">브라우저 메뉴에서 '홈 화면에 추가'를 선택하세요.</p><button class="btn primary" type="button" id="installGuideClose">확인</button></div></div>
@@ -1442,6 +1473,30 @@ function drawAnimatedRarityRim(x,y,w,h,tier,seconds){
   }
  }ctx.restore();
 }
+
+function drawMergeReadyEmblem(x,y,w,h,u,t){
+ // Merge emblem is painted ON EACH eligible unit card, never on the action bar.
+ const phase=t*3.7+u.id*.57,ox=x+w*.18,oy=y+h*.75;
+ ctx.save();ctx.translate(ox,oy);ctx.shadowColor='#ffc85f';ctx.shadowBlur=7+3*Math.sin(phase);
+ ctx.fillStyle='#302046de';ctx.strokeStyle='#ffe69a';ctx.lineWidth=2;
+ ctx.beginPath();ctx.arc(0,0,15,0,2*Math.PI);ctx.fill();ctx.stroke();
+ ctx.rotate(Math.sin(phase*.75)*.17);
+ for(const [i,[px,py]] of [[-5,-4],[5,-4],[0,5]].entries()){
+  const pulse=.78+.22*Math.sin(phase+i*2.2),rad=3.6*pulse;
+  ctx.beginPath();ctx.moveTo(px,py-rad);ctx.lineTo(px+rad,py);ctx.lineTo(px,py+rad);ctx.lineTo(px-rad,py);ctx.closePath();ctx.fillStyle='#fff1a1';ctx.fill();
+ }
+ ctx.fillStyle='#fffdf0';ctx.shadowBlur=3;ctx.font='900 9px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('✦',0,0);
+ ctx.restore();
+ // Four glitter points twinkle around the card edge.
+ ctx.save();ctx.fillStyle='#fff8cb';ctx.shadowColor='#ffdd66';ctx.shadowBlur=7;ctx.textAlign='center';
+ for(let i=0;i<4;i++){
+  const px=x+((i%2)?w-9:9)+Math.sin(phase+i)*2;
+  const py=y+(i<2?9:h-9)+Math.cos(phase+i)*2;
+  ctx.globalAlpha=.25+.75*Math.abs(Math.sin(phase+i*1.45));
+  ctx.font=(i%2?12:10)+'px system-ui';ctx.fillText('✦',px,py);
+ }
+ ctx.restore();
+}
 function drawUnits(){for(const u of state.units){
  const p=pos(u),e=elements[u.element],tier=u.tier,selected=state.selected===u.id,img=heroImages[u.element+'_'+tier];ctx.save();
  if(selected){/* Full range circle rendered by drawSelectedRange() below the units. */}
@@ -1475,6 +1530,7 @@ function drawUnits(){for(const u of state.units){
  }
  ctx.restore();
  drawAnimatedRarityRim(left,top,cardWidth,cardHeight,tier,visualTime);
+ if(canMergeUnit(u))drawMergeReadyEmblem(left,top,cardWidth,cardHeight,u,visualTime);
  // Shared cached card already includes its complete rarity frame.
  // A selected card gets a separate gameplay highlight; never paint over its face.
  if(selected){
@@ -1898,6 +1954,11 @@ $('menuOdds').onclick=()=>{toggleQuickMenu(false);toggleOdds(true)};
 $('menuHome').onclick=()=>{toggleQuickMenu(false);setScreen('home')};
 $('menuProfile').onclick=()=>{toggleQuickMenu(false);setScreen('profile')};
 $('closeOdds').onclick=()=>toggleOdds(false);$('oddsBack').onclick=()=>toggleOdds(false);
+$('oddsModal').addEventListener('click',e=>{
+ const button=e.target.closest('[data-odds-jump]');if(!button)return;
+ const row=$('oddsRows').querySelector('.odds-rich-row[data-tier="'+button.dataset.oddsJump+'"]');
+ if(row)row.scrollIntoView({behavior:'smooth',block:'center'});
+});
 $('oddsRows').addEventListener('click',e=>{
  const card=e.target.closest('[data-card-element][data-card-tier]');if(!card)return;
  const key=card.dataset.cardElement,tier=Number(card.dataset.cardTier);
