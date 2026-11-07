@@ -315,3 +315,31 @@
  #oddsModal #oddsRows .oddsservice{font-size:clamp(8px,2.2vw,11px)!important}
  #oddsModal #oddsRows .oddsservice small{font-size:clamp(7px,1.8vw,10px)!important}
 }
+
+/* v1.5.12 — gallery is the SAME baked framed bitmap as deployed board units. */
+#oddsModal #oddsRows .odds-portrait{
+ aspect-ratio:1/1!important;
+ border:0!important;
+ padding:0!important;
+ overflow:hidden!important;
+ background:transparent!important;
+ border-radius:8px!important;
+ box-shadow:0 2px 4px #4f385477!important
+}
+#oddsModal #oddsRows .odds-portrait img{
+ position:static!important;
+ top:auto!important;left:auto!important;inset:auto!important;
+ width:100%!important;height:100%!important;
+ max-width:100%!important;max-height:100%!important;
+ aspect-ratio:1/1!important;
+ object-fit:contain!important;object-position:center center!important;
+ transform:none!important;
+ border:0!important;padding:0!important;margin:0!important
+}
+#oddsModal #oddsRows .odds-portrait::before,
+#oddsModal #oddsRows .odds-portrait::after{
+ content:none!important;display:none!important
+}
+#oddsModal #oddsRows .odds-portrait.tier-5{box-shadow:0 0 7px #ff873d88!important}
+#oddsModal #oddsRows .odds-portrait.tier-6{box-shadow:0 0 8px #ffd34caa!important}
+#oddsModal #oddsRows .odds-portrait.tier-7{box-shadow:0 0 9px #b86effaa!important}
