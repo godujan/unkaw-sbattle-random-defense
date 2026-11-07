@@ -186,3 +186,35 @@
  object-fit:contain!important;object-position:center center!important;
  transform:none!important;aspect-ratio:128/151!important;
 }
+
+/* v1.5.9 — 20-card board + readable selected range + compact boss status */
+#gameScreen .arena{position:relative}
+#gameScreen .boss-status{
+ position:absolute;z-index:4;left:12px;right:12px;bottom:10px;
+ padding:6px 10px 8px;border:1px solid #ffdc9e;border-radius:11px;
+ background:linear-gradient(115deg,#331838eb,#151b33ef);
+ box-shadow:0 3px 14px #0009;pointer-events:none;color:#fff1d5
+}
+#gameScreen .boss-status>div:first-child{
+ display:flex;justify-content:space-between;align-items:center;gap:5px;
+ font-size:11px;line-height:1.4;margin-bottom:4px
+}
+#gameScreen .boss-track{
+ width:100%;height:9px;overflow:hidden;border-radius:20px;
+ background:#190f28;border:1px solid #c9a17d
+}
+#gameScreen .boss-track>span{
+ display:block;width:100%;height:100%;
+ background:linear-gradient(90deg,#e35a8e,#ff8b68,#ffdf97);
+ box-shadow:0 0 9px #ff9471;transition:width .14s linear
+}
+#gameScreen .boss-status.hidden{display:none!important}
+#gameScreen .compact-choice-head{display:flex;align-items:center;justify-content:space-between}
+#gameScreen .compact-choice-head::after{content:'🎯 선택 시 사거리 표시';font-size:9px;color:#8d6b52;margin-left:4px}
+@media(max-width:800px){
+ body.focus-game #gameScreen .wrap{max-width:510px!important}
+ #gameScreen .stats .stat{min-width:0}
+ #gameScreen .stats .stat strong{font-variant-numeric:tabular-nums}
+ #gameScreen .boss-status{left:8px;right:8px;bottom:7px;padding:4px 8px 6px}
+}
+@media(max-width:390px){#gameScreen .compact-choice-head::after{display:none}}
