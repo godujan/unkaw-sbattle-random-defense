@@ -821,6 +821,24 @@ function slotNumber(c,r){return r*GRID+c+1}
 function pos(u){return{x:BX+u.c*(CELL+GAP)+CELL/2,y:BY+u.r*(CELL_H+GAP)+CELL_H/2}}
 function freeCells(){const occupied=new Set(state.units.map(u=>slotNumber(u.c,u.r)));return Array.from({length:GRID*ROWS},(_,i)=>({c:i%GRID,r:Math.floor(i/GRID)})).filter(v=>!occupied.has(slotNumber(v.c,v.r)))}
 function getSelected(){return state.units.find(u=>u.id===state.selected)}
+function toggleMoveMode(){
+ if(!state||state.mode!=='wave'||state.paused)return;
+ state.moveMode=!state.moveMode;
+ toast(state.moveMode?'⇄ 이동 ON · 영웅을 고른 후 목적지 터치':'⇄ 이동 OFF');
+ sync();
+}
+function moveSelectedUnit(c,r){
+ const selected=getSelected();if(!selected){toast('이동할 영웅을 먼저 선택하세요');return}
+ if(selected.c===c&&selected.r===r){state.selected=null;sync();return}
+ const other=state.units.find(u=>u.c===c&&u.r===r);
+ const fromC=selected.c,fromR=selected.r;
+ selected.c=c;selected.r=r;
+ if(other){other.c=fromC;other.r=fromR}
+ recalcClusters();
+ toast(other?'⇄ 영웅 자리 교환 완료':'⇄ '+selected.name+' 이동 완료');
+ sync();
+}
+
 const attackDescriptions={
 water:{name:'방어 약화형',mode:'타격 + 방어력 감소',detail:'물 타격 시 적에게 침식 효과를 부여합니다. 약화된 적은 모든 영웅에게 더 큰 피해를 받습니다.',effect:'맞은 적 방어 약화 (3초, 받는 피해 +22%)',target:'우선 타격 대상 선택 가능'},
 fire:{name:'화상 중첩형',mode:'타격 + 화상 누적',detail:'기본 공격마다 화상 중첩을 남깁니다. 중첩 수가 높을수록 지속 피해가 강해집니다.',effect:'화상 중첩 (최대 30회) · 3초 지속 피해',target:'우선 타격 대상 선택 가능'},
@@ -850,24 +868,25 @@ function applyBoon(){if(state.boon.id==='life')state.life+=8;
 $('boonName').textContent='✨ '+state.boon.icon+' '+state.boon.name;$('boonDesc').textContent=state.boon.desc;}
 function updateCompactChoice(u){const box=$('compactSelectedSummary');if(!box)return;if(!u){box.innerHTML='<span class="compact-empty">영웅을 터치하면 정보가 나와요.</span>';return}const e=elements[u.element],d=attackDescriptions[u.element];box.innerHTML=`<img class="${u.tier>=5?'tier-card-glow':''}" style="--grade:${tierColors[u.tier]}" alt="" src="${canonicalCardSource(u.element,u.tier)}"><div class="choice-body"><b style="color:${tierColors[u.tier]}">${e.icon} ${u.name} · ${tierNames[u.tier]} ×${(u.count||1).toLocaleString('ko-KR')}</b><small>⚔ ${Math.round(damageOf(u)).toLocaleString()} · 🎯 ${Math.round(rangeOf(u))} · ⏱ ${rateOf(u).toFixed(2)}초</small><small>${d.name} · 판매 1명 +${SALE_VALUES[u.tier]}원 · ⚔ 공명+${resonanceAttack(u.element)}</small></div>`}
 function initCompactLayout(){const b=$('expandUnitInfo');if(b)b.addEventListener('click',()=>{if(getSelected())showUnitInfo();else toast('먼저 캐릭터를 선택하세요')});}
-function reset(){const chosen=$('difficultySelect').value,difficulty=difficulties[chosen]?chosen:'normal',def=difficulties[difficulty];state={mode:'intro',difficulty,maxWave:def.waves,wave:1,time:0,seconds:60,speed:1,paused:false,coins:30,life:def.life,units:[],enemies:[],fx:[],shots:[],floaters:[],kills:0,summons:0,spawned:0,spawnTarget:0,spawnClock:0,selected:null,elementLv:{water:0,fire:0,ice:0,lightning:0,wind:0},rangeLv:{water:0,fire:0,ice:0,lightning:0,wind:0},incomeLv:0,bestTier:0,leaks:0,bossCleared:false,bossWins:0,finishReason:'',finalScore:null,boon:chooseBoon(),titles:safeRead(),shake:0,uiAccum:0};nextUnitId=1;notices=[];applyBoon();setDifficultyText();drawTitleStatus();log('새 게임 준비 완료 · '+def.label+' 난이도');log('이번 판 혜택: '+state.boon.name);sync();}
+function reset(){const chosen=$('difficultySelect').value,difficulty=difficulties[chosen]?chosen:'normal',def=difficulties[difficulty];state={mode:'intro',moveMode:false,difficulty,maxWave:def.waves,wave:1,time:0,seconds:60,speed:1,paused:false,coins:30,life:def.life,units:[],enemies:[],fx:[],shots:[],floaters:[],kills:0,summons:0,spawned:0,spawnTarget:0,spawnClock:0,selected:null,elementLv:{water:0,fire:0,ice:0,lightning:0,wind:0},rangeLv:{water:0,fire:0,ice:0,lightning:0,wind:0},incomeLv:0,bestTier:0,leaks:0,bossCleared:false,bossWins:0,finishReason:'',finalScore:null,boon:chooseBoon(),titles:safeRead(),shake:0,uiAccum:0};nextUnitId=1;notices=[];applyBoon();setDifficultyText();drawTitleStatus();log('새 게임 준비 완료 · '+def.label+' 난이도');log('이번 판 혜택: '+state.boon.name);sync();}
 function rollTier(){const weights=baseTierOdds;const sum=weights.reduce((a,b)=>a+b,0);let x=Math.random()*sum,index=0;for(let i=0;i<weights.length;i++){if((x-=weights[i])<=0){index=i;break}}const shift=Math.min(4,Math.floor((state.wave-1)/16));const luck=state.boon.id==='luck'&&Math.random()<.38?1:0;return Math.min(tierNames.length-1,shift+index+luck)}
 function createUnit(c,r,tier,key){const element=key||keys[rand(5)];return{id:nextUnitId++,c,r,tier,element,name:roleByTier[element][tier],count:1,paid:10,cool:Math.random()*.2,flash:0,cluster:1,charge:0,attackCount:0,targetMode:'front'}}
 function addOrStack(unit){const existing=state.units.find(v=>v.tier===unit.tier&&v.element===unit.element&&v.name===unit.name);if(existing){existing.count=Math.min(Number.MAX_SAFE_INTEGER,(existing.count||1)+(unit.count||1));existing.paid=(existing.paid||10)+(unit.paid||10);state.selected=existing.id;const p=pos(existing);burst(p.x,p.y,tierColors[unit.tier],10,46);toast('✨ '+existing.name+' 중복 합체 ×'+existing.count);return existing}state.units.push(unit);state.selected=unit.id;return unit}
-function summonAt(c,r,preRolled=null){if(state.mode!=='wave'||state.paused)return;const cost=summonCost();if(state.coins<cost){toast('영압이 부족합니다');return}state.coins-=cost;state.summons++;const u=preRolled||createUnit(c,r,rollTier());u.paid=cost;const target=addOrStack(u);state.bestTier=Math.max(state.bestTier,u.tier);recalcClusters();burst(pos(target).x,pos(target).y,elements[target.element].color,12,45);if(u.tier>=6)toast('🌟 '+tierNames[u.tier]+' 영웅 등장!');log(`🎲 ${tierNames[u.tier]} ${elements[u.element].name} ${u.name} ×${target.count} (#${slotNumber(target.c,target.r)})`);sync()}
-function summon(){if(state.mode!=='wave'||state.paused)return;const free=freeCells();if(!free.length){
- // Full-board pulls may only commit when a matching stack exists; no charge on rejected pull.
- const roll=createUnit(0,0,rollTier());const existing=state.units.find(u=>u.tier===roll.tier&&u.element===roll.element&&u.name===roll.name);
- if(!existing){toast('20칸 가득! 이번 소환은 무료 취소 · 합성으로 공간 확보');return}
- roll.c=existing.c;roll.r=existing.r;summonAt(existing.c,existing.r,roll);return}
- summonAt(free[0].c,free[0].r)}
+function summonAt(c,r,preRolled=null){if(state.mode!=='wave'||state.paused)return;
+ if(!freeCells().length||state.units.some(u=>u.c===c&&u.r===r)){toast('20칸 가득! 빈 칸을 확보한 뒤 뽑아주세요');sync();return}
+ const cost=summonCost();if(state.coins<cost){toast('영압이 부족합니다');return}state.coins-=cost;state.summons++;const u=preRolled||createUnit(c,r,rollTier());u.paid=cost;const target=addOrStack(u);state.bestTier=Math.max(state.bestTier,u.tier);recalcClusters();burst(pos(target).x,pos(target).y,elements[target.element].color,12,45);if(u.tier>=6)toast('🌟 '+tierNames[u.tier]+' 영웅 등장!');log(`🎲 ${tierNames[u.tier]} ${elements[u.element].name} ${u.name} ×${target.count} (#${slotNumber(target.c,target.r)})`);sync()}
+function summon(){if(state.mode!=='wave'||state.paused)return;
+ const free=freeCells();
+ if(!free.length){toast('20칸이 가득 차 추가 뽑기가 차단되었습니다. 합성·판매로 빈 칸 확보');sync();return}
+ summonAt(free[0].c,free[0].r)
+}
 function mergeGroup(u){return u?state.units.filter(x=>x.element===u.element&&x.tier===u.tier):[]}
 function selectedMergeCount(){return mergeGroup(getSelected()).reduce((sum,x)=>sum+(x.count||1),0)}
-function canMerge(){const u=getSelected();if(!u||u.tier>=tierNames.length-1||selectedMergeCount()<3)return false;return u.count<=3||!!freeCells().length||state.units.some(x=>x.element===u.element&&x.tier===u.tier+1)}
+function canMerge(){const u=getSelected();if(!u||u.tier>=5||selectedMergeCount()<3)return false;return u.count<=3||!!freeCells().length||state.units.some(x=>x.element===u.element&&x.tier===u.tier+1)}
 function merge(){
  if(state.mode!=='wave'||state.paused)return;
  const selected=getSelected();if(!selected)return toast('합성할 캐릭터를 먼저 선택하세요');
- if(selected.tier>=tierNames.length-1)return toast('창조 등급은 합성할 수 없습니다');
+ if(selected.tier>=5)return toast('신화 이상 합성 불가: 태초·창조는 소환으로만 등장합니다');
  const group=mergeGroup(selected),total=group.reduce((a,x)=>a+(x.count||1),0);
  if(total<3)return toast('같은 속성 · 같은 등급 영웅 3명이 필요합니다 ('+total+'/3)');
  const higher=state.units.find(x=>x.element===selected.element&&x.tier===selected.tier+1);
@@ -1026,9 +1045,10 @@ function updateBossHud(){
  $('bossHpLabel').textContent=Math.ceil(percentage)+'% · '+Math.ceil(Math.max(0,boss.hp)).toLocaleString()+' HP';
 }
 function syncQuick(){updateBossHud();$('wave').textContent=state.wave+' / '+state.maxWave;$('timerStat').textContent=Math.max(0,waveLimit()-state.time).toFixed(1)+'초';$('timerBadge').textContent='⏳ '+Math.ceil(Math.max(0,waveLimit()-state.time))+'초';$('timerBar').style.width=clamp((waveLimit()-state.time)/waveLimit()*100,0,100)+'%';$('gold').textContent=Math.floor(state.coins).toLocaleString();$('life').textContent=state.life;$('kills').textContent=state.kills;$('remaining').textContent=state.enemies.length+' / 150';$('remaining').style.color=state.enemies.length>=120?'#ff5e79':'';$('speedBadge').textContent=state.speed+'배속';}
-function sync(){syncQuick();const playing=state.mode==='wave'&&!state.paused;const buttons={summon:playing&&state.coins>=summonCost(),merge:playing&&canMerge(),income:playing&&state.coins>=incomeCost()&&state.incomeLv<12,sell:playing&&!!getSelected()};for(const [key,enable] of Object.entries(buttons))$(key).disabled=!enable;
-$('mSummon').disabled=!buttons.summon;$('mMerge').disabled=!buttons.merge;$('mSpeed').disabled=!['wave'].includes(state.mode);$('mPause').disabled=!['wave'].includes(state.mode);$('speed').disabled=!['wave'].includes(state.mode);$('pause').disabled=!['wave'].includes(state.mode);
-$('detailSell').disabled=!buttons.sell;$('detailSell').textContent=getSelected()?'🪙 판매 +'+SALE_VALUES[getSelected().tier]:'🪙 판매';$('summonCost').textContent='('+summonCost()+')';$('incomeCost').textContent='('+incomeCost()+')';$('incomeLevel').textContent='Lv.'+state.incomeLv;$('bestTier').textContent=tierNames[state.bestTier];$('phase').textContent=state.paused?'⏸ 일시정지':state.mode==='intro'?'● 시작 대기':state.mode==='wave'?'● '+difficulties[state.difficulty].label+' 진행 중':state.mode==='won'?'🏆 클리어':'● 종료';$('speed').textContent='⚡ '+state.speed+'배속';$('pause').textContent=state.paused?'▶ 계속하기':'⏸ 일시정지';$('mPause').textContent=state.paused?'▶ 계속':'⏸ 정지';$('mSpeed').textContent='⏩ '+state.speed+'×';$('mMerge').textContent=canMerge()?'🔀 합성 가능':'🔀 합성';document.querySelectorAll('[data-speed]').forEach(b=>b.classList.toggle('active',Number(b.dataset.speed)===state.speed));
+function sync(){syncQuick();const playing=state.mode==='wave'&&!state.paused;const buttons={summon:playing&&state.coins>=summonCost()&&freeCells().length>0,merge:playing&&canMerge(),income:playing&&state.coins>=incomeCost()&&state.incomeLv<12,sell:playing&&!!getSelected()};for(const [key,enable] of Object.entries(buttons))$(key).disabled=!enable;
+$('mSummon').disabled=!buttons.summon;$('mSummon').title=freeCells().length===0?'20칸 가득 · 뽑기 불가':'영웅 뽑기';$('summon').title=$('mSummon').title;$('mMerge').disabled=!buttons.merge;$('mSpeed').disabled=!['wave'].includes(state.mode);$('mPause').disabled=!['wave'].includes(state.mode);$('speed').disabled=!['wave'].includes(state.mode);$('pause').disabled=!['wave'].includes(state.mode);
+const moveBtn=$('moveModeToggle');if(moveBtn){const on=Boolean(state.moveMode);moveBtn.textContent=on?'⇄ 이동 ON':'⇄ 이동 OFF';moveBtn.classList.toggle('active',on);moveBtn.setAttribute('aria-pressed',String(on));moveBtn.setAttribute('aria-label',on?'캐릭터 이동 모드 끄기':'캐릭터 이동 모드 켜기');moveBtn.disabled=!playing}
+ $('detailSell').disabled=!buttons.sell;$('detailSell').textContent=getSelected()?'🪙 판매 +'+SALE_VALUES[getSelected().tier]:'🪙 판매';$('summonCost').textContent='('+summonCost()+')';$('incomeCost').textContent='('+incomeCost()+')';$('incomeLevel').textContent='Lv.'+state.incomeLv;$('bestTier').textContent=tierNames[state.bestTier];$('phase').textContent=state.paused?'⏸ 일시정지':state.mode==='intro'?'● 시작 대기':state.mode==='wave'?'● '+difficulties[state.difficulty].label+' 진행 중':state.mode==='won'?'🏆 클리어':'● 종료';$('speed').textContent='⚡ '+state.speed+'배속';$('pause').textContent=state.paused?'▶ 계속하기':'⏸ 일시정지';$('mPause').textContent=state.paused?'▶ 계속':'⏸ 정지';$('mSpeed').textContent='⏩ '+state.speed+'×';$('mMerge').textContent=canMerge()?'🔀 합성 가능':'🔀 합성';document.querySelectorAll('[data-speed]').forEach(b=>b.classList.toggle('active',Number(b.dataset.speed)===state.speed));
 for(const k of keys){const lv=state.elementLv[k],btn=$('up-'+k),rbtn=$('rng-'+k),rlv=state.rangeLv[k];
  btn.disabled=!playing||lv>=30||state.coins<elementCost(k);
  $('level-'+k).textContent='Lv.'+lv+' +'+resonanceAttack(k);
@@ -1272,7 +1292,7 @@ function applyBattleSnapshot(snapshot){
  $('homeDifficulty').value=state.difficulty;
  $('difficultySelect').disabled=true;
  $('overlay').classList.add('hidden');
- state.paused=false;return true;
+ state.paused=false;state.moveMode=Boolean(state.moveMode);return true;
 }
 function onBackgroundTimeout(){
  backgroundHeld=false;catchupActive=false;backgroundMarkedAt=0;
