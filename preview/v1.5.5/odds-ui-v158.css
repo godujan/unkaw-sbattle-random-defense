@@ -163,3 +163,16 @@
  #oddsModal #oddsRows .oddsservice small{font-size:clamp(7px,2vw,10px)!important}
  #oddsModal #oddsRows .odds-portrait{border-radius:5px!important}
 }
+
+/* v1.5.8: compact game-over score + personal leaderboard */
+#gameScreen #overlay .modal{width:min(470px,100%);max-height:min(88dvh,760px);overflow-y:auto;border:2px solid #e2bb7a;background:linear-gradient(145deg,#292443,#111b32);box-shadow:0 12px 50px #000c;padding:18px}
+#gameScreen #overlay .modal h2{color:#ffe0a0}
+#gameScreen #resultSummary{margin:12px auto}
+#gameScreen .result-score{border:1px solid #d8ae74;background:linear-gradient(155deg,#fff8e7,#edd8b6);border-radius:13px;padding:12px;color:#503522;text-align:left;line-height:1.7;font-size:12px}
+#gameScreen .result-score strong{font-size:clamp(24px,6vw,35px);color:#73418b;display:block;text-align:center}
+#gameScreen .result-score small{display:block;border-top:1px solid #d6b98d;margin-top:5px;padding-top:5px;color:#654a39}
+#gameScreen .result-leaderboard{background:#141b32;border:1px solid #987747;border-radius:12px;padding:10px;text-align:left;margin-top:8px}
+#gameScreen .result-leaderboard>b{display:block;color:#ffe6ae;font-size:14px;margin-bottom:7px}
+#gameScreen .result-rank{display:flex;justify-content:space-between;gap:8px;padding:5px;border-top:1px solid #5e4b51;font-size:12px}
+#gameScreen .result-rank b{color:#ffdd8b}
+#gameScreen #resultRankBtn{margin:4px;min-height:42px}
