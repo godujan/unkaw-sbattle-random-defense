@@ -641,7 +641,7 @@ body.focus-game #gameScreen #compactSelectedSummary img{width:26px!important;hei
 </section><section class="compact-selected" aria-label="선택 영웅"><div class="compact-choice-head"><span>🎯 선택 캐릭터</span><div class="compact-choice-tools"><button type="button" id="moveModeToggle" class="move-toggle" aria-pressed="false" aria-label="캐릭터 이동 모드 켜기">⇄ 이동 OFF</button><button type="button" id="expandUnitInfo">상세 ▾</button></div></div><div class="compact-main"><div id="compactSelectedSummary">영웅을 터치하면 공격 방식과 수량이 표시됩니다.</div><button type="button" id="detailSell" class="compact-sell-action" aria-label="선택 캐릭터 1명 판매" disabled>🪙 판매</button></div></section><aside class="sidebar">
 <div class="panel"><h2>⚙️ 난이도 설정</h2><select id="difficultySelect" aria-label="게임 난이도 선택"><option value="easy">이지 — 40W · 연습</option><option value="normal" selected>노멀 — 60W · 칭호 획득</option><option value="hard">하드 — 80W · 게스트도 플레이 가능</option></select><div class="muted" id="difficultyHint" style="margin-top:7px">노멀 60웨이브 클리어 시 '노멀의 수호자' 칭호 획득</div><div class="boon" id="boonCard" role="status"><div class="boon-title" id="boonName">✨ 운명의 축복 추첨 예정</div><div class="boon-desc" id="boonDesc">매판 다른 혜택 1개가 무작위로 부여됩니다.</div><span class="twinkle">✦</span><span class="twinkle">✧</span><span class="twinkle">✦</span></div></div>
 <div class="panel"><h2>🎲 소환 · 합성 · 관리</h2><div class="actions"><button class="btn primary" id="summon">🎲 영웅 소환 <small id="summonCost"></small></button><button class="btn gold" id="merge">✨ 선택 영웅 3명 합성</button><button class="btn teal" id="speed">⚡ 전투 배속</button><button class="btn" id="pause">⏸ 일시정지</button><button class="btn" id="income">🛡 방어벽 강화 <small id="incomeCost"></small></button><button class="btn danger" id="restart">↻ 새 게임</button></div><button id="sell" type="button" hidden tabindex="-1" aria-hidden="true">판매</button><div class="speed-switch" id="speedSwitch" aria-label="전투 배속">
-<button type="button" data-speed="1" class="active">1×</button><button type="button" data-speed="1.5">1.5×</button><button type="button" data-speed="2">2×</button><button type="button" data-speed="3">3×</button><button type="button" data-speed="4">4×</button></div><div class="hint">PC: S 소환 · M 합성 · 1/2/3/4/5 배속 · P 일시정지<br>빈 칸 터치는 소환하지 않습니다 · 이동 ON에서 영웅 선택 후 목적지 터치</div></div>
+<button type="button" data-speed="1" class="active">1×</button><button type="button" data-speed="1.5">1.5×</button><button type="button" data-speed="2">2×</button><button type="button" data-speed="3">3×</button><button type="button" data-speed="4">4×</button></div><div class="hint">PC: S 소환 · M 합성 · V 이동 모드 · 1/2/3/4/5 배속 · P 일시정지<br>빈 칸 터치는 소환하지 않습니다 · 이동 ON에서 영웅 선택 후 목적지 터치</div></div>
 <div class="panel"><h2>⚔️ 속성별 공격력 강화</h2><div class="section-note" style="margin-bottom:9px">8단계 희귀도(커먼→언커먼→레어→유니크→에픽→신화→태초→창조) · 각 속성 강화 최대 Lv.30</div><div class="el-upgrades" id="elementUpgrades"></div><div class="divider"></div><div class="muted">방어벽 강화 <b id="incomeLevel">Lv.0</b> · 최고 등급 <b id="bestTier">커먼</b></div></div>
 <div class="panel"><h2>🧙 선택 캐릭터</h2><div id="selected" class="selected">영웅을 선택해 능력치를 확인하세요.</div><div class="mini" id="portraitGallery"></div></div>
 <div class="panel"><h2>🏆 클리어 칭호</h2><div id="titleStatus" class="titlepill">🔒 노멀의 수호자 · 노멀 난이도 80W 완료 시 획득</div><p class="muted">게스트는 기기에, 이메일 로그인은 연결된 계정에 칭호가 저장됩니다.</p><div class="divider"></div><h2>📜 전투 기록</h2><div class="log" id="log"></div></div>
@@ -823,7 +823,8 @@ function freeCells(){const occupied=new Set(state.units.map(u=>slotNumber(u.c,u.
 function getSelected(){return state.units.find(u=>u.id===state.selected)}
 function toggleMoveMode(){
  if(!state||state.mode!=='wave'||state.paused)return;
- state.moveMode=!state.moveMode;
+ state.moveMode=!state.moveMode;state.moveFromId=null;
+ if(state.moveMode)state.selected=null;
  toast(state.moveMode?'⇄ 이동 ON · 영웅을 고른 후 목적지 터치':'⇄ 이동 OFF');
  sync();
 }
@@ -868,7 +869,7 @@ function applyBoon(){if(state.boon.id==='life')state.life+=8;
 $('boonName').textContent='✨ '+state.boon.icon+' '+state.boon.name;$('boonDesc').textContent=state.boon.desc;}
 function updateCompactChoice(u){const box=$('compactSelectedSummary');if(!box)return;if(!u){box.innerHTML='<span class="compact-empty">영웅을 터치하면 정보가 나와요.</span>';return}const e=elements[u.element],d=attackDescriptions[u.element];box.innerHTML=`<img class="${u.tier>=5?'tier-card-glow':''}" style="--grade:${tierColors[u.tier]}" alt="" src="${canonicalCardSource(u.element,u.tier)}"><div class="choice-body"><b style="color:${tierColors[u.tier]}">${e.icon} ${u.name} · ${tierNames[u.tier]} ×${(u.count||1).toLocaleString('ko-KR')}</b><small>⚔ ${Math.round(damageOf(u)).toLocaleString()} · 🎯 ${Math.round(rangeOf(u))} · ⏱ ${rateOf(u).toFixed(2)}초</small><small>${d.name} · 판매 1명 +${SALE_VALUES[u.tier]}원 · ⚔ 공명+${resonanceAttack(u.element)}</small></div>`}
 function initCompactLayout(){const b=$('expandUnitInfo');if(b)b.addEventListener('click',()=>{if(getSelected())showUnitInfo();else toast('먼저 캐릭터를 선택하세요')});}
-function reset(){const chosen=$('difficultySelect').value,difficulty=difficulties[chosen]?chosen:'normal',def=difficulties[difficulty];state={mode:'intro',moveMode:false,difficulty,maxWave:def.waves,wave:1,time:0,seconds:60,speed:1,paused:false,coins:30,life:def.life,units:[],enemies:[],fx:[],shots:[],floaters:[],kills:0,summons:0,spawned:0,spawnTarget:0,spawnClock:0,selected:null,elementLv:{water:0,fire:0,ice:0,lightning:0,wind:0},rangeLv:{water:0,fire:0,ice:0,lightning:0,wind:0},incomeLv:0,bestTier:0,leaks:0,bossCleared:false,bossWins:0,finishReason:'',finalScore:null,boon:chooseBoon(),titles:safeRead(),shake:0,uiAccum:0};nextUnitId=1;notices=[];applyBoon();setDifficultyText();drawTitleStatus();log('새 게임 준비 완료 · '+def.label+' 난이도');log('이번 판 혜택: '+state.boon.name);sync();}
+function reset(){const chosen=$('difficultySelect').value,difficulty=difficulties[chosen]?chosen:'normal',def=difficulties[difficulty];state={mode:'intro',moveMode:false,moveFromId:null,difficulty,maxWave:def.waves,wave:1,time:0,seconds:60,speed:1,paused:false,coins:30,life:def.life,units:[],enemies:[],fx:[],shots:[],floaters:[],kills:0,summons:0,spawned:0,spawnTarget:0,spawnClock:0,selected:null,elementLv:{water:0,fire:0,ice:0,lightning:0,wind:0},rangeLv:{water:0,fire:0,ice:0,lightning:0,wind:0},incomeLv:0,bestTier:0,leaks:0,bossCleared:false,bossWins:0,finishReason:'',finalScore:null,boon:chooseBoon(),titles:safeRead(),shake:0,uiAccum:0};nextUnitId=1;notices=[];applyBoon();setDifficultyText();drawTitleStatus();log('새 게임 준비 완료 · '+def.label+' 난이도');log('이번 판 혜택: '+state.boon.name);sync();}
 function rollTier(){const weights=baseTierOdds;const sum=weights.reduce((a,b)=>a+b,0);let x=Math.random()*sum,index=0;for(let i=0;i<weights.length;i++){if((x-=weights[i])<=0){index=i;break}}const shift=Math.min(4,Math.floor((state.wave-1)/16));const luck=state.boon.id==='luck'&&Math.random()<.38?1:0;return Math.min(tierNames.length-1,shift+index+luck)}
 function createUnit(c,r,tier,key){const element=key||keys[rand(5)];return{id:nextUnitId++,c,r,tier,element,name:roleByTier[element][tier],count:1,paid:10,cool:Math.random()*.2,flash:0,cluster:1,charge:0,attackCount:0,targetMode:'front'}}
 function addOrStack(unit){const existing=state.units.find(v=>v.tier===unit.tier&&v.element===unit.element&&v.name===unit.name);if(existing){existing.count=Math.min(Number.MAX_SAFE_INTEGER,(existing.count||1)+(unit.count||1));existing.paid=(existing.paid||10)+(unit.paid||10);state.selected=existing.id;const p=pos(existing);burst(p.x,p.y,tierColors[unit.tier],10,46);toast('✨ '+existing.name+' 중복 합체 ×'+existing.count);return existing}state.units.push(unit);state.selected=unit.id;return unit}
@@ -1292,7 +1293,7 @@ function applyBattleSnapshot(snapshot){
  $('homeDifficulty').value=state.difficulty;
  $('difficultySelect').disabled=true;
  $('overlay').classList.add('hidden');
- state.paused=false;state.moveMode=Boolean(state.moveMode);return true;
+ state.paused=false;state.moveMode=Boolean(state.moveMode);state.moveFromId=null;return true;
 }
 function onBackgroundTimeout(){
  backgroundHeld=false;catchupActive=false;backgroundMarkedAt=0;
@@ -1387,16 +1388,20 @@ cvs.addEventListener('pointerup',event=>{
  if(x>sx+CELL||y>sy+CELL_H)return;
  const tapped=state.units.find(u=>u.c===c&&u.r===r);
  if(state.moveMode){
-  if(!getSelected()){
-   if(tapped){state.selected=tapped.id;toast('⇄ 이동할 목적지 칸을 눌러주세요');sync()}
+  if(state.moveFromId==null){
+   if(tapped){state.moveFromId=tapped.id;state.selected=tapped.id;toast('⇄ 목적지 칸을 선택하세요');sync()}
    else toast('⇄ 먼저 이동할 캐릭터를 선택하세요');
-  }else moveSelectedUnit(c,r);
+  }else{
+   const source=state.units.find(u=>u.id===state.moveFromId);
+   state.moveFromId=null;
+   if(source){state.selected=source.id;moveSelectedUnit(c,r)}else{state.selected=null;sync()}
+  }
  }else if(tapped){state.selected=tapped.id;sync()}
  else toast('🎲 영웅은 하단 뽑기 버튼으로 소환하세요');
 });
 $('menuFullscreen').onclick=()=>{toggleQuickMenu(false);requestGameFullscreen()};$('menuGraphics').onclick=()=>{applyGraphicsMode(graphicsMode==='high'?'standard':'high');toast(graphicsMode==='high'?'✨ 고사양 모드 활성화':'⚡ 기본 모드 활성화')};$('closeUnitSheet').onclick=closeUnitInfo;document.getElementById('unitSheet').addEventListener('click',ev=>{if(ev.target.id==='unitSheet')closeUnitInfo()});$('sheetUpgrade').onclick=()=>{const u=getSelected();if(!u)return;upgradeElement(u.element);showUnitInfo()};$('sheetSell').onclick=()=>{sell();closeUnitInfo()};$('summon').onclick=summon;$('merge').onclick=merge;$('income').onclick=income;$('sell').onclick=sell;$('speed').onclick=()=>setSpeed(speedValues[(speedValues.indexOf(state.speed)+1)%speedValues.length]);$('pause').onclick=pause;$('restart').onclick=()=>{activeSessionStarted=false;restart()};$('modalStart').onclick=()=>{requestGameFullscreen();activeSessionStarted=true;start()};$('mSummon').onclick=summon;$('mMerge').onclick=merge;$('moveModeToggle').onclick=toggleMoveMode;$('mSpeed').onclick=()=>setSpeed(speedValues[(speedValues.indexOf(state.speed)+1)%speedValues.length]);$('mPause').onclick=pause;
 $('difficultySelect').addEventListener('change',()=>{if(state.mode==='wave')return;$('homeDifficulty').value=$('difficultySelect').value;reset()});
-document.addEventListener('keydown',event=>{if(event.target.matches('select,input,textarea'))return;const k=event.key.toLowerCase();if(k==='s')summon();if(k==='m')merge();if(k==='p')pause();if(['1','2','3','4','5'].includes(k))setSpeed(speedValues[Number(k)-1])});
+document.addEventListener('keydown',event=>{if(event.target.matches('select,input,textarea'))return;const k=event.key.toLowerCase();if(k==='s')summon();if(k==='m')merge();if(k==='v')toggleMoveMode();if(k==='p')pause();if(['1','2','3','4','5'].includes(k))setSpeed(speedValues[Number(k)-1])});
 // Background/restore handling is installed below with wall-clock catch-up.
 
 
