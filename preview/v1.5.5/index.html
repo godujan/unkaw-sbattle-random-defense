@@ -1377,8 +1377,24 @@ function start(){clearBattleSnapshot();if(state.mode!=='intro')reset();state.mod
 const speedValues=[1,1.5,2,3,4];function setSpeed(n){if(state.mode!=='wave')return;if(!speedValues.includes(n))return;state.speed=n;sync()}
 function pause(){if(state.mode!=='wave')return;state.paused=!state.paused;sync()}
 function restart(){clearBattleSnapshot();if(state.mode==='wave'&&!confirm('현재 게임을 포기하고 새로운 판을 시작할까요?'))return;state.mode='intro';$('difficultySelect').disabled=false;$('overlay').classList.remove('hidden');$('modalTitle').textContent='✨ 새로운 방어전';$('modalText').innerHTML='새 게임을 시작하면 랜덤 혜택이 다시 추첨됩니다.<br><b>노멀 난이도 60웨이브 클리어</b> 시 칭호 획득!';$('modalStart').textContent='게임 시작';$('resultSummary').classList.add('hidden');$('resultRankBtn').classList.add('hidden');reset()}
-cvs.addEventListener('pointerup',event=>{if(state.mode!=='wave'||state.paused)return;const rect=cvs.getBoundingClientRect(),x=(event.clientX-rect.left)/rect.width*W,y=(event.clientY-rect.top)/rect.height*H,c=Math.floor((x-BX)/(CELL+GAP)),r=Math.floor((y-BY)/(CELL_H+GAP));if(c<0||r<0||c>=GRID||r>=ROWS)return;const sx=BX+c*(CELL+GAP),sy=BY+r*(CELL_H+GAP);if(x>sx+CELL||y>sy+CELL_H)return;const chosen=state.units.find(u=>u.c===c&&u.r===r);if(chosen){state.selected=chosen.id;sync()}else summonAt(c,r)});
-$('menuFullscreen').onclick=()=>{toggleQuickMenu(false);requestGameFullscreen()};$('menuGraphics').onclick=()=>{applyGraphicsMode(graphicsMode==='high'?'standard':'high');toast(graphicsMode==='high'?'✨ 고사양 모드 활성화':'⚡ 기본 모드 활성화')};$('closeUnitSheet').onclick=closeUnitInfo;document.getElementById('unitSheet').addEventListener('click',ev=>{if(ev.target.id==='unitSheet')closeUnitInfo()});$('sheetUpgrade').onclick=()=>{const u=getSelected();if(!u)return;upgradeElement(u.element);showUnitInfo()};$('sheetSell').onclick=()=>{sell();closeUnitInfo()};$('summon').onclick=summon;$('merge').onclick=merge;$('income').onclick=income;$('sell').onclick=sell;$('speed').onclick=()=>setSpeed(speedValues[(speedValues.indexOf(state.speed)+1)%speedValues.length]);$('pause').onclick=pause;$('restart').onclick=()=>{activeSessionStarted=false;restart()};$('modalStart').onclick=()=>{requestGameFullscreen();activeSessionStarted=true;start()};$('mSummon').onclick=summon;$('mMerge').onclick=merge;$('mSpeed').onclick=()=>setSpeed(speedValues[(speedValues.indexOf(state.speed)+1)%speedValues.length]);$('mPause').onclick=pause;
+cvs.addEventListener('pointerup',event=>{
+ if(state.mode!=='wave'||state.paused)return;
+ const rect=cvs.getBoundingClientRect();
+ const x=(event.clientX-rect.left)/rect.width*W,y=(event.clientY-rect.top)/rect.height*H;
+ const c=Math.floor((x-BX)/(CELL+GAP)),r=Math.floor((y-BY)/(CELL_H+GAP));
+ if(c<0||r<0||c>=GRID||r>=ROWS)return;
+ const sx=BX+c*(CELL+GAP),sy=BY+r*(CELL_H+GAP);
+ if(x>sx+CELL||y>sy+CELL_H)return;
+ const tapped=state.units.find(u=>u.c===c&&u.r===r);
+ if(state.moveMode){
+  if(!getSelected()){
+   if(tapped){state.selected=tapped.id;toast('⇄ 이동할 목적지 칸을 눌러주세요');sync()}
+   else toast('⇄ 먼저 이동할 캐릭터를 선택하세요');
+  }else moveSelectedUnit(c,r);
+ }else if(tapped){state.selected=tapped.id;sync()}
+ else toast('🎲 영웅은 하단 뽑기 버튼으로 소환하세요');
+});
+$('menuFullscreen').onclick=()=>{toggleQuickMenu(false);requestGameFullscreen()};$('menuGraphics').onclick=()=>{applyGraphicsMode(graphicsMode==='high'?'standard':'high');toast(graphicsMode==='high'?'✨ 고사양 모드 활성화':'⚡ 기본 모드 활성화')};$('closeUnitSheet').onclick=closeUnitInfo;document.getElementById('unitSheet').addEventListener('click',ev=>{if(ev.target.id==='unitSheet')closeUnitInfo()});$('sheetUpgrade').onclick=()=>{const u=getSelected();if(!u)return;upgradeElement(u.element);showUnitInfo()};$('sheetSell').onclick=()=>{sell();closeUnitInfo()};$('summon').onclick=summon;$('merge').onclick=merge;$('income').onclick=income;$('sell').onclick=sell;$('speed').onclick=()=>setSpeed(speedValues[(speedValues.indexOf(state.speed)+1)%speedValues.length]);$('pause').onclick=pause;$('restart').onclick=()=>{activeSessionStarted=false;restart()};$('modalStart').onclick=()=>{requestGameFullscreen();activeSessionStarted=true;start()};$('mSummon').onclick=summon;$('mMerge').onclick=merge;$('moveModeToggle').onclick=toggleMoveMode;$('mSpeed').onclick=()=>setSpeed(speedValues[(speedValues.indexOf(state.speed)+1)%speedValues.length]);$('mPause').onclick=pause;
 $('difficultySelect').addEventListener('change',()=>{if(state.mode==='wave')return;$('homeDifficulty').value=$('difficultySelect').value;reset()});
 document.addEventListener('keydown',event=>{if(event.target.matches('select,input,textarea'))return;const k=event.key.toLowerCase();if(k==='s')summon();if(k==='m')merge();if(k==='p')pause();if(['1','2','3','4','5'].includes(k))setSpeed(speedValues[Number(k)-1])});
 // Background/restore handling is installed below with wall-clock catch-up.
@@ -1588,7 +1604,7 @@ syncInstallButton();
 $('authGuest').onclick=()=>closeLogin();$('homeStart').onclick=()=>{syncHomeDifficulty();startFromHome()};$('homePractice').onclick=()=>{$('homeDifficulty').value='easy';syncHomeDifficulty();startFromHome()};$('homeResume').onclick=resumeGame;$('homeProfile').onclick=()=>setScreen('profile');$('homeDifficulty').onchange=syncHomeDifficulty;$('profileLogin').onclick=()=>{$('codePortal').scrollIntoView({block:'center',behavior:'smooth'})};$('nickSave').onclick=saveNick;$('signOut').onclick=signOut;$('authClose').onclick=closeLogin;$('authModal').addEventListener('click',e=>{if(e.target===$('authModal'))closeLogin()});$('sendLink').onclick=requestLink;$('overlayHome').onclick=()=>setScreen('home');
 document.querySelectorAll('[data-speed]').forEach(btn=>btn.onclick=()=>setSpeed(Number(btn.dataset.speed)));
 
-if(location.hash==='#test'){window.__test={get:()=>state,forceTime:t=>{state.time=t},setWave:n=>{state.wave=n},newGame:()=>start(),upgradeElement,completeWave};}
+if(location.hash==='#test'){window.__test={get:()=>state,forceTime:t=>{state.time=t},setWave:n=>{state.wave=n},newGame:()=>start(),upgradeElement,completeWave,moveSelectedUnit,toggleMoveMode,summon,merge,canMerge,freeCells};}
 $('homeRanking').onclick=()=>showRankings('season');
 $('menuRankings').onclick=()=>{toggleQuickMenu(false);showRankings('season')};
 $('rankClose').onclick=hideRankings;$('rankBack').onclick=hideRankings;$('resultRankBtn').onclick=()=>showRankings('mine');
