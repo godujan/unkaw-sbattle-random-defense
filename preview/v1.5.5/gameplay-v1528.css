@@ -1,0 +1,123 @@
+/* Fortune War v1.5.28 — nickname enroll, two-step selected merge, DPS, auto-sale. */
+#deviceEnroll.device-enroll{
+  box-sizing:border-box;grid-column:1/-1;width:100%;min-width:0;
+  border:1.5px solid #c68eb6;background:linear-gradient(145deg,#fff9e8,#ffe9ee);
+  color:#62443a;padding:7px 9px;border-radius:13px;
+  box-shadow:0 2px 7px #a65d7840
+}
+#deviceEnroll label{display:block;margin:0 0 3px;color:#654059;font-size:12px;font-weight:900}
+#deviceEnroll .device-enroll-row{display:grid;grid-template-columns:minmax(0,1fr) 78px;gap:6px}
+#deviceNickInput{box-sizing:border-box;min-width:0;width:100%;height:34px;min-height:34px;
+  border:1px solid #daa7b5;background:#fffefa;color:#39253c;font-size:12px;
+  border-radius:9px;padding:4px 8px;outline-offset:2px}
+#deviceEnrollBtn{height:34px;min-height:34px;border-radius:9px;
+ background:linear-gradient(#f9a4c5,#ef6b9c);border:1px solid #ef7e9e;
+ color:white;font-weight:950;font-size:12px;cursor:pointer}
+#deviceEnrollBtn:disabled{opacity:.55}
+#deviceEnrollStatus{display:block;margin-top:4px;font-size:10px;line-height:1.4;color:#6e5552;overflow-wrap:anywhere}
+#gameScreen .battle-dps-hud{
+ box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr) auto;
+ align-items:center;gap:5px;min-height:29px;margin:1px 2px 3px;
+ padding:3px 7px;min-width:0;color:#6a452d;font:800 11px system-ui,sans-serif;
+ background:linear-gradient(110deg,#fffef2,#fbe8c3);
+ border:1.5px solid #e5b977;border-radius:10px;box-shadow:0 1px 2px #9c7b4a3b;
+}
+#gameScreen .battle-dps-hud span{white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+#gameScreen .battle-dps-hud span b{color:#984a30;font-variant-numeric:tabular-nums;font-size:12px}
+#gameScreen .battle-dps-hud strong{
+ white-space:nowrap;color:#a45b4c;font-size:10px;max-width:120px;overflow:hidden;text-overflow:ellipsis;
+}
+#gameScreen .battle-dps-hud strong.dps-ready{color:#178454;text-shadow:0 0 7px #83e6ac66}
+#gameScreen #selectedMergeBtn{
+ display:inline-flex!important;align-items:center;justify-content:center;
+ border-radius:7px!important;border:1px solid #cbaf92!important;
+ background:linear-gradient(#f4ece0,#dfccad)!important;
+ color:#756550!important;min-width:64px!important;width:64px!important;
+ height:19px!important;min-height:19px!important;
+ font-weight:1000!important;font-size:9px!important;padding:1px 2px!important;
+}
+#gameScreen #selectedMergeBtn.merge-ready{
+ background:linear-gradient(#fff5b2,#ffcf65)!important;
+ border-color:#edaa4c!important;color:#653b15!important;
+ box-shadow:0 0 8px #ffbd40aa!important;
+}
+#gameScreen #selectedMergeBtn:disabled{opacity:.65!important;cursor:not-allowed!important}
+#gameScreen #mergeReadyHint{
+ display:inline-block;flex:1 1 auto;min-width:0;max-width:36%;overflow:hidden;
+ text-overflow:ellipsis;white-space:nowrap;font-size:10px!important
+}
+#gameScreen .power-head{gap:4px!important}
+#gameScreen .power-head strong{flex:1;min-width:0}
+#gameScreen #openUpgradeQuick{
+ width:auto!important;min-width:64px!important;padding:2px 5px!important;
+ font-size:9px!important;white-space:nowrap!important
+}
+#gameScreen #autoSellOpen{
+ box-sizing:border-box;flex:none;min-width:74px;height:22px;min-height:22px;
+ border-radius:7px;border:1.5px solid #c39a5e;
+ padding:1px 5px;background:linear-gradient(#fff5dc,#f8d4a4);
+ color:#744c26;font:900 10px system-ui,sans-serif;cursor:pointer
+}
+#gameScreen #autoSellOpen.active{
+ background:linear-gradient(#ffe7a6,#f6b765);border-color:#ef9e27;
+ box-shadow:0 0 7px #e8ab45a0;color:#74421c
+}
+#autoSellModal{z-index:92!important}
+#autoSellModal .auto-sell-popup{
+ box-sizing:border-box;width:min(390px,calc(100vw - 20px))!important;
+ max-height:calc(92dvh - env(safe-area-inset-bottom))!important;
+ overflow-y:auto!important;padding:12px!important;
+ background:linear-gradient(#fff9e9,#ffecd1)!important;color:#61432e!important;
+ border:2px solid #ddae77!important;border-radius:16px!important
+}
+#autoSellModal .auto-sell-options{display:grid;grid-template-columns:1fr;gap:6px}
+#autoSellModal .auto-sell-choice{
+ min-height:43px;padding:7px 10px;background:#fffef8;border:1.5px solid var(--elem);
+ border-radius:10px;display:flex;align-items:center;gap:9px;justify-content:space-between;
+ color:#523e34;font-size:14px;font-weight:900;
+}
+#autoSellModal .auto-sell-choice>span{flex:1}
+#autoSellModal .auto-sell-choice input{accent-color:#44a276;width:19px;height:19px}
+#autoSellModal .auto-sell-choice b{width:31px;color:#755b47;font-size:11px}
+#autoSellModal .auto-sell-notice{
+ font-size:11px;line-height:1.5;margin:8px 0;color:#735747;overflow-wrap:anywhere;
+}
+@media(max-width:800px){
+ body.home-active #homeScreen{overflow-y:auto!important;overscroll-behavior:contain;
+   -webkit-overflow-scrolling:touch}
+ body.home-active #homeScreen .landing-actions #deviceEnroll{
+   grid-column:1/-1!important;order:-1!important;padding:5px 8px!important;margin:0!important}
+ body.home-active #homeScreen .landing-actions #deviceEnroll label{
+   font-size:11px!important;margin-bottom:2px!important
+ }
+ body.home-active #homeScreen .landing-actions #deviceNickInput,
+ body.home-active #homeScreen .landing-actions #deviceEnrollBtn{
+   height:31px!important;min-height:31px!important;font-size:11px!important
+ }
+ body.home-active #homeScreen #deviceEnrollStatus{font-size:9px}
+ body.focus-game #gameScreen>.wrap{
+   grid-template-rows:44px 29px minmax(0,1fr)!important;
+   row-gap:2px!important
+ }
+ body.focus-game #gameScreen>.wrap>#battleDpsHud{
+   position:relative!important;grid-column:1/-1!important;grid-row:2!important;
+   width:100%!important;height:29px!important;min-height:29px!important;
+   margin:0!important;z-index:59!important
+ }
+ body.focus-game #gameScreen>.wrap>.layout{grid-row:3!important}
+ body.focus-game #gameScreen .battle-dps-hud{gap:3px!important;padding:3px 4px!important}
+ body.focus-game #gameScreen .battle-dps-hud span,
+ body.focus-game #gameScreen .battle-dps-hud span b{
+   font-size:clamp(9px,2.6vw,12px)!important
+ }
+ body.focus-game #gameScreen .battle-dps-hud strong{font-size:9px!important}
+}
+@media(max-width:375px){
+ #gameScreen .battle-dps-hud{grid-template-columns:minmax(0,.82fr) minmax(0,1fr) auto;gap:2px}
+ #gameScreen .battle-dps-hud strong{font-size:8px!important;max-width:90px}
+ #gameScreen .power-head strong{font-size:11px!important}
+ #gameScreen #selectedMergeBtn{min-width:57px!important;width:57px!important;font-size:9px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ #gameScreen #selectedMergeBtn.merge-ready{animation:none!important}
+}
