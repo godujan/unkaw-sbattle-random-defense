@@ -901,7 +901,7 @@ function buildRarityUI(){
  const summary=$('rarityPills');if(summary)summary.innerHTML=tierNames.map((n,i)=>`<span style="--tier:${tierColors[i]}">${n}</span>`).join('');
  const names=['커먼','언커먼','레어','유니크','에픽','신화','태초','창조'];
  const sale=SALE_VALUES,odds=summonTierPercent();
- const rows=$('oddsRows');if(rows)rows.innerHTML=names.map((n,i)=>`<div class="odds-rich-row" data-tier="${i}" style="--tier:${tierColors[i]}"><span class="rarityname">${n}</span><span class="oddsrate">${odds[i].toFixed(odds[i]<1?3:2)}%<small>속성별 ${(odds[i]/5).toFixed(odds[i]<1?4:3).replace(/\.?0+$/,'')}%</small></span><div class="oddsheroes">${['fire','water','ice','lightning','wind'].map(k=>`<button type="button" class="odds-portrait ${i>=5?'glow tier-'+i:''}" data-card-element="${k}" data-card-tier="${i}" title="${roleByTier[k][i]} · 전체 카드 보기" aria-label="${tierNames[i]} ${elements[k].name} ${roleByTier[k][i]} 카드 확대"><img data-card-key="${k}" data-card-grade="${i}" src="${canonicalCardSource(k,i)}" alt="${tierNames[i]} ${elements[k].name} 영웅" loading="eager" decoding="async"></button>`).join('')}</div><span class="oddsservice">${i>=6?'소환 전용':i===5?'합성 종결':'합성 가능'}<small>판매 ${sale[i]}원</small></span></div>`).join('');
+ const rows=$('oddsRows');if(rows)rows.innerHTML=names.map((n,i)=>`<div class="odds-rich-row" data-tier="${i}" style="--tier:${tierColors[i]}"><span class="rarityname">${n}${i===6&&hasNormalClearTitle()?" ×2":""}</span><span class="oddsrate">${odds[i].toFixed(odds[i]<1?3:2)}%<small>속성별 ${(odds[i]/5).toFixed(odds[i]<1?4:3).replace(/\.?0+$/,'')}%</small></span><div class="oddsheroes">${['fire','water','ice','lightning','wind'].map(k=>`<button type="button" class="odds-portrait ${i>=5?'glow tier-'+i:''}" data-card-element="${k}" data-card-tier="${i}" title="${roleByTier[k][i]} · 전체 카드 보기" aria-label="${tierNames[i]} ${elements[k].name} ${roleByTier[k][i]} 카드 확대"><img data-card-key="${k}" data-card-grade="${i}" src="${canonicalCardSource(k,i)}" alt="${tierNames[i]} ${elements[k].name} 영웅" loading="eager" decoding="async"></button>`).join('')}</div><span class="oddsservice">${i>=6?'소환 전용':i===5?'합성 종결':'합성 가능'}<small>판매 ${sale[i]}원</small></span></div>`).join('');
 }
 function toggleQuickMenu(open){document.getElementById('gameMenu').classList.toggle('hidden',!open)}
 function toggleOdds(open){if(open)buildRarityUI();document.getElementById('oddsModal').classList.toggle('hidden',!open)}
@@ -1092,7 +1092,7 @@ function incomeCost(){return Math.round(14+state.incomeLv*9+state.incomeLv*state
 function elementCost(k){const n=state.elementLv[k];return Math.round(8+2.3*n+.48*n*n)}
 function tierPower(t){return GRADE_ATTACK[Math.max(0,Math.min(7,Math.floor(t||0)))]}
 function setDifficultyText(){const names={easy:'이지 · 40라운드 · 여유 있는 입문전',normal:'노멀 · 60라운드 · 칭호 / 로그인 시 노멀 랭킹 등록',hard:'하드 · 80라운드 · 창조 +25강 약 1.5배 DPS 목표 · 로그인 랭킹'};$('difficultyHint').textContent=names[state.difficulty]||names.normal;}
-function drawTitleStatus(){let unlocked=state.titles.normal;$('titleStatus').classList.toggle('unlocked',!!unlocked);$('titleStatus').textContent=unlocked?'🏆 노멀의 수호자 · 획득 완료':'🔒 노멀의 수호자 · 노멀 60웨이브 클리어 시 획득'}
+function drawTitleStatus(){let unlocked=state.titles.normal;$('titleStatus').classList.toggle('unlocked',!!unlocked);$('titleStatus').textContent=unlocked?'🏆 노멀의 수호자 · 태초 뽑기 확률 ×2':'🔒 노멀의 수호자 · 노멀 60W 클리어 시 태초 확률 ×2'}
 function chooseBoon(){return boonPool[rand(boonPool.length)]}
 function applyBoon(){if(state.boon.id==='life')state.life+=8;
 $('boonName').textContent='✨ '+state.boon.icon+' '+state.boon.name;$('boonDesc').textContent=state.boon.desc;}
@@ -1222,7 +1222,7 @@ function rangeCost(k){return state.rangeLv[k]===0?30:50}
 function upgradeRange(k){if(state.mode!=='wave'||state.paused)return;
  const n=state.rangeLv[k]||0;if(n>=2)return toast('사거리 구매 강화는 최대 2회입니다');
  const price=rangeCost(k);if(state.coins<price)return toast('사거리 강화 영압이 부족합니다');
- state.coins-=price;state.rangeLv[k]++;toast('🎯 '+elements[k].name+' 사거리 +7% (구매 '+state.rangeLv[k]+'/2)');sync();
+ state.coins-=price;state.rangeLv[k]++;const fullOpened=state.rangeLv[k]===2&&state.units.some(u=>u.element===k&&u.tier>=6);toast(fullOpened?'🌌 '+elements[k].name+' 태초·창조 전장 전체 사거리 개방!':'🎯 '+elements[k].name+' 사거리 +7% (구매 '+state.rangeLv[k]+'/2)');sync();
 }
 function updateResonanceUI(){
  const target=$('resonanceStrip');if(!target)return;
