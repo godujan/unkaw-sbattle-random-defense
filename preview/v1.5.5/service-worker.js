@@ -1,4 +1,4 @@
-const CACHE='fortune-war-v1526-shell';
+const CACHE='fortune-war-v1527-shell';
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./index.html','./manifest.webmanifest','./icon.svg','./mobile-ui-v1511.css','./odds-ui-v158.css','./reference-odds-v1513.css','./hotfix-v1522.css','./rankings-v1526.css'])).then(()=>self.skipWaiting()).catch(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(Promise.all([self.clients.claim(),caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('fortune-war-')&&k!==CACHE).map(k=>caches.delete(k))))]))});
 self.addEventListener('fetch',event=>{const req=event.request;if(req.method!=='GET'||new URL(req.url).origin!==self.location.origin)return;if(req.mode==='navigate'){event.respondWith(fetch(req).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE).then(c=>c.put('./index.html',copy))}return r}).catch(()=>caches.match('./index.html')))}});
