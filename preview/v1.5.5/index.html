@@ -791,13 +791,49 @@ body.home-active #homeScreen .landing-actions #installAppBtn{grid-column:2!impor
 <div id="rankingModal" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-label="운의전쟁 랭킹"><div class="game-menu-card ranking-card"><div class="game-menu-top"><b>🏆 랭킹</b><button type="button" id="rankClose">✕</button></div><p class="muted">노멀 60W · 하드 80W 각각 집계 · ‘도전 R80’은 미클리어, 🏆 표기만 클리어</p><div class="ranktabs"><button type="button" data-rank="season" class="active">🏆 시즌</button><button type="button" data-rank="today">📅 오늘</button><button type="button" data-rank="mine">👤 내 기록</button></div><div id="rankList" class="ranklist" aria-live="polite"></div><button id="rankToProfile" class="btn outlined">내 프로필 보기</button><button id="rankBack" class="btn primary">닫기</button></div></div>
 <div id="installHelpModal" class="game-menu-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="installHeading"><div class="game-menu-card install-guide"><div class="game-menu-top"><b id="installHeading">📲 운의전쟁 홈 화면에 추가</b><button type="button" id="closeInstallHelp" aria-label="닫기">✕</button></div><p id="installInstructions">브라우저 메뉴에서 '홈 화면에 추가'를 선택하세요.</p><button class="btn primary" type="button" id="installGuideClose">확인</button></div></div>
 <div id="authModal" class="auth-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="authHeading"><div class="auth-card"><button id="authClose" class="auth-close" aria-label="닫기">×</button><div id="authWelcomeIntro" class="auth-welcome hidden"><div class="auth-orb">🎲</div><strong>운의전쟁에 오신 것을 환영해요!</strong><span>로그인하면 프로필과 노멀·하드 랭킹 기록을 계정에 저장할 수 있어요.</span></div><span class="microbadge">MAGIC LINK SIGN IN</span><h2 id="authHeading">이메일 링크로 로그인</h2><p>이메일로 전송된 인증 링크를 누르면 계정이 연결됩니다. 닉네임은 자동 부여되며 이후에도 유지됩니다.</p><label for="emailInput">이메일 주소</label><input id="emailInput" type="email" autocomplete="email" placeholder="you@example.com"><button id="sendLink" class="btn primary auth-send">✉ 이메일 인증 링크 보내기</button><button id="authGuest" class="btn auth-guest" type="button">게스트로 계속 플레이</button><p id="authFeedback" role="status" class="muted"></p><p class="auth-footnote">보안 로그인은 최초 이메일 링크 인증으로 진행합니다. Supabase 설정 전에는 게스트 이용만 가능합니다. 플레이어 코드 16자리 자체는 로그인 인증 수단이 아닙니다.</p></div></div>
-<style id="hotfix-v1531">
-body.focus-game #gameScreen .wrap{height:auto!important;min-height:0!important;max-height:none!important;padding-bottom:calc(52px + env(safe-area-inset-bottom))!important;overflow-y:auto!important}
-body.focus-game #gameScreen{height:100dvh!important;overflow-y:auto!important}
-body.focus-game #gameScreen .layout{flex:0 0 auto!important;justify-content:flex-start!important;min-height:0!important}
-body.focus-game #gameScreen .stats{position:sticky;top:0;z-index:25}
-body.focus-game #mobileGamebar{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important;padding-bottom:calc(4px + env(safe-area-inset-bottom))!important}
-body.focus-game #mobileGamebar .btn{font-size:10px!important;min-height:42px!important;padding:3px 1px!important;white-space:normal!important}
+<style id="hotfix-v1532">
+/* HUD visibility: reserve only the real dock height; do not add phantom padding. */
+body.focus-game{height:100dvh!important;max-height:100dvh!important;overflow:hidden!important}
+body.focus-game #gameScreen{height:100dvh!important;max-height:100dvh!important;overflow:hidden!important;padding:0!important}
+body.focus-game #gameScreen .wrap{
+ box-sizing:border-box!important;display:flex!important;flex-direction:column!important;
+ height:calc(100dvh - var(--game-dock-height, 49px))!important;
+ min-height:0!important;max-height:calc(100dvh - var(--game-dock-height, 49px))!important;
+ padding:0 7px 0!important;margin:0 auto!important;
+ overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;
+ scrollbar-width:none;
+}
+body.focus-game #gameScreen .wrap::-webkit-scrollbar{display:none}
+body.focus-game #gameScreen .mobile-quick-head{flex:0 0 36px!important}
+body.focus-game #gameScreen .stats{
+ position:absolute!important;top:0!important;left:4px!important;
+ z-index:25!important;margin:2px 0!important
+}
+body.focus-game #gameScreen .layout{
+ flex:0 0 auto!important;display:flex!important;flex-direction:column!important;
+ justify-content:flex-start!important;min-height:0!important;overflow:visible!important;
+}
+body.focus-game #gameScreen .battle-dps-hud,
+body.focus-game #gameScreen #battleDpsHud{
+ position:relative!important;z-index:2!important;flex:0 0 auto!important;
+ margin-bottom:2px!important;
+}
+body.focus-game #mobileGamebar{
+ position:fixed!important;bottom:0!important;top:auto!important;
+ box-sizing:border-box!important;height:auto!important;min-height:0!important;
+ padding:3px 5px calc(3px + env(safe-area-inset-bottom, 0px))!important;
+ grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:3px!important;
+ max-width:490px!important;z-index:30!important;
+}
+body.focus-game #mobileGamebar .btn{
+ box-sizing:border-box!important;min-height:39px!important;height:39px!important;
+ padding:2px 1px!important;font-size:10px!important;line-height:1.1!important;
+ white-space:normal!important;overflow:hidden!important;
+}
+@media(max-height:680px){
+ body.focus-game #mobileGamebar .btn{height:36px!important;min-height:36px!important}
+ body.focus-game #gameScreen .mobile-quick-head{flex-basis:34px!important;height:34px!important}
+}
 </style><script src="./auth-config.js"></script>
 <script>
 (()=>{'use strict';
@@ -2499,16 +2535,24 @@ document.querySelectorAll('[data-rank]').forEach(b=>b.addEventListener('click',(
 $('copyPlayerCode').onclick=async()=>{const code=$('publicPlayerCode').value;try{await navigator.clipboard.writeText(code);$('codeMessage').textContent='식별 코드 복사 완료 (계정 로그인 키는 아닙니다).'}catch{$('publicPlayerCode').select();$('codeMessage').textContent='식별 코드가 선택되었습니다.'}};
 function fitBattlefield(){
  if(!document.body.classList.contains('focus-game'))return;
- // Preserve the actual 720 × 850 canvas ratio. Reserve the compact HUD,
- // resonance, selection panel and bottom controls before computing board width.
+ // Measure the actual bottom dock and visible controls instead of reserving an
+ // extra black gap. The canvas is CSS-square, so do not apply W/H twice.
  const v=window.visualViewport?.height||window.innerHeight;
- const width=Math.min(window.innerWidth,490);
- const short=v<660;
- // Reserve HUD, resonance dashboard, selection and bottom controls.
- // Keep flexible remainder ABOVE the battlefield instead of below unit actions.
- const reserved=36+25+(short?125:144)+49+55+14;
- const usable=Math.max(240,v-reserved);
- const size=Math.max(205,Math.min(width-8,Math.floor(usable*W/H)));
+ const dock=$('mobileGamebar');
+ const dockHeight=dock&&!dock.classList.contains('hidden')?Math.ceil(dock.getBoundingClientRect().height):49;
+ $('gameScreen').style.setProperty('--game-dock-height',dockHeight+'px');
+ const wrap=$('gameScreen').querySelector('.wrap');
+ const h=el=>el&&getComputedStyle(el).display!=='none'?el.getBoundingClientRect().height:0;
+ const top=h(wrap.querySelector('.mobile-quick-head'));
+ const dps=h($('battleDpsHud'));
+ const res=h($('resonanceStrip'))||h(wrap.querySelector('.resonance-strip'));
+ const power=h(wrap.querySelector('.mobile-power'));
+ const selected=h(wrap.querySelector('.compact-selected'));
+ const other=res+power+selected;
+ // Extra allowance accounts for small gaps, the timer and the arena frame.
+ const usable=Math.max(205,v-dockHeight-top-dps-other-22);
+ const width=Math.min(window.innerWidth,490)-14;
+ const size=Math.max(205,Math.min(width,Math.floor(usable)));
  $('gameScreen').style.setProperty('--arena-size',size+'px');
 }
 window.addEventListener('resize',fitBattlefield);window.visualViewport?.addEventListener('resize',fitBattlefield);
