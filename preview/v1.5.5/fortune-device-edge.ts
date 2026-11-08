@@ -6,7 +6,14 @@
  * No service-role credentials are ever returned to the client.
  */
 const SUPABASE_URL=Deno.env.get("SUPABASE_URL")||"";
-const SERVICE_ROLE=Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"";
+const SERVICE_ROLE=(()=>{
+  // Prefer the modern sb_secret API key; legacy service_role JWT is fallback.
+  try{
+    const stored=JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS")||"{}");
+    if(typeof stored.default==="string"&&stored.default)return stored.default;
+  }catch{}
+  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")||"";
+})();
 const ALLOWED_ORIGIN="https://godujan.github.io";
 const u8=new TextEncoder();
 function cors(origin:string){
@@ -53,7 +60,8 @@ async function rest(path:string,method="GET",body?:unknown){
  if(!SUPABASE_URL||!SERVICE_ROLE)throw new Error("Supabase server credentials are missing");
  const res=await fetch(SUPABASE_URL+"/rest/v1/"+path,{
   method,headers:{
-   "apikey":SERVICE_ROLE,"Authorization":"Bearer "+SERVICE_ROLE,
+   "apikey":SERVICE_ROLE,
+   ...(SERVICE_ROLE.startsWith("sb_secret_")?{}:{"Authorization":"Bearer "+SERVICE_ROLE}),
    "Content-Type":"application/json",
    "Prefer":method==="POST"?"return=representation":"return=minimal"
   },
