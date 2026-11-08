@@ -2137,44 +2137,73 @@ function rankModePanel(mode,body){
 async function renderRankings(scope='season'){
  const seq=++currentRankingRequest;
  document.querySelectorAll('[data-rank]').forEach(b=>b.classList.toggle('active',b.dataset.rank===scope));
- const node=$('rankList');
- const msgScope=scope==='season'?'시즌':scope==='today'?'오늘':'내 기록';
- function drawForMode(build){
-   if(seq!==currentRankingRequest||$('rankingModal').classList.contains('hidden'))return;
-   node.innerHTML='<div class="rank-dual">'+rankModes.map(mode=>rankModePanel(mode,build(mode))).join('')+'</div>';
+ const node=$('rankList'),scopeName=scope==='season'?'시즌':scope==='today'?'오늘':'내 기록';
+ function draw(build){
+  if(seq!==currentRankingRequest||$('rankingModal').classList.contains('hidden'))return;
+  node.innerHTML='<div class="rank-dual">'+rankModes.map(mode=>rankModePanel(mode,build(mode))).join('')+'</div>';
  }
  if(!authConfigured){
-   drawForMode(mode=>(scope==='mine'?myModeRank(mode.key):'')
-    +'<div class="offline">온라인 랭킹 서버 설정을 확인해 주세요. 다른 플레이어의 기록은 표시할 수 없습니다.</div>');
-   return;
+  draw(mode=>(scope==='mine'?myModeRank(mode.key):'')+
+      '<div class="offline">온라인 서버가 연결되지 않았습니다.</div>');
+  return;
  }
- if(scope==='mine'&&!loggedIn){
-   drawForMode(mode=>myModeRank(mode.key)
-    +'<div class="offline">내 온라인 순위는 이메일 로그인 후 표시됩니다.</div>');
-   return;
+ if(scope==='mine'&&!loggedIn&&!deviceRank){
+  draw(mode=>myModeRank(mode.key)+
+      '<div class="offline">메인 화면에서 닉네임을 등록하면 이 기기의 온라인 순위를 확인할 수 있습니다.</div>');
+  return;
  }
- drawForMode(mode=>'<div class="rank-loading">'+mode.name+' '+msgScope+' 랭킹 조회 중…</div>');
+ draw(mode=>'<div class="rank-loading">'+mode.name+' '+scopeName+' 랭킹 조회 중…</div>');
  try{
-   const token=loggedIn?await validToken():null;
-   const results=await Promise.allSettled(rankModes.map(mode=>
-     baseRequest('/rest/v1/rpc/fortune_rankings_by_difficulty',
-       {method:'POST',body:{p_scope:scope,p_difficulty:mode.key},token})
-   ));
-   if(seq!==currentRankingRequest)return;
-   drawForMode(mode=>{
-     const idx=rankModes.findIndex(m=>m.key===mode.key),out=results[idx];
-     const local=scope==='mine'?myModeRank(mode.key):'';
-     if(out.status!=='fulfilled')return local
-      +'<div class="offline">랭킹 조회 실패: '+esc(out.reason?.message||'연결을 확인해 주세요')+'</div>';
-     if(!Array.isArray(out.value))return local+'<div class="offline">랭킹 응답 형식이 올바르지 않습니다.</div>';
-     const data=out.value;
-     return local+(data.length?data.slice(0,101).map(formatRankItem).join(''):
-       '<div class="offline">아직 등록된 '+mode.name+' 온라인 랭킹 기록이 없습니다.</div>')
-      +'<p class="rank-mode-note">로그인한 플레이어 기록만 집계 · 최고 점수 순 · 서버 검증 전 점수 조작 방지가 완전하지 않습니다.</p>';
-   });
+  const token=loggedIn?await validToken():null;
+  const results=await Promise.allSettled(rankModes.map(async mode=>{
+   const requests=[
+    baseRequest('/rest/v1/rpc/fortune_rankings_by_difficulty',{
+     method:'POST',body:{p_scope:scope,p_difficulty:mode.key},token
+    }),
+    scope==='mine'&&!deviceRank?Promise.resolve({rows:[]}):
+    deviceRankRequest('rankings',{
+     scope,difficulty:mode.key,
+     ...(scope==='mine'&&deviceRank?{
+       device_id:deviceRank.device_id,device_secret:deviceRank.device_secret
+     }:{})
+    })
+   ];
+   const sources=await Promise.allSettled(requests);
+   const entries=[];let unavailable=0;
+   for(const response of sources){
+    if(response.status!=='fulfilled'){unavailable++;continue;}
+    const rows=Array.isArray(response.value)?response.value:response.value?.rows;
+    if(Array.isArray(rows))entries.push(...rows);else unavailable++;
+   }
+   if(unavailable===2)throw new Error('온라인 랭킹 서버 모두 연결 실패');
+   const best=new Map();
+   for(const r of entries){
+    const id=String(r?.user_id||'');if(!id)continue;
+    const old=best.get(id);
+    if(!old||Number(r.score)>Number(old.score)||
+     (Number(r.score)===Number(old.score)&&Number(r.wave)>Number(old.wave)))best.set(id,r);
+   }
+   const sorted=[...best.values()].sort((x,y)=>Number(y.score)-Number(x.score)||
+    Number(y.wave)-Number(x.wave)||(new Date(x.finished_at)-new Date(y.finished_at)));
+   const rows=sorted.slice(0,scope==='mine'?100:101).map((r,i)=>({...r,rank:i+1}));
+   rows.partial=unavailable>0;
+   return rows;
+  }));
+  if(seq!==currentRankingRequest)return;
+  draw(mode=>{
+   const idx=rankModes.findIndex(m=>m.key===mode.key),r=results[idx];
+   const local=scope==='mine'?myModeRank(mode.key):'';
+   if(r.status!=='fulfilled')return local+'<div class="offline">랭킹 조회 실패: '+
+     esc(r.reason?.message||'연결 확인')+'</div>';
+   const records=r.value;
+   return local+(records.length?records.map(formatRankItem).join(''):
+    '<div class="offline">등록된 '+mode.name+' 기록이 없습니다.</div>')+
+    (records.partial?'<p class="rank-mode-note">⚠ 일부 기록의 서버 응답이 누락됐습니다.</p>':'')+
+    '<p class="rank-mode-note">기기 인증·이메일 계정 통합 랭킹 · 웨이브×100 + 처치×3 + 클리어400 · 서버 점수 검증은 제한적</p>';
+  });
  }catch(err){
-   drawForMode(mode=>(scope==='mine'?myModeRank(mode.key):'')+
-     '<div class="offline">랭킹 조회 실패: '+esc(err.message||'네트워크를 확인해 주세요')+'</div>');
+  draw(mode=>(scope==='mine'?myModeRank(mode.key):'')+
+   '<div class="offline">조회 오류: '+esc(err.message||'연결 실패')+'</div>');
  }
 }
 function showRankings(scope='season'){$('rankingModal').classList.remove('hidden');renderRankings(scope)}
