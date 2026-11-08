@@ -834,6 +834,15 @@ body.focus-game #mobileGamebar .btn{
  body.focus-game #mobileGamebar .btn{height:36px!important;min-height:36px!important}
  body.focus-game #gameScreen .mobile-quick-head{flex-basis:34px!important;height:34px!important}
 }
+</style><style id="hotfix-v1533">
+/* Keep the ordinary dock compact. Only reveal the advanced buttons on Primordial selection. */
+body.focus-game #mobileGamebar{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+body.focus-game #mobileGamebar:has(.ascension-action:not([hidden])){grid-template-columns:repeat(5,minmax(0,1fr))!important}
+#mobileGamebar .ascension-action,#gameScreen .ascension-action{border:1px solid #bc9f79!important;background:#162542!important;color:#ffe2b5!important;border-radius:9px!important;font-weight:750!important}
+#mobileGamebar .ascension-action[hidden],#gameScreen .ascension-action[hidden]{display:none!important}
+#mobileGamebar .ascension-action:disabled,#gameScreen .ascension-action:disabled{opacity:.42!important;filter:grayscale(.7)!important;cursor:not-allowed!important}
+body.focus-game #gameScreen .wrap{padding-bottom:0!important}
+body.focus-game #gameScreen .layout{margin-bottom:0!important;padding-bottom:0!important}
 </style><script src="./auth-config.js"></script>
 <script>
 (()=>{'use strict';
@@ -1249,36 +1258,84 @@ function merge(){
  toast('합성 성공! '+elements[selected.element].name+' '+tierNames[promoted.tier]);sync();
 }
 
+
+/* v1.5.33: primordial selection is the ONLY UI gateway for both combinations.
+   Genesis consumes TWO different-element Creations (primordial is selector only).
+   Plague consumes the selected Primordial + same-element Creation. */
+function primordialSelection(){const u=getSelected();return u&&u.tier===6&&!u.ascension&&u.count>0?u:null}
+function ascensionMaterials(kind){
+ const selected=primordialSelection();if(!selected)return null;
+ if(kind==='plague'){
+  const creation=state.units.find(u=>u.tier===7&&!u.ascension&&u.element===selected.element&&(u.count||0)>0);
+  return creation?[selected,creation]:null;
+ }
+ const creations=state.units.filter(u=>u.tier===7&&!u.ascension&&(u.count||0)>0);
+ for(let i=0;i<creations.length;i++)for(let j=i+1;j<creations.length;j++)
+  if(creations[i].element!==creations[j].element)return [creations[i],creations[j]];
+ return null;
+}
+function refreshAscensionButtons(){
+ const selected=primordialSelection(),playing=state?.mode==='wave'&&!state.paused;
+ for(const [id,kind,unlocked] of [
+  ['deskGenesis','genesis',hasGenesisUnlock()],['mobileGenesis','genesis',hasGenesisUnlock()],
+  ['deskPlague','plague',hasPlagueUnlock()],['mobilePlague','plague',hasPlagueUnlock()]
+ ]){
+  const b=$(id);if(!b)continue;
+  const visible=!!selected;
+  b.hidden=!visible;
+  b.style.display=visible?'':'none';
+  const materials=visible&&unlocked?ascensionMaterials(kind):null;
+  // If a source card is absent, no premature destructive attempt is possible.
+  const available=!!(materials&&(materials.some(u=>(u.count||0)===1)||freeCells().length));
+  b.disabled=!(playing&&unlocked&&available);
+  b.title=!unlocked?(kind==='genesis'?'하드 3회 클리어 후 해금':'지옥 클리어 후 해금'):
+   !materials?(kind==='genesis'?'서로 다른 속성 창조 2기 필요':'선택한 태초와 같은 속성의 창조 1기 필요'):
+   !available?'조합 성공 시 배치할 빈 칸이 필요':'조합 실패 시 재료 2기 소모';
+ }
+}
 function tryAscension(kind){
  if(state.mode!=='wave'||state.paused)return;
- const a=getSelected(),gen=kind==='genesis';
- if(gen&&!hasGenesisUnlock())return toast('🔒 하드 3회 클리어로 개벽 해금');
- if(!gen&&!hasPlagueUnlock())return toast('🔒 지옥 클리어로 역병 해금');
- if(!a||a.ascension||!(gen?a.tier===7:a.tier===6||a.tier===7))return toast(gen?'창조 유닛을 선택하세요':'태초 또는 창조를 선택하세요');
- const b=state.units.find(x=>x.id!==a.id&&!x.ascension&&(gen?x.tier===7&&x.element!==a.element:x.element===a.element&&x.tier===(a.tier===6?7:6)));
- if(!b)return toast(gen?'서로 다른 속성 창조 2기 필요':'같은 속성 태초 + 창조 필요');
- if(a.count>1&&b.count>1&&!freeCells().length)return toast('빈 슬롯이 필요합니다');
- const success=Math.random()<(gen?.5:.3);
- for(const x of [a,b]){const old=x.count||1;x.count=old-1;x.paid=(x.paid||10)*(old-1)/old}
- state.units=state.units.filter(x=>x.count>0);
+ const selected=primordialSelection();if(!selected){toast('태초 유닛을 선택해야 조합할 수 있습니다');return}
+ const gen=kind==='genesis';
+ if(gen&&!hasGenesisUnlock()){toast('🔒 하드 3회 클리어로 개벽 해금');return}
+ if(!gen&&!hasPlagueUnlock()){toast('🔒 지옥 클리어로 역병 해금');return}
+ const materials=ascensionMaterials(kind);
+ if(!materials){toast(gen?'창조 2기 (서로 다른 속성)가 필요합니다':'선택한 태초와 동일 속성 창조가 필요합니다');return}
+ // A material disappearing frees its board position. Otherwise a spare slot is needed.
+ if(materials.every(u=>(u.count||0)>1)&&!freeCells().length){toast('조합 결과를 놓을 빈 칸이 필요합니다');return}
+ const [a,b]=materials,slot={c:a.c,r:a.r},success=Math.random()<(gen?.5:.3);
+ for(const u of materials){const original=u.count||1;u.count=original-1;u.paid=Math.max(0,(u.paid||10)*u.count/original)}
+ state.units=state.units.filter(u=>u.count>0);
  if(success){
-  const el=gen?a.element:(a.tier===7?a.element:b.element),unit=createUnit(a.c,a.r,7,el);
-  unit.ascension=gen?'genesis':'plague';unit.secondaryElement=gen?b.element:null;
-  unit.name=gen?'개벽-'+a.element+'-'+b.element:'역병-'+el;unit.paid=0;
-  if(state.units.some(x=>x.c===unit.c&&x.r===unit.r)){const cell=freeCells()[0];if(cell){unit.c=cell.c;unit.r=cell.r}else return toast('조합 슬롯이 없습니다')}
-  state.units.push(unit);state.selected=unit.id;
-  burst(pos(unit).x,pos(unit).y,gen?'#ffe3a1':'#bbff80',24,75);
-  toast(gen?'🌌 개벽 성공!':'☠️ 역병 성공!');
- }else{state.selected=null;toast('💥 조합 실패 · 재료 소모')}
+  const result=createUnit(slot.c,slot.r,7,gen?a.element:selected.element);
+  result.ascension=gen?'genesis':'plague';
+  result.secondaryElement=gen?b.element:null;
+  result.name=gen?'개벽-'+a.element+'-'+b.element:'역병-'+selected.element;
+  result.paid=0;
+  if(state.units.some(u=>u.c===result.c&&u.r===result.r)){
+   const vacant=freeCells()[0];
+   if(!vacant){toast('조합 결과 배치 공간 부족');return}
+   result.c=vacant.c;result.r=vacant.r;
+  }
+  state.units.push(result);state.selected=result.id;
+  burst(pos(result).x,pos(result).y,gen?'#ffe3a1':'#b9ff8c',24,80);
+  toast(gen?'🌌 개벽 조합 성공!':'☠️ 역병 조합 성공!');
+ }else{state.selected=selected.count>0?selected.id:null;toast('💥 조합 실패 · 재료 2기 소모')}
  recalcClusters();sync();
 }
 function setupAscensionActions(){
- function add(id,el,kind){const b=document.createElement('button');b.id=id;b.type='button';b.className='btn';b.textContent=kind==='genesis'?'🌌 개벽 50%':'☠ 역병 30%';b.style.cssText='min-height:34px;min-width:0;padding:3px;font-size:11px;border:1px solid #bc9f79;background:#162542;color:#ffe2b5;border-radius:9px';b.onclick=()=>tryAscension(kind);el.appendChild(b)}
- const d=$('merge')?.parentElement,m=$('mobileGamebar');
- if(d){add('deskGenesis',d,'genesis');add('deskPlague',d,'plague')}
- if(m){add('mobileGenesis',m,'genesis');add('mobilePlague',m,'plague')}
+ const create=(id,host,kind)=>{
+  const button=document.createElement('button');
+  button.id=id;button.type='button';button.className='btn ascension-action';
+  button.textContent=kind==='genesis'?'🌌 개벽 50%':'☠ 역병 30%';
+  button.hidden=true;button.style.display='none';
+  button.onclick=()=>tryAscension(kind);host.appendChild(button);
+ };
+ const desk=$('merge')?.parentElement,mobile=$('mobileGamebar');
+ if(desk){create('deskGenesis',desk,'genesis');create('deskPlague',desk,'plague')}
+ if(mobile){create('mobileGenesis',mobile,'genesis');create('mobilePlague',mobile,'plague')}
+ refreshAscensionButtons();
 }
-
 function sell(){if(state.mode!=='wave'||state.paused)return;const u=getSelected();if(!u)return toast('판매할 영웅을 먼저 선택하세요');const n=Math.max(1,u.count||1),share=(u.paid||10)/n,refund=SALE_VALUES[u.tier]||3;state.coins+=refund;u.paid=Math.max(0,(u.paid||10)-share);u.count=n-1;if(u.count<=0){state.units=state.units.filter(v=>v!==u);state.selected=null;toast('🪙 '+unitDisplayName(u)+' 판매 +'+refund+'원 · 빈 칸 확보')}else toast('🪙 '+unitDisplayName(u)+' 1명 판매 +'+refund+'원 · 남은 ×'+u.count);recalcClusters();log(`🪙 ${unitDisplayName(u)} 1명 판매 +${refund}원`);sync()}
 function upgradeElement(k){if(state.mode!=='wave'||state.paused)return;const lv=state.elementLv[k],cost=elementCost(k);if(lv>=30)return toast('최대 강화 레벨입니다');if(state.coins<cost)return toast('강화 영압이 부족합니다');state.coins-=cost;state.elementLv[k]++;toast(elements[k].name+' 공격 강화 Lv.'+state.elementLv[k]);log('⚔️ '+elements[k].name+' 속성 공격력 Lv.'+state.elementLv[k]);sync()}
 function income(){if(state.mode!=='wave'||state.paused)return;const cost=incomeCost();if(state.incomeLv>=12)return toast('방어벽 최고 레벨입니다');if(state.coins<cost)return toast('영압이 부족합니다');state.coins-=cost;state.incomeLv++;state.life+=2;log('🛡 방어벽 강화 Lv.'+state.incomeLv+' · 생명 +2');toast('🛡 생명 +2');sync()}
@@ -1554,7 +1611,7 @@ function renderAutoSellSettings(){
  host.innerHTML=keys.map(k=>'<label class="auto-sell-choice" style="--elem:'+elements[k].color+'"><span>'+elements[k].icon+' '+elements[k].name+'</span><input type="checkbox" data-auto-sell="'+k+'" '+(autoSellFlags[k]?'checked':'')+'><b>'+(autoSellFlags[k]?'ON':'OFF')+'</b></label>').join('');
  $('autoSellOpen').classList.toggle('active',keys.some(k=>autoSellFlags[k]));
 }
-function sync(){syncQuick();updateDpsHud();const playing=state.mode==='wave'&&!state.paused;const buttons={summon:playing&&state.coins>=summonCost()&&freeCells().length>0,merge:playing&&canMergeUnit(getSelected()),income:playing&&state.coins>=incomeCost()&&state.incomeLv<12,sell:playing&&!!getSelected()};for(const [key,enable] of Object.entries(buttons))$(key).disabled=!enable;
+function sync(){syncQuick();updateDpsHud();refreshAscensionButtons();const playing=state.mode==='wave'&&!state.paused;const buttons={summon:playing&&state.coins>=summonCost()&&freeCells().length>0,merge:playing&&canMergeUnit(getSelected()),income:playing&&state.coins>=incomeCost()&&state.incomeLv<12,sell:playing&&!!getSelected()};for(const [key,enable] of Object.entries(buttons))$(key).disabled=!enable;
 $('mSummon').disabled=!buttons.summon;$('mSummon').title=freeCells().length===0?'20칸 가득 · 뽑기 불가':'영웅 뽑기';$('summon').title=$('mSummon').title;$('mMerge').disabled=!buttons.merge;$('mSpeed').disabled=!['wave'].includes(state.mode);$('mPause').disabled=!['wave'].includes(state.mode);$('speed').disabled=!['wave'].includes(state.mode);$('pause').disabled=!['wave'].includes(state.mode);
 const moveBtn=$('moveModeToggle');if(moveBtn){const on=Boolean(state.moveMode);moveBtn.textContent=on?'⇄ 이동 ON':'⇄ 이동 OFF';moveBtn.classList.toggle('active',on);moveBtn.setAttribute('aria-pressed',String(on));moveBtn.setAttribute('aria-label',on?'캐릭터 이동 모드 끄기':'캐릭터 이동 모드 켜기');moveBtn.disabled=!playing}
  $('detailSell').disabled=!buttons.sell;$('detailSell').textContent=getSelected()?'🪙 판매 +'+SALE_VALUES[getSelected().tier]:'🪙 판매';$('summonCost').textContent='('+summonCost()+')';$('incomeCost').textContent='('+incomeCost()+')';$('incomeLevel').textContent='Lv.'+state.incomeLv;$('bestTier').textContent=tierNames[state.bestTier];$('phase').textContent=state.paused?'⏸ 일시정지':state.mode==='intro'?'● 시작 대기':state.mode==='wave'?'● '+difficulties[state.difficulty].label+' 진행 중':state.mode==='won'?'🏆 클리어':'● 종료';$('speed').textContent='⚡ '+state.speed+'배속';$('pause').textContent=state.paused?'▶ 계속하기':'⏸ 일시정지';$('mPause').textContent=state.paused?'▶ 계속':'⏸ 정지';$('mSpeed').textContent='⏩ '+state.speed+'×';const selectedForMerge=getSelected(),mergeReady=buttons.merge;
