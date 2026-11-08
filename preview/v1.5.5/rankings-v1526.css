@@ -1,0 +1,81 @@
+/* Fortune War v1.5.26 — two independent online ranking boards. */
+#rankingModal .ranking-card{
+  width:min(940px,calc(100vw - 16px))!important;
+  max-width:940px!important;
+  max-height:min(94dvh,980px)!important;
+  overflow-y:auto!important;
+  overscroll-behavior-y:contain;
+}
+#rankingModal .ranking-card>.game-menu-top{
+  position:sticky;top:-18px;z-index:3;
+  padding:3px 0 9px;
+  background:linear-gradient(180deg,#fffdf7 80%,#fffdf700);
+}
+#rankingModal .ranktabs{margin:6px 0 10px;gap:6px}
+#rankingModal .ranktabs button{min-height:38px;padding:6px 4px;font-size:12px}
+#rankingModal .ranklist{background:transparent;padding:0;margin:0 0 10px}
+#rankingModal .rank-dual{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;align-items:start;
+}
+#rankingModal .rank-mode-panel{
+  box-sizing:border-box;min-width:0;min-height:140px;
+  border:2px solid #dac4a5;border-radius:14px;
+  background:#fffaf2;box-shadow:0 2px 7px #8863441b;
+  overflow:hidden;
+}
+#rankingModal .rank-mode-normal{border-color:#b0cba2}
+#rankingModal .rank-mode-hard{border-color:#efae80}
+#rankingModal .rank-mode-head{
+  min-height:48px;padding:9px 11px;
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  background:linear-gradient(100deg,#e4f6d9,#f6faec);
+  border-bottom:1px solid #cbd9b9;
+  color:#315a2d;
+}
+#rankingModal .rank-mode-hard .rank-mode-head{
+  background:linear-gradient(100deg,#ffdbc5,#fff3df);
+  border-bottom-color:#f1c99d;color:#923a22;
+}
+#rankingModal .rank-mode-head b{font-size:15px;line-height:1.25}
+#rankingModal .rank-mode-head small{font-size:10px;white-space:nowrap;opacity:.8}
+#rankingModal .rank-mode-content{padding:8px 9px 10px}
+#rankingModal .rank-mode-content .rankentry{
+  border:1px solid #e6dac3;margin:4px 0;
+  padding:8px 6px;border-radius:9px;gap:5px;
+}
+#rankingModal .rank-mode-content .rankpos{flex:0 0 26px;font-size:14px}
+#rankingModal .rank-mode-content .rankdetails{min-width:0;flex:1}
+#rankingModal .rank-mode-content .rankdetails b{font-size:12px}
+#rankingModal .rank-mode-content .rankdetails small{font-size:9px}
+#rankingModal .rank-mode-content .rankscore strong{font-size:12px;white-space:nowrap}
+#rankingModal .rank-mode-content .rankscore small{font-size:10px}
+#rankingModal .rank-mode-content .myrank{
+  margin:3px 0 7px;padding:8px;
+  background:#fff5d5;color:#6e492c;border-radius:10px;
+  border:1px solid #eac37d;
+}
+#rankingModal .rank-mode-content .myrank b{font-size:12px}
+#rankingModal .rank-mode-content .myrank p{font-size:11px;line-height:1.4}
+#rankingModal .rank-mode-content .myrank small{font-size:9px;opacity:.8}
+#rankingModal .rank-mode-content .offline,
+#rankingModal .rank-mode-content .rank-loading{
+  padding:14px 9px;border-radius:9px;
+  background:#f5f1e7;color:#806c5d;font-size:12px;line-height:1.55;
+}
+#rankingModal .rank-mode-note{
+  margin:7px 2px 0!important;font-size:10px;line-height:1.45;
+  color:#846d56;overflow-wrap:anywhere;
+}
+@media(max-width:660px){
+  #rankingModal .ranking-card{
+    width:calc(100vw - 12px)!important;
+    max-height:calc(100dvh - 12px)!important;
+    padding:12px 8px!important;
+  }
+  #rankingModal .rank-dual{grid-template-columns:minmax(0,1fr);gap:9px}
+  #rankingModal .rank-mode-head{min-height:39px;padding:6px 8px}
+  #rankingModal .rank-mode-content{padding:5px 6px 8px}
+  #rankingModal .rank-mode-content .rankentry{padding:7px 8px}
+  #rankingModal .rank-mode-head b{font-size:14px}
+}
