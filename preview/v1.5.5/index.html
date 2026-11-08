@@ -2023,7 +2023,7 @@ let deviceRank=loadDeviceRank(),deviceEnrollBusy=false;
 async function deviceRankRequest(action,fields={}){
  if(!authConfigured)throw new Error('온라인 랭킹 서버 설정이 없습니다.');
  const response=await fetch(apiBase+'/functions/v1/fortune-device',{
-  method:'POST',headers:{apikey:anonKey,Authorization:'Bearer '+anonKey,'Content-Type':'application/json'},
+  method:'POST',headers:{apikey:anonKey,'Content-Type':'application/json'},
   body:JSON.stringify({action,...fields}),signal:AbortSignal.timeout(12000)
  });
  let data={};try{data=await response.json()}catch{}
