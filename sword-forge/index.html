@@ -321,6 +321,23 @@ body.forge-immersive{overflow-x:hidden}body.forge-immersive #forgeView{min-heigh
 @media(max-width:380px){#forgeView .tool-tile b{font-size:9px}#forgeView .tool-tile small{font-size:8px}}
 @media(prefers-reduced-motion:reduce){.market-offer.tier-hidden:before,.market-offer.tier-hidden:after,.relic-card.tier-legend:before,.relic-card.tier-epic:before,.relic-card.tier-legend:after,.artifact-pill:before{animation:none;opacity:.4}}
 
+
+/* 1.12.1 single-sword selection hotfix */
+.unselected-sword-prompt{height:132px;width:132px;border-radius:22px;border:2px dashed #9b8463;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:54px;color:#dbc09a;background:#241b23a8;line-height:1.05;box-shadow:0 0 32px #0008}
+.unselected-sword-prompt small{font-size:13px;font-weight:850;margin-top:12px;color:#edd9b7}
+#swordPickerOverlay[hidden]{display:none!important}
+#swordPickerOverlay{position:fixed;inset:0;z-index:9999;background:#070710cd;display:flex;align-items:center;justify-content:center;padding:18px 12px;backdrop-filter:blur(6px)}
+.sword-picker-dialog{width:min(480px,100%);max-height:min(76dvh,650px);display:flex;flex-direction:column;border:1px solid #c79c5e;border-radius:17px;background:linear-gradient(160deg,#2e2637,#12131e);box-shadow:0 22px 85px #000b;color:#f7e6c8;overflow:hidden}
+.sword-picker-head{display:flex;align-items:center;gap:8px;justify-content:space-between;padding:13px 15px;border-bottom:1px solid #594457}
+.sword-picker-head b{font-size:16px}
+.sword-picker-head small{color:#c9b5bb}
+.sword-picker-list{padding:10px;overflow:auto;min-height:0;display:flex;flex-direction:column;gap:7px;overscroll-behavior:contain}
+.sword-picker-list .weapon{padding:10px 9px;min-height:57px}
+.sword-picker-list .weapon b{font-size:12px}
+.sword-picker-list .weapon .wprice{font-size:12px}
+.sword-picker-list button:disabled{opacity:.42}
+.sword-picker-bottom{display:flex;justify-content:flex-end;padding:9px 12px;border-top:1px solid #594457;gap:8px}
+@media(max-width:640px){#swordPickerOverlay{padding:10px}.sword-picker-dialog{max-height:72dvh;border-radius:12px}.sword-picker-head{padding:10px 11px}.sword-picker-list{padding:8px;gap:5px}.sword-picker-list .weapon{padding:8px;min-height:51px}}
 </style>
 </head>
 <body>
@@ -387,6 +404,7 @@ body.forge-immersive{overflow-x:hidden}body.forge-immersive #forgeView{min-heigh
 <section class="app-view screen-page" id="resultView" hidden><div class="screen-top"><span class="screen-kicker">DRAGON'S VERDICT</span><span>계약 판정</span></div><div class="screen-sheet" id="resultContent"></div></section>
 <section class="app-view screen-page" id="infoView" hidden><div class="screen-top"><span class="screen-kicker">CODEX</span><span>게임 안내</span></div><div class="screen-sheet" id="infoContent"></div></section>
 <div class="overlay" id="overlay" hidden><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
+<div id="swordPickerOverlay" hidden role="presentation"><section class="sword-picker-dialog" role="dialog" aria-modal="true" aria-label="강화할 검 선택"><div class="sword-picker-head"><div><b>⚔️ 강화할 검 선택</b><br><small>선택한 검만 강화할 수 있습니다</small></div><button type="button" class="subbtn" id="closeSwordPicker" aria-label="닫기">✕ 닫기</button></div><div id="swordPickerList" class="sword-picker-list"></div><div class="sword-picker-bottom"><button type="button" class="ghostbtn" id="clearSwordPicker">선택 해제</button></div></section></div>
 <script>
 (()=>{'use strict';
 const KEY='dragon_sword_forge_edition_v15';
@@ -514,7 +532,7 @@ const RELICS=[
  ['life','❤️','붉은 용의 심장','목숨 +1회 회복 (최대 3개)','생존']
 ].map(([id,icon,name,desc,type])=>({id,icon,name,desc,type}));
 if(RELICS.length!==50)throw Error('유물 개수 오류');
-const base=()=>({v:7,round:1,misses:0,lives:3,gold:650,forgeGoldEarned:0,milestoneSuccess:false,pledged:[],sound:true,swords:[{id:1,lv:0,bonus:0,form:0,streak:0,fever:0},{id:2,lv:0,bonus:0,form:0,streak:0,fever:0},{id:3,lv:0,bonus:0,form:0,streak:0,fever:0}],selected:1,nextId:4,turns:999999,maxTurns:999999,artifacts:[],offered:[],items:[],activeBuffs:[],marketStock:[],marketStockRound:0,marketBought:[],phase:'play',logs:['🐉 고룡 바르자크의 첫 계약이 시작되었습니다.'],stats:{attempts:0,successes:0,broken:0,delivered:0,bestSword:{name:'낡은 단검',value:120,level:0,form:0},bestRound:1},outcome:'대장장이의 첫 망치질을 기다립니다.',outcomeType:'',started:true});
+const base=()=>({v:7,round:1,misses:0,lives:3,gold:650,forgeGoldEarned:0,milestoneSuccess:false,pledged:[],sound:true,swords:[{id:1,lv:0,bonus:0,form:0,streak:0,fever:0},{id:2,lv:0,bonus:0,form:0,streak:0,fever:0},{id:3,lv:0,bonus:0,form:0,streak:0,fever:0}],selected:null,nextId:4,turns:999999,maxTurns:999999,artifacts:[],offered:[],items:[],activeBuffs:[],marketStock:[],marketStockRound:0,marketBought:[],phase:'play',logs:['🐉 고룡 바르자크의 첫 계약이 시작되었습니다.'],stats:{attempts:0,successes:0,broken:0,delivered:0,bestSword:{name:'낡은 단검',value:120,level:0,form:0},bestRound:1},outcome:'대장장이의 첫 망치질을 기다립니다.',outcomeType:'',started:true});
 let s;
 const num=n=>Math.floor(n).toLocaleString('ko-KR');
 const has=id=>s.artifacts.includes(id);
@@ -533,7 +551,7 @@ function baseTurns(){return 999999}
 function price(){return 0}
 function swordBuyPrice(){return Math.max(1,Math.round((70+s.round*48)*(has('cheap')?.65:1)))}
 function repairPrice(w){return 0}
-function makeSword(purchased=false){const w={id:s.nextId++,lv:0,form:0,streak:0,fever:0,bonus:purchased&&has('sturdy')?.1:0};infuseSword(w);s.swords.push(w);if(!selected())s.selected=w.id;return w}
+function makeSword(purchased=false){const w={id:s.nextId++,lv:0,form:0,streak:0,fever:0,bonus:purchased&&has('sturdy')?.1:0};infuseSword(w);s.swords.push(w);return w}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}}
 function restore(){
  try{
@@ -697,7 +715,7 @@ function swordSvg(w){
    const ring=n>1?`<div class="fusion-ring ${n>=7?'spectrum':''}" style="--fusion-palette:${spectrum};--fusion-intensity:${(.36+n*.082).toFixed(2)}"></div>${stars}`:'';
    return `<div class="element-blade ${n>1?'multi-fused':''} ${n>=7?'pure-light':''}" role="img" aria-label="+${w.lv} ${weaponTitle(w)}" style="--asset-x:${x}%;--asset-y:${y}%;--element-color:${n>=7?'#fff9da':e.color};--blade-bright:${1+local*.055};--rune-alpha:${Math.min(.52,(w.lv>=10?.12:0)+(local/4)*.24)}">${ring}</div>`;
   }
-  if(!w)return '<div style="font-size:66px;opacity:.35">⚔️</div>';const [gradeName,col]=grade(w.lv),f=Math.max(0,Math.min(19,w.form||0));const kind=f===3||f===11||f===12?'hammer':f===4||f===5?'axe':f===6||f===7||f===17?'spear':f===16?'scythe':'sword';const hue=f>=15?['#fbc476','#fff3d1']:f>=10?['#91b8ff','#e4f4ff']:f>=5?['#ba95ff','#eae0ff']:['#a4c5d9','#f6f7fa'];$('swordArt').style.setProperty('--glow',col+'b0');const wide=48+f%3*9,bladeLen=135+Math.min(f,15)*2;let head='';if(kind==='sword')head=`<path d="M150 10 L${150+wide/2} ${215-bladeLen} L${150+wide/2-5} 179 L150 198 L${150-wide/2+5} 179 L${150-wide/2} ${215-bladeLen} Z" fill="url(#blade)" stroke="${col}" stroke-width="4"/><path d="M150 18V189" stroke="#ffffffb8" stroke-width="3"/>`;else if(kind==='hammer')head=`<path d="M90 39H210L222 113H78Z" fill="url(#blade)" stroke="${col}" stroke-width="5"/><path d="M90 54H210M90 96H210" stroke="#fff8" stroke-width="5"/>`;else if(kind==='axe')head=`<path d="M146 50Q100 5 62 32L37 103Q89 94 146 139Z" fill="url(#blade)" stroke="${col}" stroke-width="5"/><path d="M154 50Q201 5 239 32L264 103Q208 94 154 139Z" fill="url(#blade)" stroke="${col}" stroke-width="5"/>`;else if(kind==='spear')head=`<path d="M150 3L182 99L150 145L118 99Z" fill="url(#blade)" stroke="${col}" stroke-width="4"/><path d="M150 10V153" stroke="#fff9" stroke-width="3"/>`;else head=`<path d="M150 26Q224 -25 255 58Q206 46 175 125L149 158Z" fill="url(#blade)" stroke="${col}" stroke-width="5"/>`;const hilt=kind==='spear'||kind==='scythe'?`<rect x="143" y="111" width="14" height="169" rx="5" fill="url(#hilt)" stroke="#bca68b" stroke-width="3"/>`:`<rect x="142" y="171" width="16" height="102" rx="5" fill="url(#hilt)" stroke="#dfb87f" stroke-width="3"/><path d="M94 191L139 178L150 188L161 178L206 191L198 207L150 201L102 207Z" fill="#a78256" stroke="#f8d5a1" stroke-width="3"/><ellipse cx="150" cy="274" rx="18" ry="11" fill="#f2c778"/>`;return `<svg viewBox="0 0 300 300" role="img" aria-label="+${w.lv} ${formName(w)}"><defs><linearGradient id="blade" x1="0" x2="1" y1="0" y2="0"><stop stop-color="${hue[0]}"/><stop offset=".5" stop-color="${hue[1]}"/><stop offset="1" stop-color="${hue[0]}"/></linearGradient><linearGradient id="hilt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#654056"/><stop offset="1" stop-color="#e3b86f"/></linearGradient></defs><g transform="rotate(42 150 150)">${hilt}${head}${f>=3?`<circle cx="150" cy="186" r="${5+f%6}" fill="${col}" stroke="#fff9" stroke-width="2"/>`:''}</g>${f>=6?`<g fill="${col}"><circle cx="55" cy="66" r="3"/><circle cx="250" cy="130" r="4"/><path d="M63 181v14m-7-7h14" stroke="${col}" stroke-width="2"/></g>`:''}</svg>`}
+  if(!w)return '<div class="unselected-sword-prompt" aria-label="선택된 검 없음">＋<small>검 선택</small></div>';const [gradeName,col]=grade(w.lv),f=Math.max(0,Math.min(19,w.form||0));const kind=f===3||f===11||f===12?'hammer':f===4||f===5?'axe':f===6||f===7||f===17?'spear':f===16?'scythe':'sword';const hue=f>=15?['#fbc476','#fff3d1']:f>=10?['#91b8ff','#e4f4ff']:f>=5?['#ba95ff','#eae0ff']:['#a4c5d9','#f6f7fa'];$('swordArt').style.setProperty('--glow',col+'b0');const wide=48+f%3*9,bladeLen=135+Math.min(f,15)*2;let head='';if(kind==='sword')head=`<path d="M150 10 L${150+wide/2} ${215-bladeLen} L${150+wide/2-5} 179 L150 198 L${150-wide/2+5} 179 L${150-wide/2} ${215-bladeLen} Z" fill="url(#blade)" stroke="${col}" stroke-width="4"/><path d="M150 18V189" stroke="#ffffffb8" stroke-width="3"/>`;else if(kind==='hammer')head=`<path d="M90 39H210L222 113H78Z" fill="url(#blade)" stroke="${col}" stroke-width="5"/><path d="M90 54H210M90 96H210" stroke="#fff8" stroke-width="5"/>`;else if(kind==='axe')head=`<path d="M146 50Q100 5 62 32L37 103Q89 94 146 139Z" fill="url(#blade)" stroke="${col}" stroke-width="5"/><path d="M154 50Q201 5 239 32L264 103Q208 94 154 139Z" fill="url(#blade)" stroke="${col}" stroke-width="5"/>`;else if(kind==='spear')head=`<path d="M150 3L182 99L150 145L118 99Z" fill="url(#blade)" stroke="${col}" stroke-width="4"/><path d="M150 10V153" stroke="#fff9" stroke-width="3"/>`;else head=`<path d="M150 26Q224 -25 255 58Q206 46 175 125L149 158Z" fill="url(#blade)" stroke="${col}" stroke-width="5"/>`;const hilt=kind==='spear'||kind==='scythe'?`<rect x="143" y="111" width="14" height="169" rx="5" fill="url(#hilt)" stroke="#bca68b" stroke-width="3"/>`:`<rect x="142" y="171" width="16" height="102" rx="5" fill="url(#hilt)" stroke="#dfb87f" stroke-width="3"/><path d="M94 191L139 178L150 188L161 178L206 191L198 207L150 201L102 207Z" fill="#a78256" stroke="#f8d5a1" stroke-width="3"/><ellipse cx="150" cy="274" rx="18" ry="11" fill="#f2c778"/>`;return `<svg viewBox="0 0 300 300" role="img" aria-label="+${w.lv} ${formName(w)}"><defs><linearGradient id="blade" x1="0" x2="1" y1="0" y2="0"><stop stop-color="${hue[0]}"/><stop offset=".5" stop-color="${hue[1]}"/><stop offset="1" stop-color="${hue[0]}"/></linearGradient><linearGradient id="hilt" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#654056"/><stop offset="1" stop-color="#e3b86f"/></linearGradient></defs><g transform="rotate(42 150 150)">${hilt}${head}${f>=3?`<circle cx="150" cy="186" r="${5+f%6}" fill="${col}" stroke="#fff9" stroke-width="2"/>`:''}</g>${f>=6?`<g fill="${col}"><circle cx="55" cy="66" r="3"/><circle cx="250" cy="130" r="4"/><path d="M63 181v14m-7-7h14" stroke="${col}" stroke-width="2"/></g>`:''}</svg>`}
 function render(){const w=selected();$('roundText').textContent=s.round<=CLEAR_ROUND?`${s.round} / ${CLEAR_ROUND}`:`♾️ ${s.round}R`;$('roundTag').textContent=`ROUND ${String(s.round).padStart(2,'0')}`;$('hearts').textContent='❤️'.repeat(s.lives)+'🖤'.repeat(3-s.lives);$('gold').textContent=num(s.gold)+' G';$('targetValue').textContent=num(target());$('failureText').textContent=`${s.misses} / 4`;
  const v=swordVal(w),offeredValue=pledgedValue(),pct=Math.round(offeredValue/target()*100);$('currentPrice').textContent=num(offeredValue)+' G';$('targetPercent').textContent=pct+'%';$('demandBar').style.width=Math.min(100,pct)+'%';$('dragonSpeech').innerHTML=s.round>CLEAR_ROUND?'“무한의 계약까지 버티다니, 네가 진정한 장인이군!”':offeredValue>=target()?'<b>“으하하! 종을 울려라, 이 공물을 받겠다!”</b>':v+offeredValue>=target()?'<b>“그 검도 제단에 올리면 계약을 채울 수 있겠군.”</b>':'“'+(`최소 ${num(target())}G의 검이 필요하네. 실패하면 다음 날 더 비싸질 것이야.`)+'”';
  $('pledgedList').innerHTML=s.pledged.length?s.pledged.map(id=>{const x=s.swords.find(w=>w.id===id);return x?`<button class="altar-chip" data-unpledge="${x.id}" title="제단에서 꺼내기">⚔️ +${x.lv} · ${num(swordVal(x))}G <b>✕</b></button>`:''}).join(''):'<span class="altar-empty">아직 올린 검이 없습니다.</span>';
@@ -705,9 +723,9 @@ function render(){const w=selected();$('roundText').textContent=s.round<=CLEAR_R
  $('swordStage').classList.toggle('element-awakened',!!elementInfo(w)&&w.lv>=10);$('swordStage').classList.toggle('full-spectrum',!!w&&visibleElements(w).length===7);
  $('swordStage').style.setProperty('--element-color',visibleElements(w).length===7?'#fff9da':elementInfo(w)?.color||'#ffac69');
  $('swordArt').innerHTML=swordSvg(w);
- $('swordName').textContent=w?`+${w.lv} ${weaponTitle(w)}`:'제작할 검이 없습니다';
+ $('swordName').textContent=w?`+${w.lv} ${weaponTitle(w)}`:'검을 선택해 주세요';
  $('gradeTag').textContent=w?((visibleElements(w).length>=7?'전속성 광휘':visibleElements(w).length>=2?visibleElements(w).length+'속성 융합':elementInfo(w)?.name||'')+(elementInfo(w)?' · ':'')+grade(w.lv)[2]):'검 없음';
- $('swordSubtitle').textContent=w?(elementInfo(w)?`${elementCaption(w)} · 진화 ${Math.min(29,w.form||0)+1}/30 · +10강부터 속성 융합`:'5라운드부터 검마다 7가지 속성이 무작위로 부여됩니다.'):'새 검을 구매해 강화에 도전하세요';$('levelLabel').textContent=w?'+'+w.lv:'—';$('valueLabel').textContent=num(v)+' G';$('durabilityLabel').textContent=s.swords.length+'자루';
+ $('swordSubtitle').textContent=w?(elementInfo(w)?`${elementCaption(w)} · 진화 ${Math.min(29,w.form||0)+1}/30 · +10강부터 속성 융합`:'5라운드부터 검마다 7가지 속성이 무작위로 부여됩니다.'):'보유 검을 눌러 원하는 검을 선택하세요';$('levelLabel').textContent=w?'+'+w.lv:'—';$('valueLabel').textContent=num(v)+' G';$('durabilityLabel').textContent=s.swords.length+'자루';
  const p=prob(w);p.forEach((x,i)=>{const label=w?(Math.round(x*10)/10).toFixed(1)+'%':'—';$('p'+i).textContent=label;$('inlineP'+i).textContent=label});$('forgeCost').textContent='(무료)';
  const frozen=s.phase!=='play';$('forgeBtn').disabled=frozen||!w;$('repairBtn').disabled=true;$('buySwordBtn').disabled=s.phase!=='market';$('buySwordBtn2').disabled=s.phase!=='market';$('buySwordBtn').textContent='🏪 상점: 3라운드마다 오픈';$('pledgeBtn').disabled=frozen||!w;$('deliverBtn').disabled=frozen||offeredValue<target();$('giveupBtn').disabled=frozen;
  $('turnText').textContent='무제한';$('turnBar').style.width='100%';$('turnHelp').textContent='무료 · 무제한 강화 / 유물 금화보너스 '+num(s.forgeGoldEarned||0)+' / '+num(dailyForgeCap())+' G (오늘 한도)';
@@ -734,7 +752,7 @@ function forge(){
  s.outcomeType=['destroy','damage','','success','great'][o];let msg=protection.notice?' '+protection.notice:'';
  if(o===0){
   s.stats.broken++;w.streak=0;w.fever=0;
-  const val=swordVal(w);s.swords=s.swords.filter(x=>x.id!==w.id);s.selected=best()?.id||null;
+  const val=swordVal(w);s.swords=s.swords.filter(x=>x.id!==w.id);s.selected=null;
   if(has('breakgold'))awardForgeGold(80);
   if(has('salvage')&&Math.random()<.35){makeSword();msg=' 잔해에서 새 검을 회수했습니다!'}
   s.outcome=`💀 검이 산산조각 났습니다!${msg}`;
@@ -784,11 +802,11 @@ function forge(){
  if(s.swords.length===0&&!s.pledged.length)failContract('모든 검이 파괴되어 납품할 수 없습니다.');
 }
 
-function buySword(){if(s.phase!=='market')return;const p=swordBuyPrice();if(s.gold<p){toast('새 검 구입 금화가 부족합니다.');return}s.gold-=p;const w=makeSword(true);s.selected=w.id;s.outcome='🗡️ 새 검 구입 완료. 새 검을 선택했습니다.';s.outcomeType='';say(`🗡️ 새 검 구입 (${num(p)}G)`);render()}
+function buySword(){if(s.phase!=='market')return;const p=swordBuyPrice();if(s.gold<p){toast('새 검 구입 금화가 부족합니다.');return}s.gold-=p;const w=makeSword(true);s.selected=null;s.outcome='🗡️ 새 검 구입 완료. 보유 검에서 직접 선택해 주세요.';s.outcomeType='';say(`🗡️ 새 검 구입 (${num(p)}G)`);render()}
 function repair(){return}
-function pledge(){if(s.phase!=='play')return;const w=selected();if(!w)return toast('먼저 검을 선택해 주세요.');s.pledged.push(w.id);s.selected=best()?.id||null;s.outcome=`🏛️ +${w.lv} 검을 공물 제단에 보관했습니다.`;s.outcomeType='';say(`🏛️ 제단에 ${num(swordVal(w))}G 검 보관`);playSound('deposit');render()}
-function unpledge(id){if(s.phase!=='play')return;if(!s.pledged.includes(id))return;s.pledged=s.pledged.filter(x=>x!==id);s.selected=id;s.outcome='⚔️ 제단에서 검을 꺼냈습니다.';s.outcomeType='';render()}
-function deliver(){if(s.phase!=='play')return;if(pledgedValue()<target())return;const value=pledgedValue(),used=s.pledged.length;s.milestoneSuccess=true;let reward=Math.round(target()*.70+value*.18);if(has('deliverygold'))reward=Math.round(reward*1.25);s.gold+=reward;s.stats.delivered++;s.swords=s.swords.filter(x=>!s.pledged.includes(x.id));s.pledged=[];s.selected=best()?.id||null;s.outcome=`✅ 검 ${used}자루 · ${num(value)}G 납품! 보상 +${num(reward)}G`;playSound('deliver');s.outcomeType='success';say(`🐉 ${s.round}라운드 계약 완료! (+${num(reward)}G)`);
+function pledge(){if(s.phase!=='play')return;const w=selected();if(!w)return toast('먼저 검을 선택해 주세요.');s.pledged.push(w.id);s.selected=null;s.outcome=`🏛️ +${w.lv} 검을 공물 제단에 보관했습니다.`;s.outcomeType='';say(`🏛️ 제단에 ${num(swordVal(w))}G 검 보관`);playSound('deposit');render()}
+function unpledge(id){if(s.phase!=='play')return;if(!s.pledged.includes(id))return;s.pledged=s.pledged.filter(x=>x!==id);s.selected=null;s.outcome='⚔️ 제단에서 검을 꺼냈습니다. 보유 검에서 선택해 주세요.';s.outcomeType='';render()}
+function deliver(){if(s.phase!=='play')return;if(pledgedValue()<target())return;const value=pledgedValue(),used=s.pledged.length;s.milestoneSuccess=true;let reward=Math.round(target()*.70+value*.18);if(has('deliverygold'))reward=Math.round(reward*1.25);s.gold+=reward;s.stats.delivered++;s.swords=s.swords.filter(x=>!s.pledged.includes(x.id));s.pledged=[];s.selected=null;s.outcome=`✅ 검 ${used}자루 · ${num(value)}G 납품! 보상 +${num(reward)}G`;playSound('deliver');s.outcomeType='success';say(`🐉 ${s.round}라운드 계약 완료! (+${num(reward)}G)`);
  if(s.round===CLEAR_ROUND){s.phase='milestone';s.stats.bestRound=Math.max(s.stats.bestRound||1,s.round);render();showOutcome('milestone');return}
  s.offered=pickRelics(3);s.stats.bestRound=Math.max(s.stats.bestRound||1,s.round);s.phase='shop';render();showShop(value,reward)}
 function pickRelics(count){
@@ -802,7 +820,7 @@ function pickRelics(count){
  }
  return picks;
 }
-function nextRound(){s.phase='play';s.pledged=[];s.round++;s.items=(s.items||[]).filter(x=>x.expiresRound>=s.round);s.activeBuffs=[];s.forgeGoldEarned=0;awakenSwords();s.turns=baseTurns();s.maxTurns=s.turns;for(let i=0;i<3;i++)makeSword();if(has('extra1'))makeSword();if(has('extra2')){makeSword();makeSword()}if(has('roundgold'))s.gold+=300;s.selected=best()?.id||null;s.offered=[];s.stats.bestRound=Math.max(s.stats.bestRound||1,s.round);s.outcome=`🐉 ${s.round}라운드 계약 시작! 목표 ${num(target())}G`;s.outcomeType='';say(`📜 ${s.round}라운드 목표 ${num(target())}G · 강화 횟수 무제한`);closeModal();render()}
+function nextRound(){s.phase='play';s.pledged=[];s.round++;s.items=(s.items||[]).filter(x=>x.expiresRound>=s.round);s.activeBuffs=[];s.forgeGoldEarned=0;awakenSwords();s.turns=baseTurns();s.maxTurns=s.turns;for(let i=0;i<3;i++)makeSword();if(has('extra1'))makeSword();if(has('extra2')){makeSword();makeSword()}if(has('roundgold'))s.gold+=300;s.selected=null;s.offered=[];s.stats.bestRound=Math.max(s.stats.bestRound||1,s.round);s.outcome=`🐉 ${s.round}라운드 계약 시작! 목표 ${num(target())}G`;s.outcomeType='';say(`📜 ${s.round}라운드 목표 ${num(target())}G · 강화 횟수 무제한`);closeModal();render()}
 function afterRelic(){if(s.round%3===0){s.phase='market';render();showMarketPreview()}else nextRound()}
 let pendingRelicPurchase=null;
 function buyRelic(id,method='gold'){
@@ -844,7 +862,7 @@ function completeRelicPurchase(id,method='gold',dropId=null){
  if(method==='sword'&&!candidate)return toast('교환할 검이 부족합니다.'),false;
  if(method!=='sword'&&s.gold<cost)return toast('금화가 부족합니다.'),false;
  if(dropId){const lost=RELICS.find(x=>x.id===dropId);s.artifacts=s.artifacts.filter(x=>x!==dropId);say('🔁 유물 포기: '+(lost?.name||dropId))}
- if(candidate){s.swords=s.swords.filter(x=>x.id!==candidate.id);s.selected=best()?.id||null;say(`⚔️ ${num(swordVal(candidate))}G 검으로 유물 교환`)}else{s.gold-=cost}
+ if(candidate){s.swords=s.swords.filter(x=>x.id!==candidate.id);s.selected=null;say(`⚔️ ${num(swordVal(candidate))}G 검으로 유물 교환`)}else{s.gold-=cost}
  s.artifacts.push(id);pendingRelicPurchase=null;s.swords.forEach(recordBest);
  if(id==='life'){s.misses=Math.max(0,s.misses-1);s.lives=3-s.misses}
  say(`${r.icon} 유물 획득: ${r.name}`);afterRelic();toast(`${r.name} 효과 적용!`);return true;
@@ -859,7 +877,7 @@ function confirmRelicReplace(dropId){
 
 function failContract(reason){
  if(s.phase!=='play')return;
- s.misses++;s.lives=Math.max(0,3-s.misses);s.pledged=[];s.selected=best()?.id||null;
+ s.misses++;s.lives=Math.max(0,3-s.misses);s.pledged=[];s.selected=null;
  s.milestoneSuccess=false;
  s.phase=s.misses>=4?'dead':'failed';
  s.outcome=`❌ ${s.round}라운드 미납품 (${s.misses}/4) — 용의 다음 요구액은 더 높아집니다.`;
@@ -961,31 +979,22 @@ document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement
 const hadPreviousSave=!!(localStorage.getItem(KEY)||localStorage.getItem('dragon_sword_forge_edition_v14')||localStorage.getItem('dragon_sword_forge_edition_v13'));s=restore();if(!s.maxTurns){s.turns=baseTurns();s.maxTurns=s.turns}render();$('loginName').value=localStorage.getItem(LOGIN_KEY)||localStorage.getItem(RANK_NAME_KEY)||'';$('loginInfo').textContent=hadPreviousSave?'이전 강화 기록을 이어서 플레이할 수 있습니다.':'첫 플레이입니다. 닉네임을 입력해 게임을 시작하세요.';$('loginNewBtn').hidden=!hadPreviousSave;
 $('quickTributeBtn').onclick=()=>view('tribute');
 $('fullscreenBtn').onclick=toggleFullscreen;
-$('openInventoryBtn').onclick=()=>view('inventory');$('swordQuickSelect').addEventListener('click',e=>{if(e.target.closest('.sword-pick'))view('inventory')});
-$('openRelicsBtn').onclick=()=>view('relics');
-$('openTraceBtn').onclick=()=>view('trace');
-$('openMoreBtn').onclick=()=>view('more');
-$('moreRankBtn').onclick=openRanking;
-$('moreChanceBtn').onclick=()=>view('chance');
-$('moreRulesBtn').onclick=showRules;
-$('loginGuideBtn').onclick=()=>openGuide('login');
-$('guideBackBtn').onclick=closeGuide;
-$('guidePrevBtn').onclick=()=>{if(guideStep===0){closeGuide()}else{guideStep--;renderGuide()}};
-$('guideNextBtn').onclick=()=>{if(guideStep>=GUIDE_SLIDES.length-1){closeGuide()}else{guideStep++;renderGuide()}};
-$('guideProgress').addEventListener('click',e=>{const b=e.target.closest('[data-guide-step]');if(b){guideStep=Number(b.dataset.guideStep);renderGuide()}});
-$('moreSoundBtn').onclick=()=>{s.sound=!s.sound;render();toast(s.sound?'효과음 켜짐':'효과음 꺼짐')};
-$('moreProfileBtn').onclick=()=>view('login');
-$('moreResetBtn').onclick=()=>{if(confirm('현재 도전 기록을 삭제하고 새 게임을 시작할까요?'))fresh()};
-$('relicCatalogBtn').onclick=showCatalog;
-document.body.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-back-forge'))view('forge');if(b.hasAttribute('data-swap-back')){pendingRelicPurchase=null;showShop(0,0)}if(b.hasAttribute('data-drop-relic'))confirmRelicReplace(b.dataset.dropRelic);if(b.hasAttribute('data-remove-overflow'))dropLegacyRelic(b.dataset.removeOverflow)});
-$('openItemsBtn').onclick=()=>{renderItems();view('items')};
-document.body.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-buy-item'))buyMarketItem(b.dataset.buyItem);if(b.hasAttribute('data-use-item'))activateItem(b.dataset.useItem)});
-$('loginBtn').onclick=loginEnter;$('loginName').addEventListener('keydown',e=>{if(e.key==='Enter')loginEnter()});$('loginNewBtn').onclick=()=>{if(confirm('현재 진행 기록을 초기화하고 새 도전을 시작할까요?')){fresh();view('login');$('loginNewBtn').hidden=true;$('loginInfo').textContent='새 도전을 시작합니다. 닉네임을 입력해 주세요.'}};$('profileBtn').onclick=()=>{view('login');$('loginName').value=localStorage.getItem(LOGIN_KEY)||''};$('forgeBtn').onclick=forge;$('pledgeBtn').onclick=pledge;$('deliverBtn').onclick=deliver;$('soundBtn').onclick=()=>{s.sound=!s.sound;render()};$('pledgedList').addEventListener('click',e=>{const b=e.target.closest('[data-unpledge]');if(b)unpledge(Number(b.dataset.unpledge))});$('giveupBtn').onclick=()=>{if(s.phase==='play'&&confirm('계약을 포기하면 납품 실패 횟수가 1 증가합니다. 정말 포기하시겠습니까?'))failContract('계약을 포기했습니다.')};$('repairBtn').onclick=repair;$('buySwordBtn').onclick=showMarketPreview;$('buySwordBtn2').onclick=showMarketPreview;$('selectBestBtn').onclick=()=>{const w=best();if(w){s.selected=w.id;render();toast('최고가 검을 선택했습니다.')}};
-$('inventory').addEventListener('click',e=>{const btn=e.target.closest('[data-select]');if(btn&&s.phase==='play'){const id=Number(btn.dataset.select);if(s.pledged.includes(id)){toast('제단의 검은 먼저 회수해야 합니다.');return}s.selected=id;render();view('forge');toast('선택한 검으로 교체했습니다.')}});
-$('tributeNavBtn').onclick=()=>view('tribute');$('tributeNavBtn2').onclick=()=>view('tribute');$('backFromTribute').onclick=()=>view('forge');$('backFromTribute2').onclick=()=>view('forge');$('shopNavBtn').onclick=()=>showMarketPreview();$('rankNavBtn').onclick=openRanking;$('rankBackBtn').onclick=()=>{if(s.phase==='shop')showShop(0,0);else if(s.phase==='market')showMarketPreview();else if(['milestone','dead','failed'].includes(s.phase))showOutcome(s.phase);else view('forge')};$('rankSwordTab').onclick=()=>{rankCategory='sword';loadRanking()};$('rankRoundTab').onclick=()=>{rankCategory='round';loadRanking()};$('rankRefreshBtn').onclick=loadRanking;$('rankSubmitBtn').onclick=submitRanking;$('tributeInventory').addEventListener('click',e=>{const b=e.target.closest('[data-altar-id]');if(b&&s.phase==='play'){s.selected=Number(b.dataset.altarId);pledge()}});$('rulesBtn').onclick=showRules;$('catalogBtn').onclick=showCatalog;$('resetBtn').onclick=()=>{if(confirm('현재 도전 기록을 모두 삭제하고 새 게임을 시작할까요?'))fresh()};
-document.body.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-close')){if(s.phase==='shop'||s.phase==='dead'||s.phase==='failed'||s.phase==='milestone')return;view(returnView)}else if(b.hasAttribute('data-buy'))buyRelic(b.dataset.buy);else if(b.hasAttribute('data-trade'))buyRelic(b.dataset.trade,'sword');else if(b.hasAttribute('data-buy-sword')){buySword();showMarketPreview()}else if(b.hasAttribute('data-market-back'))view('forge');else if(b.hasAttribute('data-next'))afterRelic();else if(b.hasAttribute('data-market-next'))nextRound();else if(b.hasAttribute('data-endless'))enterEndless();else if(b.hasAttribute('data-open-ranking'))openRanking();else if(b.hasAttribute('data-fail-next'))advanceFailedRound();else if(b.hasAttribute('data-new'))fresh()});
-window.addEventListener('keydown',e=>{if($('forgeView').hidden)return;if((e.code==='Space'||e.key===' ')&&!e.repeat&&!['BUTTON','INPUT','TEXTAREA'].includes(document.activeElement.tagName)){e.preventDefault();forge()}if(e.key==='Enter'&&!e.repeat&&!['BUTTON','INPUT','TEXTAREA'].includes(document.activeElement.tagName))deliver()});
-view('login');
-})();
-</script>
-</body></html>
+
+function openSwordPicker(){
+ const layer=$('swordPickerOverlay'),list=$('swordPickerList');
+ list.innerHTML=s.swords.length?s.swords.map(w=>{
+  const locked=s.pledged.includes(w.id);
+  return `<button type="button" class="weapon ${w.id===s.selected?'selected':''}" data-pick-sword="${w.id}" ${locked?'disabled':''}><span class="wicon" style="color:${elementInfo(w)?.color||'#f2cf92'}">${elementInfo(w)?.icon||'⚔️'}</span><span class="wdetail"><b>+${w.lv} ${weaponTitle(w)}</b><small>${locked?'🏛️ 제단에 납품 예정 · 회수 후 선택':w.fever?'🔥 피버 '+w.fever+'회 남음':'🔥 피버 준비 '+(w.streak||0)+'/'+threshold()}</small></span><span class="wprice">${num(swordVal(w))} G</span></button>`;
+ }).join(''):'<div class="empty">현재 보유 검이 없습니다.</div>';
+ layer.hidden=false;
+ $('closeSwordPicker').focus();
+}
+function closeSwordPicker(){ $('swordPickerOverlay').hidden=true; }
+$('closeSwordPicker').onclick=closeSwordPicker;
+$('clearSwordPicker').onclick=()=>{s.selected=null;closeSwordPicker();render();toast('검 선택을 해제했습니다.')};
+$('swordPickerOverlay').addEventListener('click',e=>{
+ if(e.target===$('swordPickerOverlay')){closeSwordPicker();return}
+ const b=e.target.closest('[data-pick-sword]');if(!b||s.phase!=='play')return;
+ const id=Number(b.dataset.pickSword);
+ if(!s.swords.some(w=>w.id===id)||s.pledged.includes(id))return;
+ s.selected=id;closeSwordPicker();render();toast('선택한 검으로 강화할 수 있습니다.');
