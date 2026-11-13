@@ -180,7 +180,7 @@ body.forge-immersive{overflow-x:hidden}body.forge-immersive #forgeView{min-heigh
 @media(max-width:380px){.guide-shell{padding-left:10px;padding-right:10px}.guide-title{font-size:22px}.guide-card{padding:12px 10px}.guide-icon{width:54px;height:54px;font-size:30px}.guide-card h3{font-size:18px}.guide-outcome span{font-size:9px}.guide-outcome b{font-size:10px}}
 
 
-/* FORGE 1.10 - independent weapon fever and progressively blended elemental aura */
+/* FORGE 1.12 - independent weapon fever and progressively blended elemental aura */
 .element-blade.multi-fused .fusion-ring{position:absolute;inset:7% 12%;border-radius:50%;background:var(--fusion-palette);opacity:var(--fusion-intensity,.5);-webkit-mask:radial-gradient(transparent 46%,#000 53%,#000 59%,transparent 68%);mask:radial-gradient(transparent 46%,#000 53%,#000 59%,transparent 68%);filter:blur(3px) saturate(1.5);animation:forge-fusion-orbit 12s linear infinite;pointer-events:none}
 .element-blade .fusion-spark{position:absolute;z-index:2;display:grid;place-items:center;width:27px;height:27px;border-radius:50%;font-size:15px;color:#fff;text-shadow:0 0 8px var(--star-color),0 0 14px var(--star-color);background:radial-gradient(circle,#ffffff30,transparent 72%);transform:translate(-50%,-50%);filter:drop-shadow(0 0 4px var(--star-color));pointer-events:none}
 .element-blade.pure-light{filter:drop-shadow(0 0 13px #ffe8a6) drop-shadow(0 0 19px #b9c5ff) brightness(1.3)}
@@ -189,6 +189,138 @@ body.forge-immersive{overflow-x:hidden}body.forge-immersive #forgeView{min-heigh
 .sword-stage.full-spectrum:before{border-color:#fff8c3;box-shadow:0 0 35px #ffe7b58c,0 0 54px #9c7bfd72,inset 0 0 32px #e6caff77}
 @keyframes forge-fusion-orbit{to{transform:rotate(360deg)}}
 @media(max-width:390px){.element-blade .fusion-spark{width:21px;height:21px;font-size:12px}}
+
+/* v1.11 tribute/relic compact UX */
+#tributeView .screen-top,#shopView .screen-top{margin-bottom:12px;padding-bottom:12px}
+#tributeView .merchant-speech{min-height:0}
+#tributeView .altar-swords{max-height:132px;overflow:auto}
+#tributeView .tribute-arsenal .inventory{max-height:38dvh;overflow:auto}
+#tributeView .merchant-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#tributeView .merchant-actions .mainbtn{margin:0}
+#tributeView .tribute-arsenal .panel-header{padding-bottom:10px}
+#tributeView .tribute-arsenal{min-height:0}
+#shopView .screen-sheet{padding:18px 16px 22px}
+.market-compact{display:grid;gap:14px}
+.market-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.market-summary .info{background:#211c2f;border:1px solid #4f4260;border-radius:14px;padding:12px;text-align:center}
+.market-summary .info span{display:block;font-size:10px;color:#bbaec7}
+.market-summary .info b{display:block;margin-top:4px;font-size:18px;color:#ffde9c}
+.market-stock.compact{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;padding:14px;border-radius:16px;background:#1b1a2a;border:1px solid #55435f}
+.market-stock.compact .stock-icon{font-size:34px;width:48px;height:48px;display:grid;place-items:center;background:#2c2840;border-radius:12px}
+.market-stock.compact h3{margin:0 0 4px;font-size:16px}
+.market-stock.compact p{margin:0;font-size:12px;line-height:1.45;color:#c7bdd2;text-align:left}
+.market-stock.compact .stock-actions{display:grid;gap:8px;min-width:120px}
+.market-stock.compact .stock-actions strong{font-size:18px;color:#ffd79a;text-align:center}
+.market-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.compact-relic-wrap .relic-options{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:14px}
+.compact-relic-wrap .relic-card{padding:10px 8px;min-height:0;border-radius:14px}
+.compact-relic-wrap .relic-card .emoji{font-size:24px}
+.compact-relic-wrap .relic-card h3{font-size:11px;margin:6px 0 4px;line-height:1.25;min-height:28px}
+.compact-relic-wrap .relic-card .effect{font-size:10px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.compact-relic-wrap .relic-card .relic-rarity{font-size:10px}
+.compact-relic-wrap .relic-card .relic-drop{font-size:9px;line-height:1.3;margin-top:6px;color:#cab69d}
+.compact-relic-wrap .relic-buy-actions{grid-template-columns:1fr;gap:4px;margin-top:8px}
+.compact-relic-wrap .relic-buy-actions button{font-size:10px;padding:8px 3px}
+.compact-relic-wrap .modal-note{margin-top:12px}
+@media(max-width:900px){
+  #tributeView .tribute-grid{gap:12px}
+}
+@media(max-width:640px){
+  #tributeView .screen-page,#shopView .screen-page{padding-top:10px}
+  #tributeView .screen-top,#shopView .screen-top{font-size:14px;gap:8px}
+  #tributeView .merchant-art{height:108px}
+  #tributeView .demand{padding:10px 12px 0}
+  #tributeView .demand-value{font-size:24px}
+  #tributeView .demand-foot{font-size:10px}
+  #tributeView .merchant-speech{margin:8px 12px;padding:8px 10px;font-size:10px}
+  #tributeView .merchant-actions{padding:0 12px 10px}
+  #tributeView .merchant-actions .mainbtn,#tributeView .merchant-actions .ghostbtn{font-size:11px;padding:10px 4px}
+  #tributeView .round-note{padding:7px 12px;font-size:9px}
+  #tributeView .tribute-arsenal .inventory{max-height:30dvh}
+  #tributeView .weapon{padding:8px}
+  #tributeView .weapon .wicon{width:30px;height:30px;font-size:20px}
+  #tributeView .weapon b{font-size:11px}
+  #tributeView .weapon small{font-size:9px}
+  .market-summary{grid-template-columns:repeat(3,1fr);gap:6px}
+  .market-summary .info{padding:9px 4px;border-radius:11px}
+  .market-summary .info b{font-size:14px}
+  .market-summary .info span{font-size:9px}
+  .market-stock.compact{grid-template-columns:42px 1fr;gap:8px;padding:10px}
+  .market-stock.compact .stock-icon{width:42px;height:42px;font-size:28px}
+  .market-stock.compact .stock-actions{grid-column:1/-1;grid-template-columns:1fr 1fr;align-items:center}
+  .market-stock.compact .stock-actions strong{font-size:16px}
+  .market-controls{grid-template-columns:1fr 1fr;gap:8px}
+  .compact-relic-wrap .relic-options{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .compact-relic-wrap .relic-card{padding:8px 5px}
+  .compact-relic-wrap .relic-card .emoji{font-size:20px}
+  .compact-relic-wrap .relic-card h3{font-size:10px;min-height:24px}
+  .compact-relic-wrap .relic-card .effect{font-size:9px;-webkit-line-clamp:2}
+  .compact-relic-wrap .relic-card .relic-rarity,.compact-relic-wrap .relic-card .relic-drop{font-size:8px}
+  .compact-relic-wrap .relic-buy-actions button{font-size:9px;padding:7px 2px}
+}
+
+
+/* v1.12: once-per-round consumables, compact market, rare glitter */
+#forgeView .compact-tools{grid-template-columns:repeat(5,minmax(0,1fr))}
+#forgeView .tool-tile{padding:7px 2px;min-width:0}
+#forgeView .tool-tile b{font-size:10px;white-space:nowrap}
+#forgeView .tool-tile small{font-size:9px;white-space:nowrap}
+.market-subnote{text-align:center;font-size:11px;color:#cbb298;margin:0}
+.market-item-header{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;color:#f4c58a;font-weight:850}
+.market-item-odds{font-size:10px;line-height:1.5;color:#bcae9d;font-weight:500}
+.market-offer-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.market-offer{position:relative;overflow:hidden;display:flex;flex-direction:column;min-width:0;border:1px solid #6f523d;background:linear-gradient(150deg,#29221d,#17141b);border-radius:12px;padding:10px 9px;gap:4px}
+.market-offer .item-icon{font-size:24px;line-height:1.3;z-index:1}
+.market-offer .item-name{font-size:12px;font-weight:950;line-height:1.3;z-index:1}
+.market-offer .item-tier{font-size:10px;color:#e5c8aa;z-index:1}
+.market-offer .item-desc{color:#cbb8a5;font-size:10px;line-height:1.35;flex:1;z-index:1}
+.market-offer .item-price{color:#ffda9c;font-size:13px;font-weight:950;z-index:1}
+.market-offer button{font-size:11px;border-radius:8px;border:1px solid #bf8a58;padding:7px 4px;background:#58402b;color:#ffe5b7;font-weight:900;z-index:1}
+.market-offer button:disabled{opacity:.4}
+.market-offer.tier-rare{border-color:#629cc7}.market-offer.tier-epic{border-color:#c08ded;background:linear-gradient(160deg,#392445,#191321)}
+.market-offer.tier-hidden{border-color:#f6ce70;background:linear-gradient(135deg,#584020,#241928,#392b17);box-shadow:0 0 18px #ffcb503d,inset 0 0 20px #ffca3a22}
+.market-offer.tier-hidden .item-name{color:#fff1b5}
+.market-offer.tier-hidden:before,.relic-card.tier-legend:before,.relic-card.tier-epic:before,.artifact-pill.tier-legend:before,.artifact-pill.tier-epic:before{content:'✧  ✦  ✧';position:absolute;inset:-20px 0 auto;top:16px;pointer-events:none;text-align:center;letter-spacing:8px;color:#fff4a3;text-shadow:0 0 8px #ffe6b6,0 0 16px #fcc34f;opacity:0;animation:rare-spark 2.9s ease-in-out infinite;z-index:0}
+.market-offer.tier-hidden:after,.relic-card.tier-legend:after{content:'';position:absolute;inset:-160% -70%;background:linear-gradient(110deg,transparent 46%,#fff7b015 49%,#fff5c966 50%,#fff7b015 52%,transparent 55%);pointer-events:none;transform:rotate(13deg) translateX(-65%);animation:rare-shimmer 4.3s ease-in-out infinite}
+.relic-card.tier-legend,.relic-card.tier-epic,.artifact-pill.tier-legend,.artifact-pill.tier-epic{position:relative;overflow:hidden}
+.relic-card.tier-epic:before,.artifact-pill.tier-epic:before{color:#e4aaff;text-shadow:0 0 12px #c37aff;animation-duration:4s}
+.relic-card.tier-legend:before,.relic-card.tier-legend:after,.relic-card.tier-epic:before{z-index:0}
+.relic-card.tier-legend>* ,.relic-card.tier-epic>*{position:relative;z-index:1}
+.artifact-pill.tier-legend{border-color:#ecbc73;box-shadow:0 0 9px #ecb25555}
+.artifact-pill.tier-epic{border-color:#ae7ce2;box-shadow:0 0 7px #a17ce044}
+@keyframes rare-spark{0%,30%,90%,100%{opacity:0;transform:translateY(-5px)}48%,70%{opacity:.85;transform:translateY(3px)}}
+@keyframes rare-shimmer{0%,50%,100%{transform:rotate(13deg) translateX(-65%)}75%{transform:rotate(13deg) translateX(65%)}}
+.consumable-inventory{display:grid;gap:9px}
+.consumable-card{border:1px solid #78593e;border-radius:12px;background:#2b211a;padding:12px;display:flex;align-items:center;gap:10px}
+.consumable-card .item-icon{font-size:29px;flex:0 0 35px;text-align:center}
+.consumable-card .item-content{flex:1;min-width:0}
+.consumable-card .item-content strong{font-size:13px;display:block;color:#ffe1af}
+.consumable-card .item-content small{font-size:10px;line-height:1.5;color:#c9ad91;display:block}
+.consumable-card button{padding:9px 12px;border-radius:8px;background:#74502d;color:#fff0c4;border:1px solid #bf955e;font-weight:800;white-space:nowrap;font-size:11px}
+.consumable-card.tier-hidden{box-shadow:0 0 14px #eeb65a55;border-color:#ffcf78}
+.item-buff-hint{background:#231d1b;border:1px solid #7a5740;border-radius:10px;padding:10px 13px;margin-bottom:10px;color:#f3ce98;font-size:12px}
+@media(max-width:700px){
+ #shopView .screen-sheet{padding:11px 9px 15px}
+ #shopView .market-compact{gap:8px}
+ #shopView .market-summary .info{padding:7px 3px}
+ #shopView .market-stock.compact{padding:8px}
+ #shopView .market-stock.compact .stock-icon{width:34px;height:34px;font-size:22px}
+ #shopView .market-stock.compact h3{font-size:12px}
+ #shopView .market-stock.compact p{font-size:10px}
+ #shopView .market-offer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ #shopView .market-offer{min-height:105px;gap:2px;padding:7px 8px}
+ #shopView .market-offer .item-icon{font-size:19px}
+ #shopView .market-offer .item-name{font-size:11px}
+ #shopView .market-offer .item-desc{font-size:9px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ #shopView .market-offer .item-price{font-size:11px}
+ #shopView .market-offer button{padding:5px}
+ #shopView .market-item-header{font-size:11px}
+ #shopView .market-item-odds{font-size:9px}
+ .consumable-card{padding:9px}
+}
+@media(max-width:380px){#forgeView .tool-tile b{font-size:9px}#forgeView .tool-tile small{font-size:8px}}
+@media(prefers-reduced-motion:reduce){.market-offer.tier-hidden:before,.market-offer.tier-hidden:after,.relic-card.tier-legend:before,.relic-card.tier-epic:before,.relic-card.tier-legend:after,.artifact-pill:before{animation:none;opacity:.4}}
+
 </style>
 </head>
 <body>
@@ -201,14 +333,15 @@ body.forge-immersive{overflow-x:hidden}body.forge-immersive #forgeView{min-heigh
  <button class="mainbtn" id="loginBtn">⚔️ 대장간 입장</button><button type="button" class="login-guide-btn" id="loginGuideBtn">📘 게임 방법 · 1분 플레이 가이드</button><button class="ghostbtn login-alt" id="loginNewBtn" hidden>↻ 기존 기록 초기화 후 새 게임</button>
  </div><p class="login-foot">30라운드 생존 후 ♾️ 무한모드 · 글로벌 최고 검 / 생존 랭킹<br>닉네임 기반 기기 로그인 · 다른 기기로 진행 데이터가 동기화되지는 않습니다.</p></div>
 </section>
-<div id="forgeView" class="app-view" hidden><header class="wrap header"><div class="brand"><div class="brand-icon">⚒️</div><div><h1>검 강화하기 <span style="font-size:10px;color:#f3c37a">FORGE 1.10</span></h1><small>DRAGON TRIBUTE · THE FORGE</small></div></div><div class="status"><div><span>계약</span> <strong id="roundText">1 / 30</strong></div><div><span>목숨</span> <strong class="hearts" id="hearts">❤️❤️❤️</strong></div><div><span>금화</span> <strong id="gold">650 G</strong></div></div></header>
+<div id="forgeView" class="app-view" hidden><header class="wrap header"><div class="brand"><div class="brand-icon">⚒️</div><div><h1>검 강화하기 <span style="font-size:10px;color:#f3c37a">FORGE 1.12</span></h1><small>DRAGON TRIBUTE · THE FORGE</small></div></div><div class="status"><div><span>계약</span> <strong id="roundText">1 / 30</strong></div><div><span>목숨</span> <strong class="hearts" id="hearts">❤️❤️❤️</strong></div><div><span>금화</span> <strong id="gold">650 G</strong></div></div></header>
 <nav class="compact-top" aria-label="게임 주 메뉴">
-  <div class="compact-brand"><span>⚒️</span><div><strong>검 강화하기</strong><small>FORGE 1.10 · 대장간</small></div></div>
+  <div class="compact-brand"><span>⚒️</span><div><strong>검 강화하기</strong><small>FORGE 1.12 · 대장간</small></div></div>
   <div class="compact-top-actions"><button class="compact-action tribute" id="quickTributeBtn" aria-label="용의 납품 제단 열기">🐉 납품</button><button class="compact-action immersive" id="fullscreenBtn" aria-label="전체화면 전환" aria-pressed="false">⛶ 전체화면</button></div>
 </nav>
 <div class="compact-tools" aria-label="게임 보조 메뉴">
   <button class="tool-tile" id="openInventoryBtn"><span>🎒</span><b>검 보관함</b><small id="quickInventory">3자루</small></button>
   <button class="tool-tile" id="openRelicsBtn"><span>🔮</span><b>유물</b><small id="quickRelics">0 / 10</small></button>
+  <button class="tool-tile" id="openItemsBtn"><span>🧰</span><b>소모품</b><small id="quickItems">0개</small></button>
   <button class="tool-tile" id="openTraceBtn"><span>📖</span><b>강화 흔적</b><small id="quickTrace">기록 보기</small></button>
   <button class="tool-tile" id="openMoreBtn"><span>☰</span><b>더보기</b><small>랭킹·확률</small></button>
 </div>
@@ -223,7 +356,7 @@ body.forge-immersive{overflow-x:hidden}body.forge-immersive #forgeView{min-heigh
  <div class="impact-text" id="impactText" aria-live="polite"></div>
  </div><div class="sword-caption"><strong id="swordName">+0 낡은 철검</strong><small id="swordSubtitle">한 번의 타격, 다섯 가지 운명</small></div><div class="sword-info" id="swordQuickSelect" aria-label="현재 검 선택하기"><button type="button" class="sword-pick" aria-label="현재 강화. 검 보관함에서 검 선택"><span>현재 강화 ↗</span><b id="levelLabel">+0</b></button><button type="button" class="sword-pick" aria-label="검 판매 가치. 검 보관함에서 검 선택"><span>검 판매 가치 ↗</span><b id="valueLabel" style="color:#ffcf85">120 G</b></button><button type="button" class="sword-pick" aria-label="보유 검. 검 보관함에서 검 선택"><span>보유 검 ↗</span><b id="durabilityLabel">3자루</b></button></div><div class="inline-chances" aria-label="현재 검 강화 결과 확률"><div class="inline-chance-caption"><span>🎲 강화 결과 확률</span><small>현재 검 기준 · 유물/피버 반영</small></div><div class="inline-chance-grid"><div class="inline-chance destroy"><span>💀 파괴</span><strong id="inlineP0">—</strong></div><div class="inline-chance damage"><span>💔 손상</span><strong id="inlineP1">—</strong></div><div class="inline-chance hold"><span>🔩 유지</span><strong id="inlineP2">—</strong></div><div class="inline-chance success"><span>✨ 성공</span><strong id="inlineP3">—</strong></div><div class="inline-chance great"><span>🌟 대성공</span><strong id="inlineP4">—</strong></div></div></div><div class="chances"><div class="section-head"><span>강화 결과 확률</span><small>강화도·유물에 따라 변동</small></div><div class="chance-grid"><div class="chance destroy"><b>💀 파괴</b><strong id="p0">4%</strong></div><div class="chance damage"><b>💔 손상</b><strong id="p1">12%</strong></div><div class="chance hold"><b>🔩 유지</b><strong id="p2">21%</strong></div><div class="chance success"><b>✨ 성공</b><strong id="p3">53%</strong></div><div class="chance great"><b>🌟 대성공</b><strong id="p4">10%</strong></div></div></div><div class="forge-actions"><button class="mainbtn" id="forgeBtn">⚒️ 망치 내려치기 <span class="cost" id="forgeCost">무료 강화</span></button><div class="mini-actions"><button class="ghostbtn" id="repairBtn" hidden>🧰 검 수리</button><button class="ghostbtn portal-btn" id="tributeNavBtn2">🐉 납품 화면 →</button><button class="ghostbtn" id="buySwordBtn">🏪 3라운드마다 검 상점</button></div><div class="track" id="feverBox"><div class="trackline"><span id="feverName">🔥 피버까지 파괴 없는 강화</span><strong id="feverLabel">0 / 10</strong></div><div class="progress"><div id="feverBar"></div></div></div><div class="result" id="result">대장장이의 첫 망치질을 기다립니다.</div></div></section>
  <aside class="panel right" aria-label="검 보관함과 유물"><div class="panel-header"><div><div class="eyebrow">ARSENAL & RELICS</div><h2>🎒 검 보관함</h2></div><span class="tag" id="inventoryCount">1자루</span></div><div class="rightbody"><div class="turns"><div><span>⚒️ 강화 횟수</span><b id="turnText">무제한</b></div><div class="progress" hidden><div id="turnBar"></div></div><small class="tiny" id="turnHelp">강화는 무료 · 검은 모든 라운드에 걸쳐 보관됩니다.</small></div><div class="inventory" id="inventory"></div><div class="inventory-actions"><button class="ghostbtn" id="selectBestBtn">🏆 최고가 검 선택</button><button class="ghostbtn" id="buySwordBtn2">🏪 검 상점</button></div><div class="owned-area"><div class="section-head"><span>🔮 보유 유물 (최대 10개)</span><small id="relicCount">0 / 50</small></div><div class="artifact-list" id="ownedRelics"><div class="artifact-empty">계약 완료 후 유물 상점이 열립니다.</div></div></div><div class="log"><div class="section-head"><span>📖 대장간 기록</span><small>최근 100건</small></div><div class="loglines" id="logList"></div></div></div></aside>
-</main><footer class="wrap footer"><span>검 강화하기 · FORGE 1.10 · 저장은 현재 브라우저에 자동으로 기록됩니다.</span><span>단축키 Space: 망치 / Enter: 종 울리기 · 기기 저장 · 온라인 랭킹</span></footer>
+</main><footer class="wrap footer"><span>검 강화하기 · FORGE 1.12 · 저장은 현재 브라우저에 자동으로 기록됩니다.</span><span>단축키 Space: 망치 / Enter: 종 울리기 · 기기 저장 · 온라인 랭킹</span></footer>
 </div>
 <section class="app-view guide-page" id="guideView" hidden aria-label="게임 플레이 가이드">
   <div class="utility-head"><button type="button" class="subbtn" id="guideBackBtn">← 돌아가기</button><b>📘 게임 플레이 가이드</b><span id="guideCounter">1 / 6</span></div>
@@ -240,6 +373,7 @@ body.forge-immersive{overflow-x:hidden}body.forge-immersive #forgeView{min-heigh
 
 <section class="app-view screen-page utility-screen" id="inventoryView" hidden><div class="utility-head"><button class="subbtn" data-back-forge>← 대장간</button><b>🎒 검 보관함</b><span id="inventoryHeadCount">0자루</span></div><div class="utility-body" id="inventoryMount"></div></section>
 <section class="app-view screen-page utility-screen" id="relicsView" hidden><div class="utility-head"><button class="subbtn" data-back-forge>← 대장간</button><b>🔮 보유 유물</b><span id="relicsHeadCount">0 / 10</span></div><div class="utility-body"><p class="utility-lead">최대 10개까지 보유할 수 있습니다. 새 유물 획득 시 가득 찼다면 기존 유물 1개를 포기해야 합니다.</p><div id="relicsMount"></div><button class="ghostbtn utility-wide" id="relicCatalogBtn">📜 유물 50종 도감 보기</button></div></section>
+<section class="app-view screen-page utility-screen" id="itemsView" hidden><div class="utility-head"><button class="subbtn" data-back-forge>← 대장간</button><b>🧰 소모품 가방</b><span id="itemsHeadCount">0개</span></div><div class="utility-body"><p class="utility-lead">3라운드마다 상점에서 구매할 수 있습니다. 구매 후 다음 라운드에 1회 사용하거나 자동 발동하며, 남은 아이템은 해당 라운드 종료 시 사라집니다.</p><div id="itemsMount" class="consumable-inventory"></div></div></section>
 <section class="app-view screen-page utility-screen" id="traceView" hidden><div class="utility-head"><button class="subbtn" data-back-forge>← 대장간</button><b>📖 강화 흔적</b><span id="traceHeadCount">최근 기록</span></div><div class="utility-body"><p class="utility-lead">파괴·손상·유지·성공·대성공과 납품 내역을 최근 100건까지 보관합니다.</p><div id="traceMount"></div></div></section>
 <section class="app-view screen-page utility-screen" id="chanceView" hidden><div class="utility-head"><button class="subbtn" data-back-forge>← 대장간</button><b>🎲 강화 확률</b><span>선택한 검 기준</span></div><div class="utility-body"><p class="utility-lead">강화도와 보유한 유물에 따라 확률이 실시간으로 달라집니다.</p><div id="chanceMount"></div></div></section>
 <section class="app-view screen-page utility-screen" id="moreView" hidden><div class="utility-head"><button class="subbtn" data-back-forge>← 대장간</button><b>☰ 더보기</b></div><div class="utility-body utility-menu"><button class="menu-action" id="moreRankBtn">🏆 온라인 랭킹 <span>›</span></button><button class="menu-action" id="moreChanceBtn">🎲 강화 확률 <span>›</span></button><button class="menu-action" id="moreRulesBtn">📘 처음부터 배우는 게임 가이드 <span>›</span></button><button class="menu-action" id="moreSoundBtn">🔊 효과음 <span>›</span></button><button class="menu-action" id="moreProfileBtn">👤 프로필 <span>›</span></button><button class="menu-action danger" id="moreResetBtn">↻ 새로운 도전 <span>›</span></button></div></section>
@@ -380,7 +514,7 @@ const RELICS=[
  ['life','❤️','붉은 용의 심장','목숨 +1회 회복 (최대 3개)','생존']
 ].map(([id,icon,name,desc,type])=>({id,icon,name,desc,type}));
 if(RELICS.length!==50)throw Error('유물 개수 오류');
-const base=()=>({v:7,round:1,misses:0,lives:3,gold:650,forgeGoldEarned:0,milestoneSuccess:false,pledged:[],sound:true,swords:[{id:1,lv:0,bonus:0,form:0,streak:0,fever:0},{id:2,lv:0,bonus:0,form:0,streak:0,fever:0},{id:3,lv:0,bonus:0,form:0,streak:0,fever:0}],selected:1,nextId:4,turns:999999,maxTurns:999999,artifacts:[],offered:[],phase:'play',logs:['🐉 고룡 바르자크의 첫 계약이 시작되었습니다.'],stats:{attempts:0,successes:0,broken:0,delivered:0,bestSword:{name:'낡은 단검',value:120,level:0,form:0},bestRound:1},outcome:'대장장이의 첫 망치질을 기다립니다.',outcomeType:'',started:true});
+const base=()=>({v:7,round:1,misses:0,lives:3,gold:650,forgeGoldEarned:0,milestoneSuccess:false,pledged:[],sound:true,swords:[{id:1,lv:0,bonus:0,form:0,streak:0,fever:0},{id:2,lv:0,bonus:0,form:0,streak:0,fever:0},{id:3,lv:0,bonus:0,form:0,streak:0,fever:0}],selected:1,nextId:4,turns:999999,maxTurns:999999,artifacts:[],offered:[],items:[],activeBuffs:[],marketStock:[],marketStockRound:0,marketBought:[],phase:'play',logs:['🐉 고룡 바르자크의 첫 계약이 시작되었습니다.'],stats:{attempts:0,successes:0,broken:0,delivered:0,bestSword:{name:'낡은 단검',value:120,level:0,form:0},bestRound:1},outcome:'대장장이의 첫 망치질을 기다립니다.',outcomeType:'',started:true});
 let s;
 const num=n=>Math.floor(n).toLocaleString('ko-KR');
 const has=id=>s.artifacts.includes(id);
@@ -408,6 +542,11 @@ function restore(){
   const v=JSON.parse(raw);
   if(![3,4,5,6,7].includes(v.v)||!Array.isArray(v.swords)||!Array.isArray(v.artifacts)||!v.stats||v.round<1||v.round>1000)return base();
   const a={...base(),...v,v:7,forgeGoldEarned:Number(v.forgeGoldEarned)||0,milestoneSuccess:!!v.milestoneSuccess};
+  a.items=Array.isArray(v.items)?v.items.filter(x=>x&&CONSUMABLES.some(i=>i.id===x.id)&&Number.isInteger(x.charges)&&x.charges>0&&x.expiresRound>=a.round).slice(0,32):[];
+  a.activeBuffs=Array.isArray(v.activeBuffs)?v.activeBuffs.filter(x=>CONSUMABLES.some(i=>i.id===x&&i.mode==='buff')).slice(0,8):[];
+  a.marketStock=Array.isArray(v.marketStock)?v.marketStock.filter(id=>CONSUMABLES.some(i=>i.id===id)).slice(0,4):[];
+  a.marketBought=Array.isArray(v.marketBought)?v.marketBought.filter(id=>CONSUMABLES.some(i=>i.id===id)).slice(0,4):[];
+  a.marketStockRound=Number(v.marketStockRound)||0;
   delete a.streak;delete a.fever; // Old global meter cannot be reliably assigned to a specific sword.
   a.swords=v.swords.filter(w=>w&&typeof w.id==='number'&&typeof w.lv==='number').map(w=>({
    ...w,form:Math.max(0,Math.min(29,Number(w.form)||0)),
@@ -433,12 +572,14 @@ function restore(){
 
 function say(t){s.logs.unshift(t);s.logs=s.logs.slice(0,100)}
 function toast(t){document.querySelectorAll('.toast').forEach(e=>e.remove());const el=document.createElement('div');el.className='toast';el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2400)}
-function prob(w){if(!w)return [0,0,0,0,0];const l=w.lv;let a=[Math.min(44,8+l*1.6),Math.min(33,13+l*1.15),20+l*.2,Math.max(17,50-l*1.85),Math.max(2,9-l*.5)];const sum=a.reduce((x,y)=>x+y);a=a.map(v=>v/sum*100);const idx={destroy:0,damage:1,hold:2,success:3,great:4};
+function prob(w){if(!w)return [0,0,0,0,0];const l=w.lv;let a=[Math.min(42,7+l*1.55),Math.min(33,13+l*1.15),24+l*.25,Math.max(15,47-l*1.85),Math.max(2,9-l*.5)];const sum=a.reduce((x,y)=>x+y);a=a.map(v=>v/sum*100);const idx={destroy:0,damage:1,hold:2,success:3,great:4};
  const shift=(from,to,points)=>{let i=idx[from],j=idx[to];if(i===j)return;let amount=Math.min(a[i],Math.max(0,points));a[i]-=amount;a[j]+=amount};
  const boost=(to,points)=>{const sources=['hold','damage','destroy','success','great'].filter(k=>k!==to);for(const source of sources){const done=a[idx[to]];shift(source,to,points);points-=(a[idx[to]]-done);if(points<=0.0001)break}};
  const lessen=(from,points)=>shift(from,from==='hold'?'success':'hold',points);
  if(has('sharp'))boost('success',4);if(has('spark')){boost('success',6);boost('damage',4)}if(has('star'))boost('great',3);if(has('nova')){boost('great',6);boost('destroy',3)}if(has('iris'))lessen('destroy',3);if(has('scale'))lessen('destroy',6);if(has('curse')){boost('success',11);boost('destroy',6)}if(has('soft'))lessen('damage',7);if(has('balanced'))shift('hold','success',4);if(has('rookie')&&l<=3)boost('success',9);if(has('master')&&l>=7)boost('success',7);if(has('bright')&&l>=6)boost('great',5);if(has('highshield')&&l>=8)lessen('destroy',7);if(has('greedy')){boost('damage',5);boost('success',10)}if(has('calm')){lessen('destroy',4);boost('hold',8)}if(has('riskvalue'))boost('damage',9);if(has('durable'))lessen('destroy',2);if(has('cost20'))shift('hold','success',4);if(has('cost40'))lessen('destroy',3);if(has('repairdiscount'))lessen('damage',4);
  if((w.fever||0)>0){lessen('destroy',100);if(has('feversafe'))lessen('damage',100);if(has('feversuccess'))boost('success',12);if(has('fevergreat'))boost('great',8)}
+ if(s.activeBuffs.includes('amplifier'))lessen('destroy',100);if(s.activeBuffs.includes('whetstone'))boost('success',4);if(s.activeBuffs.includes('ember'))boost('great',3);if(s.activeBuffs.includes('lucky'))boost('great',7);
+ if(s.activeBuffs.includes('rainbowhammer'))a=[0,0,0,0,100];else if(s.activeBuffs.includes('masterhammer'))a=[0,0,0,100,0];
  const rounded=a.map(v=>Math.round(v*10)/10);rounded[2]=Math.round((100-rounded[0]-rounded[1]-rounded[3]-rounded[4])*10)/10;return rounded}
 function threshold(){return Math.max(3,10-(has('fever2')?2:0)-(has('fever4')?4:0)-(has('turn3')?1:0))}
 const RELIC_COST_MULT={sharp:2.1,spark:2.6,star:1.9,nova:2.4,iris:2.9,scale:4.4,curse:2.2,soft:1.7,balanced:1.35,rookie:1.7,master:2.5,bright:3.45,highshield:4.2,greedy:1.8,calm:2.1,fever2:2.5,fever4:4.05,feverplus2:2.1,feverplus4:3.3,feversuccess:2.55,fevergreat:3.8,feversafe:4.3,fevergold:1.5,fevervalue:3.15,feverblade:3.2,extra1:3.0,extra2:4.8,cheap:1.7,sturdy:1.4,salvage:3.25,value14:2.15,value28:3.45,greatvalue:3.2,successvalue:2.2,pristine:1.55,deliverygold:1.85,successgold:1.2,holdgold:1.0,damagegold:1.1,breakgold:1.25,riskvalue:1.75,roundgold:1.45,cost20:1.5,cost40:2.5,turn3:1.65,turn6:2.15,durable:1.9,repairdiscount:1.55,damageblock:2.8,life:4.9};
@@ -451,6 +592,51 @@ const RELIC_TIERS={
 };
 const RELIC_ORDER=['common','rare','epic','legend'];
 const MAX_RELICS=10;
+const CONSUMABLES=[
+ {id:'oil',icon:'🛢️',name:'윤활유',tier:'normal',weight:1.3,power:1.0,desc:'다음 손상 1회를 유지로 변경',mode:'passive'},
+ {id:'whetstone',icon:'🪨',name:'휴대 숫돌',tier:'normal',weight:1.2,power:1.1,desc:'다음 강화 성공 확률 +4%p',mode:'buff'},
+ {id:'coinbag',icon:'💰',name:'금화 주머니',tier:'normal',weight:1.2,power:1.1,desc:'사용 시 금화 350G 즉시 획득',mode:'instant'},
+ {id:'oakward',icon:'🪵',name:'나무 수호패',tier:'normal',weight:1,power:1.3,desc:'다음 파괴 1회를 손상으로 변경',mode:'passive'},
+ {id:'ember',icon:'🔥',name:'작은 불씨병',tier:'normal',weight:1.15,power:1.2,desc:'다음 강화 대성공 확률 +3%p',mode:'buff'},
+ {id:'bandage',icon:'🩹',name:'보강 붕대',tier:'normal',weight:1.1,power:1.2,desc:'다음 손상 1회를 유지로 변경',mode:'passive'},
+ {id:'spareblade',icon:'🗡️',name:'예비 칼날',tier:'normal',weight:0.95,power:1.6,desc:'사용 시 기본 검 1자루 지급',mode:'instant'},
+ {id:'focus',icon:'🧿',name:'집중약',tier:'normal',weight:0.9,power:1.8,desc:'다음 유지 1회를 성공으로 변경',mode:'passive'},
+ {id:'dragonscale',icon:'🐲',name:'용의 비늘',tier:'rare',weight:0.95,power:2.0,desc:'다음 파괴 1회를 무효화 (자동)',mode:'passive'},
+ {id:'dragonbreath',icon:'🌬️',name:'용의 숨결',tier:'rare',weight:0.85,power:2.6,desc:'선택한 검에 피버 2회 적용',mode:'instant'},
+ {id:'amplifier',icon:'⚗️',name:'강화 증폭제',tier:'rare',weight:0.8,power:2.6,desc:'다음 1회 강화에서 파괴 확률 0%',mode:'buff'},
+ {id:'lucky',icon:'🍀',name:'고급 행운의 부적',tier:'rare',weight:0.75,power:2.4,desc:'다음 강화 대성공 확률 +7%p',mode:'buff'},
+ {id:'clock',icon:'⏰',name:'시간회귀 시계',tier:'rare',weight:0.48,power:3.2,desc:'다음 파괴를 직전 상태로 되돌림 (자동)',mode:'passive'},
+ {id:'stabilizer',icon:'⚖️',name:'마법 안정제',tier:'rare',weight:0.72,power:2.5,desc:'손상 2회를 유지로 변경 (자동)',mode:'passive',charges:2},
+ {id:'soulstone',icon:'💠',name:'영혼의 보석',tier:'rare',weight:0.52,power:3.3,desc:'사용 시 +2 검 1자루 즉시 지급',mode:'instant'},
+ {id:'masterhammer',icon:'🔨',name:'명장의 망치',tier:'epic',weight:0.7,power:4.0,desc:'다음 강화 반드시 성공 (+1)',mode:'buff'},
+ {id:'hourglass',icon:'⌛',name:'영겁의 모래시계',tier:'epic',weight:0.55,power:4.4,desc:'파괴 2회 무효화 (자동)',mode:'passive',charges:2},
+ {id:'stormflame',icon:'🌠',name:'폭풍의 불씨',tier:'epic',weight:0.38,power:4.9,desc:'선택한 검에 피버 5회 추가',mode:'instant'},
+ {id:'dragonheart',icon:'💛',name:'태고룡의 심장',tier:'hidden',weight:0.5,power:8.5,desc:'파괴 3회 무효화 (자동)',mode:'passive',charges:3},
+ {id:'rainbowhammer',icon:'🌈',name:'창세의 망치',tier:'hidden',weight:0.25,power:10.0,desc:'다음 강화 반드시 대성공 (+2 · 외형 진화)',mode:'buff'}
+];
+if(CONSUMABLES.length!==20)throw Error('소모품은 정확히 20개여야 합니다.');
+const ITEM_TIERS={normal:{label:'노멀',mult:1.2},rare:{label:'레어',mult:3.3},epic:{label:'에픽',mult:6.7},hidden:{label:'히든',mult:13}};
+const ITEM_RARITY_ORDER=['normal','rare','epic','hidden'];
+function itemOdds(round=s.round){if(round<9)return {normal:78,rare:22,epic:0,hidden:0};if(round<18)return {normal:64,rare:29,epic:7,hidden:0};if(round<30)return {normal:52,rare:33,epic:13,hidden:2};return {normal:44,rare:33,epic:19,hidden:4}}
+function itemPrice(item){return Math.round(swordBuyPrice()*ITEM_TIERS[item.tier].mult*item.power)}
+function chooseWeighted(pool,weight){let total=pool.reduce((a,b)=>a+Math.max(0,weight(b)),0),v=Math.random()*total;for(const x of pool){v-=Math.max(0,weight(x));if(v<=0)return x}return pool[pool.length-1]}
+function drawMarketItems(){if(s.marketStockRound===s.round&&Array.isArray(s.marketStock))return;const pool=[...CONSUMABLES],offers=[];const odds=itemOdds();for(let i=0;i<4&&pool.length;i++){const tiers=ITEM_RARITY_ORDER.filter(t=>pool.some(x=>x.tier===t)&&odds[t]>0);const tier=chooseWeighted(tiers,t=>odds[t]);const matches=pool.filter(x=>x.tier===tier);const chosen=chooseWeighted(matches,x=>x.weight);offers.push(chosen.id);pool.splice(pool.indexOf(chosen),1)}s.marketStockRound=s.round;s.marketStock=offers;s.marketBought=[];save()}
+function itemCard(item){const cost=itemPrice(item),owned=(s.marketBought||[]).includes(item.id);return `<div class="market-offer tier-${item.tier}"><span class="item-icon">${item.icon}</span><strong class="item-name">${item.name}</strong><small class="item-tier">${ITEM_TIERS[item.tier].label}${item.tier==='hidden'?' ✨':''}</small><div class="item-desc">${item.desc}</div><strong class="item-price">${num(cost)} G</strong><button data-buy-item="${item.id}" ${owned||s.gold<cost?'disabled':''}>${owned?'구매 완료':'구매'}</button></div>`}
+function buyMarketItem(id){if(s.phase!=='market')return;drawMarketItems();const item=CONSUMABLES.find(i=>i.id===id);if(!item||!s.marketStock.includes(id)||s.marketBought.includes(id))return;const cost=itemPrice(item);if(s.gold<cost)return toast('금화가 부족합니다.');s.gold-=cost;s.marketBought.push(id);s.items.push({id,charges:item.charges||1,expiresRound:s.round+1});say(`${item.icon} 일회성 아이템 구매: ${item.name} (다음 ${s.round+1}라운드 사용)`);render();showMarketPreview();toast(`${item.name} 구매 완료! 다음 라운드에서 사용하세요.`)}
+function itemCount(){return (s.items||[]).reduce((sum,x)=>sum+(x.charges||0),0)}
+function consumeItem(id){const index=s.items.findIndex(x=>x.id===id&&x.charges>0&&x.expiresRound>=s.round);if(index<0)return false;const it=s.items[index];it.charges--;if(it.charges<=0)s.items.splice(index,1);return true}
+function ownsItem(id){return (s.items||[]).some(x=>x.id===id&&x.charges>0&&x.expiresRound>=s.round)}
+function activateItem(id){if(s.phase!=='play')return toast('아이템은 라운드 진행 중 사용할 수 있습니다.');const item=CONSUMABLES.find(x=>x.id===id);if(!item||item.mode==='passive'||!ownsItem(id))return;const w=selected();if(!w&&!['coinbag','spareblade','soulstone'].includes(id))return toast('먼저 강화할 검을 선택해 주세요.');if(!consumeItem(id))return;
+ if(item.mode==='buff'){s.activeBuffs.push(id)}
+ else if(id==='coinbag')s.gold+=350;
+ else if(id==='spareblade')makeSword();
+ else if(id==='soulstone'){const nw=makeSword();nw.lv=2;recordBest(nw)}
+ else if(id==='dragonbreath')w.fever=(w.fever||0)+2;
+ else if(id==='stormflame')w.fever=(w.fever||0)+5;
+ say(`${item.icon} ${item.name} 사용!`);s.outcome=`${item.icon} ${item.name} 효과 적용`;render();view('items');toast(`${item.name} 사용 완료`)}
+function applyPassiveResult(outcome){const cases=[['clock',0,2,'⏰ 시간회귀! 파괴 직전으로 복원'],['dragonheart',0,2,'💛 태고룡의 심장 보호'],['hourglass',0,2,'⌛ 영겁의 모래시계 보호'],['dragonscale',0,2,'🐲 용의 비늘 보호'],['oakward',0,1,'🪵 나무 수호패로 파괴→손상'],['focus',2,3,'🧿 집중약으로 유지→성공'],['stabilizer',1,2,'⚖️ 마법 안정제로 손상 방지'],['oil',1,2,'🛢️ 윤활유로 손상 방지'],['bandage',1,2,'🩹 보강 붕대로 손상 방지']];for(const [id,from,to,msg] of cases){if(outcome===from&&consumeItem(id)){say(msg);return {outcome:to,notice:msg}}}return {outcome,notice:''}}
+function renderItems(){const mount=$('itemsMount');if(!mount)return;const items=(s.items||[]).filter(x=>x.expiresRound>=s.round&&x.charges>0);$('quickItems').textContent=items.length+'개';$('itemsHeadCount').textContent=items.length+'개';const buffs=(s.activeBuffs||[]).map(id=>CONSUMABLES.find(i=>i.id===id)?.name).filter(Boolean);mount.innerHTML=(buffs.length?`<div class="item-buff-hint">⚒️ 다음 강화 예약 효과: ${buffs.join(' · ')}</div>`:'')+(items.length?items.map(x=>{const item=CONSUMABLES.find(i=>i.id===x.id);if(!item)return '';return `<div class="consumable-card tier-${item.tier}"><span class="item-icon">${item.icon}</span><div class="item-content"><strong>${item.name} · ${ITEM_TIERS[item.tier].label}</strong><small>${item.desc}<br>남은 적용 ${x.charges}회 · ${x.expiresRound}라운드 종료 후 소멸</small></div>${item.mode==='passive'?'<button disabled>자동 발동</button>':`<button data-use-item="${item.id}" ${s.phase!=='play'?'disabled':''}>사용</button>`}</div>`}).join(''):'<div class="empty">사용할 소모품이 없습니다. 3라운드마다 열리는 상점에서 구매하세요.</div>')}
+
 function relicTier(r){const power=RELIC_COST_MULT[r.id]||1;return power>=3.7?'legend':power>=2.5?'epic':power>=1.65?'rare':'common'}
 function relicRarity(r){const t=relicTier(r);return [t,RELIC_TIERS[t].label]}
 function relicOdds(){
@@ -527,8 +713,8 @@ function render(){const w=selected();$('roundText').textContent=s.round<=CLEAR_R
  $('turnText').textContent='무제한';$('turnBar').style.width='100%';$('turnHelp').textContent='무료 · 무제한 강화 / 유물 금화보너스 '+num(s.forgeGoldEarned||0)+' / '+num(dailyForgeCap())+' G (오늘 한도)';
  $('feverBox').classList.toggle('fever',!!w&&(w.fever||0)>0);$('feverName').textContent=w?(w.fever>0?'🔥 현재 검의 피버! 파괴 방지 발동 중':'🔥 선택한 검만 무파괴 강화 횟수가 누적됩니다'):'🔥 검을 선택하면 개별 피버를 확인할 수 있습니다';$('feverLabel').textContent=w?(w.fever>0?`${w.fever}회 남음`:`${w.streak||0} / ${threshold()}`):'—';$('feverBar').style.width=w?Math.min(100,((w.fever>0?w.fever/(10+(has('feverplus2')?2:0)+(has('feverplus4')?4:0)+(has('turn6')?2:0)):(w.streak||0)/threshold()))*100)+'%':'0%';$('result').textContent=s.outcome;$('result').className='result '+s.outcomeType;
  $('inventoryCount').textContent=s.swords.length+'자루';$('inventory').innerHTML=s.swords.length?s.swords.map(x=>`<button class="weapon ${x.id===s.selected?'selected':''} ${s.pledged.includes(x.id)?'deposited':''}" data-select="${x.id}"><span class="wicon" style="color:${elementInfo(x)?.color||'#f0ca92'}">${elementInfo(x)?.icon||'⚔️'}</span><span class="wdetail"><b>+${x.lv} ${weaponTitle(x)}</b><small>${s.pledged.includes(x.id)?'🏛️ 제단에 보관 중 · 회수하려면 제단 클릭':'강화 +'+x.lv+' · '+(x.fever>0?'🔥 이 검의 피버 '+x.fever+'회':`🔥 이 검 ${x.streak||0}/${threshold()}`)+' · '+(x.id===s.selected?'선택 중':'터치하여 선택')}</small></span><span class="wprice">${num(swordVal(x))} G</span></button>`).join(''):'<div class="empty">남은 검이 없습니다. 상점은 3라운드마다 열립니다. 납품을 포기하면 다음 라운드로 진행합니다.</div>';
- $('selectBestBtn').disabled=frozen||!best();$('soundBtn').textContent=s.sound?'🔊 효과음':'🔇 음소거';$('relicCount').textContent=`${s.artifacts.length} / ${MAX_RELICS}`;$('ownedRelics').innerHTML=s.artifacts.length?s.artifacts.map(id=>{const r=RELICS.find(x=>x.id===id);return `<span class="artifact-pill" title="${r.desc}">${r.icon} ${r.name}</span>`}).join(''):'<div class="artifact-empty">납품 성공 시에만 유물 3개 중 1개를 구매할 수 있습니다.</div>';
- $('quickInventory').textContent=s.swords.length+'자루';$('inventoryHeadCount').textContent=s.swords.length+'자루';$('quickRelics').textContent=s.artifacts.length+' / '+MAX_RELICS;$('relicsHeadCount').textContent=s.artifacts.length+' / '+MAX_RELICS;$('quickTarget').textContent=num(target())+' G';$('quickTrace').textContent=s.logs.length+'건';$('traceHeadCount').textContent=s.logs.length+'건';
+ $('selectBestBtn').disabled=frozen||!best();$('soundBtn').textContent=s.sound?'🔊 효과음':'🔇 음소거';$('relicCount').textContent=`${s.artifacts.length} / ${MAX_RELICS}`;$('ownedRelics').innerHTML=s.artifacts.length?s.artifacts.map(id=>{const r=RELICS.find(x=>x.id===id);return `<span class="artifact-pill tier-${relicTier(r)}" title="${r.desc}">${r.icon} ${r.name}</span>`}).join(''):'<div class="artifact-empty">납품 성공 시에만 유물 3개 중 1개를 구매할 수 있습니다.</div>';
+ renderItems();$('quickInventory').textContent=s.swords.length+'자루';$('inventoryHeadCount').textContent=s.swords.length+'자루';$('quickRelics').textContent=s.artifacts.length+' / '+MAX_RELICS;$('relicsHeadCount').textContent=s.artifacts.length+' / '+MAX_RELICS;$('quickTarget').textContent=num(target())+' G';$('quickTrace').textContent=s.logs.length+'건';$('traceHeadCount').textContent=s.logs.length+'건';
   $('myBestSword').textContent=(s.stats.bestSword?num(s.stats.bestSword.value)+'G · '+s.stats.bestSword.name:'—');$('myBestRound').textContent=(s.stats.bestRound||s.round)+'R';$('logList').innerHTML=s.logs.map(v=>'<div>'+escapeHtml(v)+'</div>').join('');updateTributeList();save()}
 function escapeHtml(str){return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 let audioCtx;
@@ -540,10 +726,12 @@ function forge(){
  const feverWas=(w.fever||0)>0;
  s.stats.attempts++;
  const p=prob(w),r=Math.random()*100;
+ const pendingBuffs=[...s.activeBuffs];s.activeBuffs=[];
  let sum=0,o=4;
  for(let i=0;i<5;i++){sum+=p[i];if(r<sum){o=i;break}}
+ const protection=applyPassiveResult(o);o=protection.outcome;
  const words=['💀 파괴!','💔 손상!','🔩 유지','✨ 성공!','🌟 대성공!!'];
- s.outcomeType=['destroy','damage','','success','great'][o];let msg='';
+ s.outcomeType=['destroy','damage','','success','great'][o];let msg=protection.notice?' '+protection.notice:'';
  if(o===0){
   s.stats.broken++;w.streak=0;w.fever=0;
   const val=swordVal(w);s.swords=s.swords.filter(x=>x.id!==w.id);s.selected=best()?.id||null;
@@ -559,7 +747,7 @@ function forge(){
    s.outcome=blocked?'🛡️ 손상 방지! 강화 단계 유지':'💔 손상! 강화 단계 -1';say('💔 검 손상, +'+w.lv);
   }else if(o===2){
    if(has('holdgold'))awardForgeGold(20);
-   s.outcome='🔩 유지 — 강화 단계가 그대로입니다.';say('🔩 검 상태 유지');
+   s.outcome=protection.notice||'🔩 유지 — 강화 단계가 그대로입니다.';say('🔩 검 상태 유지');
   }else{
    const beforeCount=visibleElements(w).length;
    w.lv=Math.min(70,w.lv+(o===4?2:1));
@@ -575,7 +763,7 @@ function forge(){
    if(o===3&&has('successvalue'))w.bonus+=.05;
    if(feverWas&&has('fevervalue'))w.bonus+=.10;
    recordBest(w);
-   s.outcome=`${words[o]} +${w.lv} ${weaponTitle(w)} · ${num(swordVal(w))}G${o===4?' · 무기 진화!':''}`;say(s.outcome);
+   s.outcome=`${protection.notice?protection.notice+' · ':''}${words[o]} +${w.lv} ${weaponTitle(w)} · ${num(swordVal(w))}G${o===4?' · 무기 진화!':''}`;say(s.outcome);
   }
   // Only this sword's enhancement attempts count. Damage and hold also count.
   if(!feverWas){
@@ -614,7 +802,7 @@ function pickRelics(count){
  }
  return picks;
 }
-function nextRound(){s.phase='play';s.pledged=[];s.round++;s.forgeGoldEarned=0;awakenSwords();s.turns=baseTurns();s.maxTurns=s.turns;for(let i=0;i<3;i++)makeSword();if(has('extra1'))makeSword();if(has('extra2')){makeSword();makeSword()}if(has('roundgold'))s.gold+=300;s.selected=best()?.id||null;s.offered=[];s.stats.bestRound=Math.max(s.stats.bestRound||1,s.round);s.outcome=`🐉 ${s.round}라운드 계약 시작! 목표 ${num(target())}G`;s.outcomeType='';say(`📜 ${s.round}라운드 목표 ${num(target())}G · 강화 횟수 무제한`);closeModal();render()}
+function nextRound(){s.phase='play';s.pledged=[];s.round++;s.items=(s.items||[]).filter(x=>x.expiresRound>=s.round);s.activeBuffs=[];s.forgeGoldEarned=0;awakenSwords();s.turns=baseTurns();s.maxTurns=s.turns;for(let i=0;i<3;i++)makeSword();if(has('extra1'))makeSword();if(has('extra2')){makeSword();makeSword()}if(has('roundgold'))s.gold+=300;s.selected=best()?.id||null;s.offered=[];s.stats.bestRound=Math.max(s.stats.bestRound||1,s.round);s.outcome=`🐉 ${s.round}라운드 계약 시작! 목표 ${num(target())}G`;s.outcomeType='';say(`📜 ${s.round}라운드 목표 ${num(target())}G · 강화 횟수 무제한`);closeModal();render()}
 function afterRelic(){if(s.round%3===0){s.phase='market';render();showMarketPreview()}else nextRound()}
 let pendingRelicPurchase=null;
 function buyRelic(id,method='gold'){
@@ -682,7 +870,7 @@ function advanceFailedRound(){if(s.phase!=='failed')return;
  if(s.round%3===0){s.phase='market';render();showMarketPreview()}else nextRound()
 }
 function enterEndless(){if(s.phase!=='milestone')return;if(s.milestoneSuccess){s.phase='shop';s.offered=pickRelics(3);render();showShop(0,0)}else{afterRelic()}}
-function view(name){for(const id of ['login','forge','guide','tribute','shop','result','info','rank','inventory','relics','trace','chance','more','relicSwap']){const el=$(id+'View');if(el)el.hidden=(id!==name)}window.scrollTo(0,0)}
+function view(name){for(const id of ['login','forge','guide','tribute','shop','result','info','rank','inventory','relics','items','trace','chance','more','relicSwap']){const el=$(id+'View');if(el)el.hidden=(id!==name)}window.scrollTo(0,0)}
 let returnView='forge';
 function showModal(html){const name=s.phase==='shop'||s.phase==='market'?'shop':['milestone','dead','failed'].includes(s.phase)?'result':'info';if(name==='info')returnView=['tribute','relics','more','chance','inventory','trace'].find(id=>!$(id+'View').hidden)||'forge';$(name+'Content').innerHTML=html;view(name)}
 function closeModal(){view('forge')}
@@ -690,10 +878,10 @@ function updateTributeList(){const n=$('tributeInventory');if(!n)return;n.innerH
 
 function showShop(value,reward){
  const cards=s.offered.map(id=>{const r=RELICS.find(x=>x.id===id),cost=shopCost(r),trade=s.swords.some(w=>swordVal(w)>=cost),tier=relicRarity(r);
- return `<div class="relic-card tier-${tier[0]}"><div class="emoji">${r.icon}</div><h3>${r.name}</h3><span class="relic-rarity ${tier[0]}">${tier[1]} · ${num(cost)} G</span><div class="effect"><span style="color:#ddbca3">${r.type}</span><br>${r.desc}</div><div class="relic-drop">🎲 이 유물 1회 등장 확률 약 ${relicChancePerSlot(r).toFixed(1)}%</div><div class="relic-buy-actions"><button data-buy="${r.id}" ${s.gold<cost?'disabled':''}>🪙 ${num(cost)} G</button><button class="trade-btn" data-trade="${r.id}" ${trade?'':'disabled'}>⚔️ 검 교환</button></div></div>`}).join('');
- showModal(`<div class="subhead">CONTRACT COMPLETE · ROUND ${s.round}/${CLEAR_ROUND}</div><div class="emblem">🐉✨</div><h2>계약 성사!</h2><div class="bigstat">${num(value)} G 납품 성공</div><p>금화 ${num(reward)} G를 받았습니다.<br>고룡이 <b>희귀도별 확률 추첨</b>으로 유물 3종을 준비했습니다. <b>하나만 구매</b>할 수 있습니다. 보유 ${s.artifacts.length}/${MAX_RELICS}개<br>금화로 구매하거나 <b>남은 검 1자루</b>로 교환할 수 있습니다.<br>보유 금화: <b style="color:#ffda96">${num(s.gold)} G</b></p><div class="relic-odds">🎲 ${s.round}라운드 유물 출현 비율 (1회 추첨)<br><b>${rarityOddsText()}</b><small>미보유 유물만 출현 · 등급 내에서도 효과가 강한 유물은 더 드뭅니다. 전설 유물은 10라운드부터 등장합니다.</small></div><div class="relic-options">${cards||'<div class="empty">모든 유물을 수집했습니다. 다음 라운드로 진행하세요!</div>'}</div><div class="modal-actions"><button class="ghostbtn" data-next>유물 구매 없이 계속 →</button></div><div class="modal-note">유물은 최대 10개까지 보유할 수 있습니다. 10개 보유 중 구매하려면 기존 유물 1개를 포기해야 합니다.</div>`)
+ return `<div class="relic-card tier-${tier[0]}"><div class="emoji">${r.icon}</div><h3>${r.name}</h3><span class="relic-rarity ${tier[0]}">${tier[1]} · ${num(cost)} G</span><div class="effect"><span style="color:#ddbca3">${r.type}</span><br>${r.desc}</div><div class="relic-drop">🎲 ${relicChancePerSlot(r).toFixed(1)}%</div><div class="relic-buy-actions"><button data-buy="${r.id}" ${s.gold<cost?'disabled':''}>🪙 구매</button><button class="trade-btn" data-trade="${r.id}" ${trade?'':'disabled'}>⚔️ 교환</button></div></div>`}).join('');
+ showModal(`<div class="compact-relic-wrap"><div class="subhead">CONTRACT COMPLETE · ROUND ${s.round}/${CLEAR_ROUND}</div><div class="emblem">🐉✨</div><h2>계약 성사!</h2><div class="info-tiles"><div><strong>납품 성공</strong><br>${num(value)} G</div><div><strong>획득 금화</strong><br>${num(reward)} G</div><div><strong>보유 유물</strong><br>${s.artifacts.length}/${MAX_RELICS}</div><div><strong>현재 금화</strong><br>${num(s.gold)} G</div></div><div class="relic-odds">🎲 출현 비율: <b>${rarityOddsText()}</b><small>3개 중 1개만 선택 가능 · 금화 구매 또는 남은 검 1자루와 교환</small></div><div class="relic-options">${cards||'<div class="empty">모든 유물을 수집했습니다. 다음 라운드로 진행하세요!</div>'}</div><div class="modal-actions"><button class="ghostbtn" data-next>건너뛰고 다음 라운드 →</button></div><div class="modal-note">유물 최대 10개 · 가득 찼다면 1개를 포기한 뒤 새 유물을 획득합니다.</div></div>`)
 }
-function showMarketPreview(){if(s.phase!=='market'){toast('검 구매 상점은 3 · 6 · 9 … 라운드가 끝난 후 열립니다.');return}const cost=swordBuyPrice();$('shopContent').innerHTML=`<div class="subhead">MERCHANT MARKET · EVERY 3 ROUNDS</div><div class="emblem">🏪</div><h2>용의 대장간 상점</h2><p>${s.round}라운드 종료 후 정기 상점이 열렸습니다.<br>보관함을 유지한 채 새 검을 원하는 만큼 구매하고 다음 라운드로 진행하세요.</p><div class="market-stock"><div class="stock-icon">⚔️</div><div><h3>새 검 1자루</h3><p>+0 단검 · 현재 보유 ${s.swords.length}자루<br>구매한 검은 보관함에 영구적으로 추가됩니다.</p></div><div class="stock-actions"><strong>${num(cost)} G</strong><button class="mainbtn" data-buy-sword ${s.gold<cost?'disabled':''}>검 구매</button></div></div><p>보유 금화 <b style="color:#ffdc9b">${num(s.gold)} G</b></p><div class="modal-actions"><button class="mainbtn" data-market-next>검 구매 마치고 다음 라운드 →</button></div>`;view('shop')}
+function showMarketPreview(){if(s.phase!=='market'){toast('검 구매 상점은 3 · 6 · 9 … 라운드가 끝난 후 열립니다.');return}const cost=swordBuyPrice();drawMarketItems();const offers=s.marketStock.map(id=>CONSUMABLES.find(x=>x.id===id)).filter(Boolean).map(itemCard).join('');const odds=itemOdds();$('shopContent').innerHTML=`<div class="market-compact"><div class="subhead">MERCHANT MARKET · EVERY 3 ROUNDS</div><h2 style="text-align:center;margin:0">용의 대장간 상점</h2><div class="market-summary"><div class="info"><span>현재 라운드</span><b>${s.round}R</b></div><div class="info"><span>보유 금화</span><b>${num(s.gold)} G</b></div><div class="info"><span>보유 검</span><b>${s.swords.length} 자루</b></div></div><div class="market-stock compact"><div class="stock-icon">⚔️</div><div><h3>새 검 1자루</h3><p>+0 단검을 보관함에 영구 추가합니다.<br>상점은 3라운드마다 다시 열립니다.</p></div><div class="stock-actions"><strong>${num(cost)} G</strong><button class="mainbtn" data-buy-sword ${s.gold<cost?'disabled':''}>검 구매</button></div></div><div class="market-item-header"><span>🧰 이번 상점 소모품 4종</span><span class="market-item-odds">노멀 ${odds.normal}% · 레어 ${odds.rare}% · 에픽 ${odds.epic}% · 히든 ${odds.hidden}%</span></div><div class="market-offer-grid">${offers}</div><p class="market-subnote">1종당 1회 구매 · 다음 ${s.round+1}라운드 한정 · 히든은 반짝임 표시</p><div class="market-controls"><button class="ghostbtn" data-back-forge>← 대장간 복귀</button><button class="mainbtn" data-market-next>다음 라운드 →</button></div></div>`;view('shop')}
 function showOutcome(mode,reason=''){
  const milestone=mode==='milestone',dead=mode==='dead',failed=mode==='failed';
  const title=milestone?'30라운드 생존! 무한모드 개방':dead?'용의 계약 파기 — 사망':'용의 요구를 채우지 못했습니다';
@@ -708,7 +896,7 @@ const GUIDE_SLIDES=[
  {icon:'⚒️',title:'망치로 검 강화하기',detail:'강화에는 골드가 들지 않고 횟수 제한도 없습니다. 단, 매번 5가지 결과 중 하나가 발생합니다.',outcomes:[['💀 파괴','검 소멸'],['💔 손상','강화 -1'],['🔩 유지','변동 없음'],['✨ 성공','강화 +1'],['🌟 대성공','강화 +2']],facts:[['🌟 대성공의 특별함','강화 수치가 +2 오르고 검의 외형 진화 단계도 1칸 올라갑니다. 30단계 외형이 있습니다.'],['🎲 내 검의 실제 확률','강화 버튼 바로 위에 파괴·손상·유지·성공·대성공 확률이 표시됩니다. 강화도·유물·피버 상태마다 바뀝니다.']]},
  {icon:'🔥',title:'피버와 7속성 각성',detail:'각 검마다 파괴 없이 강화한 횟수를 따로 기록합니다. 손상·유지·성공·대성공 모두 해당 검의 피버 카운트에 포함됩니다.',facts:[['🔥 검마다 개별 피버','검 A의 피버는 검 B에 영향을 주지 않습니다. 선택 검의 피버는 검을 바꾸거나 라운드가 바뀌어도 유지됩니다. 피버 10회 동안 그 검만 파괴 방지됩니다.'],['🌈 단계별 속성 융합','5라운드부터 단일 속성, +10에 2속성, +15에 3속성, +20에 4속성, +25에 5속성, +30에 7속성이 빛으로 융합됩니다. 조합은 검마다 무작위입니다.']],elements:['🌋 화염','💧 물','🔥 불','⚡ 번개','🌿 나무','✨ 빛','🌑 어둠']},
  {icon:'🐲',title:'용에게 검 납품하기',detail:'화면 우측 상단의 🐉 납품 버튼을 누르고, 보관함의 검을 제단에 올리세요. 여러 검의 판매가치를 합산할 수 있습니다.',facts:[['🏛️ 제단에 올리기','요구액을 넘으면 납품 확정! 사용한 검은 소모되고 남은 검은 보관됩니다. 확정 전에는 제단에서 회수할 수 있습니다.'],['⚠️ 납품에 실패하면','목숨 1개를 잃고 다음 라운드로 진행됩니다. 다음 계약 금액이 커지고 누적 실패당 목표 금액이 15% 더 높아집니다.'],['💰 성공 보상','금화를 받고 유물 상점에서 3가지 제안을 확인할 수 있습니다.']]},
- {icon:'🔮',title:'유물 선택과 검 상점',detail:'성공적으로 납품한 라운드 뒤에는 유물 3종이 제안됩니다. 그중 최대 1종을 구매하거나 건너뛸 수 있습니다.',facts:[['✨ 유물은 최대 10개','11번째 유물을 받으려면 기존 유물 1개를 선택해 포기해야 합니다.'],['🎲 유물의 희귀도','일반·희귀·영웅·전설. 강한 유물일수록 비싸고 드뭅니다. 전설 유물은 10라운드부터 등장합니다.'],['🏪 새 검을 추가 구매하려면','3·6·9라운드처럼 3라운드가 끝날 때마다 검 상점이 열립니다. 강화 자체는 항상 무료입니다.']]},
+ {icon:'🔮',title:'유물 선택과 검 상점',detail:'성공적으로 납품한 라운드 뒤에는 유물 3종이 제안됩니다. 그중 최대 1종을 구매하거나 건너뛸 수 있습니다.',facts:[['✨ 유물은 최대 10개','11번째 유물을 받으려면 기존 유물 1개를 선택해 포기해야 합니다.'],['🎲 유물의 희귀도','일반·희귀·영웅·전설. 강한 유물일수록 비싸고 드뭅니다. 전설 유물은 10라운드부터 등장합니다.'],['🏪 새 검을 추가 구매하려면','3·6·9라운드처럼 3라운드가 끝날 때마다 검과 20종의 일회성 소모품 상점이 열립니다. 구매한 소모품은 다음 라운드에만 사용할 수 있고 강화 자체는 무료입니다.']]},
  {icon:'🏆',title:'검 선택과 온라인 랭킹',detail:'강화 화면의 ‘현재 강화’, ‘검 판매 가치’, ‘보유 검’을 누르면 보관함에서 강화할 검을 바로 바꿀 수 있습니다.',facts:[['🎒 검 보관함','선택한 검으로 강화 화면이 바뀝니다. 제단에 올린 검은 먼저 회수해야 선택할 수 있습니다.'],['📖 강화 흔적','강화 결과와 납품 내역은 별도 메뉴에서 최근 100건까지 확인할 수 있습니다.'],['🏆 기록 경쟁','최고 가치의 검과 최고 생존 라운드를 따로 기록합니다. 온라인 순위 등록은 직접 신청하며 베타 서비스입니다.']]}
 ];
 let guideStep=0,guideReturn='login',guideFirstVisit=false;
@@ -790,6 +978,8 @@ $('moreProfileBtn').onclick=()=>view('login');
 $('moreResetBtn').onclick=()=>{if(confirm('현재 도전 기록을 삭제하고 새 게임을 시작할까요?'))fresh()};
 $('relicCatalogBtn').onclick=showCatalog;
 document.body.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-back-forge'))view('forge');if(b.hasAttribute('data-swap-back')){pendingRelicPurchase=null;showShop(0,0)}if(b.hasAttribute('data-drop-relic'))confirmRelicReplace(b.dataset.dropRelic);if(b.hasAttribute('data-remove-overflow'))dropLegacyRelic(b.dataset.removeOverflow)});
+$('openItemsBtn').onclick=()=>{renderItems();view('items')};
+document.body.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-buy-item'))buyMarketItem(b.dataset.buyItem);if(b.hasAttribute('data-use-item'))activateItem(b.dataset.useItem)});
 $('loginBtn').onclick=loginEnter;$('loginName').addEventListener('keydown',e=>{if(e.key==='Enter')loginEnter()});$('loginNewBtn').onclick=()=>{if(confirm('현재 진행 기록을 초기화하고 새 도전을 시작할까요?')){fresh();view('login');$('loginNewBtn').hidden=true;$('loginInfo').textContent='새 도전을 시작합니다. 닉네임을 입력해 주세요.'}};$('profileBtn').onclick=()=>{view('login');$('loginName').value=localStorage.getItem(LOGIN_KEY)||''};$('forgeBtn').onclick=forge;$('pledgeBtn').onclick=pledge;$('deliverBtn').onclick=deliver;$('soundBtn').onclick=()=>{s.sound=!s.sound;render()};$('pledgedList').addEventListener('click',e=>{const b=e.target.closest('[data-unpledge]');if(b)unpledge(Number(b.dataset.unpledge))});$('giveupBtn').onclick=()=>{if(s.phase==='play'&&confirm('계약을 포기하면 납품 실패 횟수가 1 증가합니다. 정말 포기하시겠습니까?'))failContract('계약을 포기했습니다.')};$('repairBtn').onclick=repair;$('buySwordBtn').onclick=showMarketPreview;$('buySwordBtn2').onclick=showMarketPreview;$('selectBestBtn').onclick=()=>{const w=best();if(w){s.selected=w.id;render();toast('최고가 검을 선택했습니다.')}};
 $('inventory').addEventListener('click',e=>{const btn=e.target.closest('[data-select]');if(btn&&s.phase==='play'){const id=Number(btn.dataset.select);if(s.pledged.includes(id)){toast('제단의 검은 먼저 회수해야 합니다.');return}s.selected=id;render();view('forge');toast('선택한 검으로 교체했습니다.')}});
 $('tributeNavBtn').onclick=()=>view('tribute');$('tributeNavBtn2').onclick=()=>view('tribute');$('backFromTribute').onclick=()=>view('forge');$('backFromTribute2').onclick=()=>view('forge');$('shopNavBtn').onclick=()=>showMarketPreview();$('rankNavBtn').onclick=openRanking;$('rankBackBtn').onclick=()=>{if(s.phase==='shop')showShop(0,0);else if(s.phase==='market')showMarketPreview();else if(['milestone','dead','failed'].includes(s.phase))showOutcome(s.phase);else view('forge')};$('rankSwordTab').onclick=()=>{rankCategory='sword';loadRanking()};$('rankRoundTab').onclick=()=>{rankCategory='round';loadRanking()};$('rankRefreshBtn').onclick=loadRanking;$('rankSubmitBtn').onclick=submitRanking;$('tributeInventory').addEventListener('click',e=>{const b=e.target.closest('[data-altar-id]');if(b&&s.phase==='play'){s.selected=Number(b.dataset.altarId);pledge()}});$('rulesBtn').onclick=showRules;$('catalogBtn').onclick=showCatalog;$('resetBtn').onclick=()=>{if(confirm('현재 도전 기록을 모두 삭제하고 새 게임을 시작할까요?'))fresh()};
