@@ -855,7 +855,7 @@ function render(){const w=selected();$('roundText').textContent=s.round<=CLEAR_R
  $('swordArt').innerHTML=swordSvg(w);
  $('swordName').textContent=w?`+${w.lv} ${weaponTitle(w)}`:'검을 선택해 주세요';
  $('gradeTag').textContent=w?((transcendRank(w)?transcendName(w):visibleElements(w).length>=7?'전속성 광휘':visibleElements(w).length>=2?visibleElements(w).length+'속성 융합':elementInfo(w)?.name||'')+(elementInfo(w)?' · ':'')+grade(w.lv)[2]):'검 없음';
- $('swordSubtitle').textContent=w?(elementInfo(w)?`${elementCaption(w)} · 진화 ${Math.min(29,w.form||0)+1}/30 · ${transcendRank(w)?'다음 5강 구간에 초월 승급':'전속성 +30강 · 초월 +35강부터'}`:'5라운드부터 검마다 7가지 속성이 무작위로 부여됩니다.'):'보유 검을 눌러 원하는 검을 선택하세요';$('levelLabel').textContent=w?'+'+w.lv:'—';$('valueLabel').textContent=num(v)+' G';$('durabilityLabel').textContent=s.swords.length+'자루';
+ $('swordSubtitle').textContent=w?(elementInfo(w)?`${elementCaption(w)} · 진화 ${Math.min(29,w.form||0)+1}/30 · ${transcendRank(w)?(w.lv>=70?'초월 최종 단계 달성':'다음 5강 구간에 초월 승급'):'전속성 +30강 · 초월 +35강부터'}`:'5라운드부터 검마다 7가지 속성이 무작위로 부여됩니다.'):'보유 검을 눌러 원하는 검을 선택하세요';$('levelLabel').textContent=w?'+'+w.lv:'—';$('valueLabel').textContent=num(v)+' G';$('durabilityLabel').textContent=s.swords.length+'자루';
  const p=prob(w);p.forEach((x,i)=>{const label=w?(Math.round(x*10)/10).toFixed(1)+'%':'—';$('p'+i).textContent=label;$('inlineP'+i).textContent=label});$('forgeCost').textContent='(무료)';
  const frozen=s.phase!=='play';$('forgeBtn').disabled=frozen||!w;$('repairBtn').disabled=true;$('buySwordBtn').disabled=s.phase!=='market';$('buySwordBtn2').disabled=s.phase!=='market';$('buySwordBtn').textContent='🏪 상점: 3라운드마다 오픈';$('pledgeBtn').disabled=frozen||!w;$('deliverBtn').disabled=frozen||offeredValue<target();$('giveupBtn').disabled=frozen;
  $('turnText').textContent='무제한';$('turnBar').style.width='100%';$('turnHelp').textContent='무료 · 무제한 강화 / 유물 금화보너스 '+num(s.forgeGoldEarned||0)+' / '+num(dailyForgeCap())+' G (오늘 한도)';
@@ -930,7 +930,7 @@ function showDamageCracks(){
 function celebrateMilestone(level){
  const stage=$('swordStage');if(!stage)return;
  stage.querySelectorAll('.milestone-burst').forEach(x=>x.remove());
- const rank=level>=35?Math.min(8,Math.floor((level-30)/5)):0;
+ const rank=transcendRank(selected());
  const burst=document.createElement('div');burst.className='milestone-burst'+(rank?' transcend-burst':'');
  burst.setAttribute('role','status');
  const halo=document.createElement('div');halo.className='milestone-halo';
