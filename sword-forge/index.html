@@ -180,7 +180,7 @@ body.forge-immersive{overflow-x:hidden}body.forge-immersive #forgeView{min-heigh
 @media(max-width:380px){.guide-shell{padding-left:10px;padding-right:10px}.guide-title{font-size:22px}.guide-card{padding:12px 10px}.guide-icon{width:54px;height:54px;font-size:30px}.guide-card h3{font-size:18px}.guide-outcome span{font-size:9px}.guide-outcome b{font-size:10px}}
 
 
-/* FORGE 1.15 - independent weapon fever and progressively blended elemental aura */
+/* FORGE 1.16 - independent weapon fever and progressively blended elemental aura */
 .element-blade.multi-fused .fusion-ring{position:absolute;inset:7% 12%;border-radius:50%;background:var(--fusion-palette);opacity:var(--fusion-intensity,.5);-webkit-mask:radial-gradient(transparent 46%,#000 53%,#000 59%,transparent 68%);mask:radial-gradient(transparent 46%,#000 53%,#000 59%,transparent 68%);filter:blur(3px) saturate(1.5);animation:forge-fusion-orbit 12s linear infinite;pointer-events:none}
 .element-blade .fusion-spark{position:absolute;z-index:2;display:grid;place-items:center;width:27px;height:27px;border-radius:50%;font-size:15px;color:#fff;text-shadow:0 0 8px var(--star-color),0 0 14px var(--star-color);background:radial-gradient(circle,#ffffff30,transparent 72%);transform:translate(-50%,-50%);filter:drop-shadow(0 0 4px var(--star-color));pointer-events:none}
 .element-blade.pure-light{filter:drop-shadow(0 0 13px #ffe8a6) drop-shadow(0 0 19px #b9c5ff) brightness(1.3)}
@@ -413,6 +413,21 @@ body.forge-immersive.forge-handheld #forgeView .game,body.forge-immersive.forge-
  body.forge-immersive.forge-handheld #forgeView .sword-stage{height:clamp(155px,30dvh,235px)}
 }
 
+
+/* v1.16 damage-only visual: crack across the sword, no impact shake */
+.sword-stage .damage-crack-overlay{position:absolute;inset:0;z-index:17;pointer-events:none;display:grid;place-items:center;overflow:hidden;animation:damageCrackFade 1.25s ease-out both}
+.damage-crack-overlay:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,#c0f1ff45,transparent 52%);animation:damageCrackFlash .33s ease-out both}
+.damage-crack-svg{position:absolute;width:min(245px,85%);height:96%;top:2%;left:50%;transform:translateX(-50%);filter:drop-shadow(0 0 8px #c8f6ff)}
+.damage-crack-lines path{stroke-dasharray:430;stroke-dashoffset:430;animation:damageCrackDraw .22s ease-out forwards}
+.damage-crack-lines path:nth-child(2n){animation-delay:.05s}
+.damage-crack-glow path{animation:damageCrackGlow .36s ease-in-out both}
+.damage-crack-label{position:absolute;bottom:11%;left:50%;transform:translateX(-50%);color:#f5fcff;font-size:clamp(20px,5vw,29px);font-weight:1000;white-space:nowrap;text-shadow:0 0 9px #a5e6ff,0 0 24px #43cfff,0 3px 7px #11142d;animation:damageCrackLabel .9s ease-out both}
+@keyframes damageCrackDraw{to{stroke-dashoffset:0}}
+@keyframes damageCrackGlow{0%{opacity:0}30%{opacity:1}100%{opacity:.52}}
+@keyframes damageCrackFade{0%,70%{opacity:1}100%{opacity:0}}
+@keyframes damageCrackFlash{0%{opacity:0}17%{opacity:1}100%{opacity:0}}
+@keyframes damageCrackLabel{0%{opacity:0;transform:translate(-50%,14px) scale(.7)}20%{opacity:1;transform:translate(-50%,0) scale(1.08)}75%{opacity:1}100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.damage-crack-overlay,.damage-crack-overlay:before,.damage-crack-lines path,.damage-crack-label{animation-duration:.18s!important}}
 </style>
 </head>
 <body>
@@ -425,9 +440,9 @@ body.forge-immersive.forge-handheld #forgeView .game,body.forge-immersive.forge-
  <button class="mainbtn" id="loginBtn">⚔️ 대장간 입장</button><button type="button" class="login-guide-btn" id="loginGuideBtn">📘 게임 방법 · 1분 플레이 가이드</button><button class="ghostbtn login-alt" id="loginNewBtn" hidden>↻ 기존 기록 초기화 후 새 게임</button>
  </div><p class="login-foot">30라운드 생존 후 ♾️ 무한모드 · 글로벌 최고 검 / 생존 랭킹<br>닉네임 기반 기기 로그인 · 다른 기기로 진행 데이터가 동기화되지는 않습니다.</p></div>
 </section>
-<div id="forgeView" class="app-view" hidden><header class="wrap header"><div class="brand"><div class="brand-icon">⚒️</div><div><h1>검 강화하기 <span style="font-size:10px;color:#f3c37a">FORGE 1.15</span></h1><small>DRAGON TRIBUTE · THE FORGE</small></div></div><div class="status"><div><span>계약</span> <strong id="roundText">1 / 30</strong></div><div><span>목숨</span> <strong class="hearts" id="hearts">❤️❤️❤️</strong></div><div><span>금화</span> <strong id="gold">650 G</strong></div></div></header>
+<div id="forgeView" class="app-view" hidden><header class="wrap header"><div class="brand"><div class="brand-icon">⚒️</div><div><h1>검 강화하기 <span style="font-size:10px;color:#f3c37a">FORGE 1.16</span></h1><small>DRAGON TRIBUTE · THE FORGE</small></div></div><div class="status"><div><span>계약</span> <strong id="roundText">1 / 30</strong></div><div><span>목숨</span> <strong class="hearts" id="hearts">❤️❤️❤️</strong></div><div><span>금화</span> <strong id="gold">650 G</strong></div></div></header>
 <nav class="compact-top" aria-label="게임 주 메뉴">
-  <div class="compact-brand"><span>⚒️</span><div><strong>검 강화하기</strong><small>FORGE 1.15 · 대장간</small></div></div>
+  <div class="compact-brand"><span>⚒️</span><div><strong>검 강화하기</strong><small>FORGE 1.16 · 대장간</small></div></div>
   <div class="compact-top-actions"><button class="compact-action tribute" id="quickTributeBtn" aria-label="용의 납품 제단 열기">🐉 납품</button><button class="compact-action immersive" id="fullscreenBtn" aria-label="전체화면 전환" aria-pressed="false">⛶ 전체화면</button></div>
 </nav>
 <div class="compact-tools" aria-label="게임 보조 메뉴">
@@ -448,7 +463,7 @@ body.forge-immersive.forge-handheld #forgeView .game,body.forge-immersive.forge-
  <div class="impact-text" id="impactText" aria-live="polite"></div>
  </div><div class="sword-caption"><strong id="swordName">+0 낡은 철검</strong><small id="swordSubtitle">한 번의 타격, 다섯 가지 운명</small></div><div class="sword-info" id="swordQuickSelect" aria-label="현재 검 선택하기"><button type="button" class="sword-pick" aria-label="현재 강화. 검 보관함에서 검 선택"><span>현재 강화 ↗</span><b id="levelLabel">+0</b></button><button type="button" class="sword-pick" aria-label="검 판매 가치. 검 보관함에서 검 선택"><span>검 판매 가치 ↗</span><b id="valueLabel" style="color:#ffcf85">120 G</b></button><button type="button" class="sword-pick" aria-label="보유 검. 검 보관함에서 검 선택"><span>보유 검 ↗</span><b id="durabilityLabel">3자루</b></button></div><div class="inline-chances" aria-label="현재 검 강화 결과 확률"><div class="inline-chance-caption"><span>🎲 강화 결과 확률</span><small>현재 검 기준 · 유물/피버 반영</small></div><div class="inline-chance-grid"><div class="inline-chance destroy"><span>💀 파괴</span><strong id="inlineP0">—</strong></div><div class="inline-chance damage"><span>💔 손상</span><strong id="inlineP1">—</strong></div><div class="inline-chance hold"><span>🔩 유지</span><strong id="inlineP2">—</strong></div><div class="inline-chance success"><span>✨ 성공</span><strong id="inlineP3">—</strong></div><div class="inline-chance great"><span>🌟 대성공</span><strong id="inlineP4">—</strong></div></div></div><div class="chances"><div class="section-head"><span>강화 결과 확률</span><small>강화도·유물에 따라 변동</small></div><div class="chance-grid"><div class="chance destroy"><b>💀 파괴</b><strong id="p0">4%</strong></div><div class="chance damage"><b>💔 손상</b><strong id="p1">12%</strong></div><div class="chance hold"><b>🔩 유지</b><strong id="p2">21%</strong></div><div class="chance success"><b>✨ 성공</b><strong id="p3">53%</strong></div><div class="chance great"><b>🌟 대성공</b><strong id="p4">10%</strong></div></div></div><div class="forge-actions"><button class="mainbtn" id="forgeBtn">⚒️ 망치 내려치기 <span class="cost" id="forgeCost">무료 강화</span></button><div class="mini-actions"><button class="ghostbtn" id="repairBtn" hidden>🧰 검 수리</button><button class="ghostbtn portal-btn" id="tributeNavBtn2">🐉 납품 화면 →</button><button class="ghostbtn" id="buySwordBtn">🏪 3라운드마다 검 상점</button></div><div class="track" id="feverBox"><div class="trackline"><span id="feverName">🔥 피버까지 파괴 없는 강화</span><strong id="feverLabel">0 / 10</strong></div><div class="progress"><div id="feverBar"></div></div></div><div class="result" id="result">대장장이의 첫 망치질을 기다립니다.</div></div></section>
  <aside class="panel right" aria-label="검 보관함과 유물"><div class="panel-header"><div><div class="eyebrow">ARSENAL & RELICS</div><h2>🎒 검 보관함</h2></div><span class="tag" id="inventoryCount">1자루</span></div><div class="rightbody"><div class="turns"><div><span>⚒️ 강화 횟수</span><b id="turnText">무제한</b></div><div class="progress" hidden><div id="turnBar"></div></div><small class="tiny" id="turnHelp">강화는 무료 · 검은 모든 라운드에 걸쳐 보관됩니다.</small></div><div class="inventory" id="inventory"></div><div class="inventory-actions"><button class="ghostbtn" id="selectBestBtn">🏆 최고가 검 선택</button><button class="ghostbtn" id="buySwordBtn2">🏪 검 상점</button></div><div class="owned-area"><div class="section-head"><span>🔮 보유 유물 (최대 10개)</span><small id="relicCount">0 / 50</small></div><div class="artifact-list" id="ownedRelics"><div class="artifact-empty">계약 완료 후 유물 상점이 열립니다.</div></div></div><div class="log"><div class="section-head"><span>📖 대장간 기록</span><small>최근 100건</small></div><div class="loglines" id="logList"></div></div></div></aside>
-</main><footer class="wrap footer"><span>검 강화하기 · FORGE 1.15 · 저장은 현재 브라우저에 자동으로 기록됩니다.</span><span>단축키 Space: 망치 / Enter: 종 울리기 · 기기 저장 · 온라인 랭킹</span></footer>
+</main><footer class="wrap footer"><span>검 강화하기 · FORGE 1.16 · 저장은 현재 브라우저에 자동으로 기록됩니다.</span><span>단축키 Space: 망치 / Enter: 종 울리기 · 기기 저장 · 온라인 랭킹</span></footer>
 </div>
 <section class="app-view guide-page" id="guideView" hidden aria-label="게임 플레이 가이드">
   <div class="utility-head"><button type="button" class="subbtn" id="guideBackBtn">← 돌아가기</button><b>📘 게임 플레이 가이드</b><span id="guideCounter">1 / 6</span></div>
@@ -817,35 +832,65 @@ function render(){const w=selected();$('roundText').textContent=s.round<=CLEAR_R
   $('myBestSword').textContent=(s.stats.bestSword?num(s.stats.bestSword.value)+'G · '+s.stats.bestSword.name:'—');$('myBestRound').textContent=(s.stats.bestRound||s.round)+'R';$('logList').innerHTML=s.logs.map(v=>'<div>'+escapeHtml(v)+'</div>').join('');updateTributeList();save()}
 function escapeHtml(str){return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 let audioCtx;
-function playSound(kind){if(!s.sound)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const now=audioCtx.currentTime;const make=(freq,t,dur,amp=.065,wave='sine')=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=wave;o.frequency.setValueAtTime(freq,now+t);o.frequency.exponentialRampToValueAtTime(Math.max(45,freq*.56),now+t+dur);g.gain.setValueAtTime(amp,now+t);g.gain.exponentialRampToValueAtTime(.001,now+t+dur);o.connect(g).connect(audioCtx.destination);o.start(now+t);o.stop(now+t+dur)};if(kind==='breakthrough'){make(440,.09,.5,.06,'triangle');make(660,.18,.55,.06);make(880,.29,.58,.055);make(1320,.37,.66,.05);make(1760,.48,.7,.045)}else if(kind==='destroy'){make(240,0,.23,.09,'sawtooth');make(110,.08,.4,.1,'triangle')}else if(kind==='great'){make(520,0,.12);make(780,.11,.2);make(1040,.22,.32)}else if(kind==='success'){make(340,0,.12,.065,'triangle');make(650,.09,.25)}else if(kind==='deposit'||kind==='deliver'){make(380,0,.25);make(540,.21,.33)}else if(kind==='damage'){make(160,0,.17,.08,'triangle')}else{make(220,0,.08,.03,'triangle')}}catch(e){}}
+function playSound(kind){if(!s.sound)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const now=audioCtx.currentTime;const make=(freq,t,dur,amp=.065,wave='sine')=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=wave;o.frequency.setValueAtTime(freq,now+t);o.frequency.exponentialRampToValueAtTime(Math.max(45,freq*.56),now+t+dur);g.gain.setValueAtTime(amp,now+t);g.gain.exponentialRampToValueAtTime(.001,now+t+dur);o.connect(g).connect(audioCtx.destination);o.start(now+t);o.stop(now+t+dur)};if(kind==='breakthrough'){make(440,.09,.5,.06,'triangle');make(660,.18,.55,.06);make(880,.29,.58,.055);make(1320,.37,.66,.05);make(1760,.48,.7,.045)}else if(kind==='destroy'){make(240,0,.23,.09,'sawtooth');make(110,.08,.4,.1,'triangle')}else if(kind==='great'){make(520,0,.12);make(780,.11,.2);make(1040,.22,.32)}else if(kind==='success'){make(340,0,.12,.065,'triangle');make(650,.09,.25)}else if(kind==='deposit'||kind==='deliver'){make(380,0,.25);make(540,.21,.33)}else if(kind==='damage'){return}else{make(220,0,.08,.03,'triangle')}}catch(e){}}
 // Realistic forged-metal double strike: noisy attack plus inharmonic anvil resonances.
+// Bright anvil-on-steel sound: short attack, inharmonic high resonances, two separate clangs.
 function playHammerStrike(){
  if(!s.sound)return;
  try{
   audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
   if(audioCtx.state==='suspended')audioCtx.resume();
-  const t=audioCtx.currentTime+.012;
-  const hit=(offset,velocity)=>{
-   const at=t+offset;
-   const length=.085,samples=Math.max(64,Math.floor(audioCtx.sampleRate*length));
-   const buffer=audioCtx.createBuffer(1,samples,audioCtx.sampleRate),data=buffer.getChannelData(0);
-   for(let i=0;i<samples;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/samples,3);
-   const noise=audioCtx.createBufferSource();noise.buffer=buffer;
-   const filter=audioCtx.createBiquadFilter();filter.type='bandpass';filter.frequency.value=2700;filter.Q.value=.8;
-   const ng=audioCtx.createGain();ng.gain.setValueAtTime(.0001,at);ng.gain.exponentialRampToValueAtTime(.085*velocity,at+.004);ng.gain.exponentialRampToValueAtTime(.0001,at+length);
-   noise.connect(filter).connect(ng).connect(audioCtx.destination);noise.start(at);noise.stop(at+length);
-   for(const [freq,volume,decay] of [[290,.08,.21],[635,.046,.16],[1012,.033,.13],[1580,.018,.095]]){
-    const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
-    osc.type='triangle';osc.frequency.setValueAtTime(freq,at);
-    osc.frequency.exponentialRampToValueAtTime(freq*.97,at+decay);
+  const ctx=audioCtx,t=ctx.currentTime+.008;
+  const clang=(delay,strength)=>{
+   const at=t+delay;
+   const duration=.036,frames=Math.max(64,Math.floor(ctx.sampleRate*duration));
+   const buffer=ctx.createBuffer(1,frames,ctx.sampleRate),data=buffer.getChannelData(0);
+   for(let i=0;i<frames;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/frames,4);
+   const attack=ctx.createBufferSource();attack.buffer=buffer;
+   const filter=ctx.createBiquadFilter();filter.type='highpass';filter.frequency.value=1800;
+   const ping=ctx.createGain();ping.gain.setValueAtTime(.0001,at);ping.gain.exponentialRampToValueAtTime(.065*strength,at+.001);ping.gain.exponentialRampToValueAtTime(.0001,at+duration);
+   attack.connect(filter).connect(ping).connect(ctx.destination);attack.start(at);attack.stop(at+duration+.001);
+   // Clean, slightly detuned overtone stack for a "깡!" not a dull "땅!".
+   for(const [hz,loud,decay] of [[920,.07,.27],[1813,.046,.20],[2717,.025,.15],[3785,.014,.10]]){
+    const osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.type='sine';osc.frequency.setValueAtTime(hz,at);
+    osc.frequency.exponentialRampToValueAtTime(hz*.993,at+decay);
     gain.gain.setValueAtTime(.0001,at);
-    gain.gain.exponentialRampToValueAtTime(volume*velocity,at+.002);
+    gain.gain.exponentialRampToValueAtTime(loud*strength,at+.0018);
     gain.gain.exponentialRampToValueAtTime(.0001,at+decay);
-    osc.connect(gain).connect(audioCtx.destination);osc.start(at);osc.stop(at+decay+.01);
+    osc.connect(gain).connect(ctx.destination);osc.start(at);osc.stop(at+decay+.01);
    }
   };
-  hit(0,1);hit(.11,.72); // "땅! 땅!"
+  clang(0,1);clang(.16,.78);
  }catch(e){}
+}
+// Distinct fractured-spark crackle, used ONLY for the damage outcome (no hammer sound).
+function playDamageCrackle(){
+ if(!s.sound)return;
+ try{
+  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended')audioCtx.resume();
+  const ctx=audioCtx,t=ctx.currentTime+.005;
+  for(const [offset,strength] of [[0,1],[.038,.8],[.098,.58]]){
+   const at=t+offset,duration=.042,frames=Math.max(64,Math.floor(ctx.sampleRate*duration));
+   const buffer=ctx.createBuffer(1,frames,ctx.sampleRate),data=buffer.getChannelData(0);
+   for(let i=0;i<frames;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/frames,2.4);
+   const noise=ctx.createBufferSource();noise.buffer=buffer;
+   const band=ctx.createBiquadFilter();band.type='highpass';band.frequency.value=3400;
+   const gain=ctx.createGain();gain.gain.setValueAtTime(.0001,at);gain.gain.exponentialRampToValueAtTime(.085*strength,at+.001);gain.gain.exponentialRampToValueAtTime(.0001,at+duration);
+   noise.connect(band).connect(gain).connect(ctx.destination);noise.start(at);noise.stop(at+duration+.001);
+  }
+ }catch(e){}
+}
+// Fracture graphic across the blade: ephemeral, not persistent damage metadata.
+function showDamageCracks(){
+ const stage=$('swordStage');if(!stage)return;
+ stage.querySelectorAll('.damage-crack-overlay').forEach(el=>el.remove());
+ const pane=document.createElement('div');pane.className='damage-crack-overlay';pane.setAttribute('aria-hidden','true');
+ pane.innerHTML=`<svg class="damage-crack-svg" viewBox="0 0 320 260" preserveAspectRatio="none" aria-hidden="true"><defs><filter id="damage-crack-glow"><feGaussianBlur stdDeviation="2.6"/></filter></defs><g class="damage-crack-glow" fill="none" stroke="#bbf7ff" stroke-linecap="round" stroke-width="5" filter="url(#damage-crack-glow)" opacity=".85"><path d="M151 34L171 74 146 104 177 129 154 159 169 187 147 231"/><path d="M146 104L115 89 103 111 69 98"/><path d="M177 129L207 113 218 141 252 130"/></g><g class="damage-crack-lines" fill="none" stroke="#f5fcff" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"><path d="M151 34L171 74 146 104 177 129 154 159 169 187 147 231"/><path d="M146 104L115 89 103 111 69 98"/><path d="M177 129L207 113 218 141 252 130"/><path d="M154 159L121 166 107 193 76 185"/><path d="M169 187L198 204 207 229 240 241"/><path d="M171 74L201 65 208 48 232 54"/></g></svg><span class="damage-crack-label">⚡ 파직!</span>`;
+ stage.appendChild(pane);
+ clearTimeout(showDamageCracks._timer);
+ showDamageCracks._timer=setTimeout(()=>pane.remove(),1250);
 }
 function celebrateMilestone(level){
  const stage=$('swordStage');if(!stage)return;
@@ -868,19 +913,40 @@ function celebrateMilestone(level){
  stage.appendChild(burst);
  setTimeout(()=>burst.remove(),1600);
 }
-function flash(type){const el=$('swordStage'),sv=$('swordArt');$('impactText').textContent=({destroy:'파괴!',damage:'손상!',success:'성공!',great:'대성공!'})[type]||'유지';$('impactText').className='impact-text show '+(type||'hold');clearTimeout(flash._timer);flash._timer=setTimeout(()=>$('impactText').className='impact-text',620);el.classList.remove('impact');void el.offsetWidth;el.classList.add('impact');sv.classList.remove('hit');void sv.offsetWidth;sv.classList.add('hit');el.classList.remove('flaring');void el.offsetWidth;el.classList.add('flaring');for(let i=0;i<9;i++){const sp=document.createElement('div');sp.className='spark';sp.textContent=type==='destroy'?'✕':type==='great'?'✦':'✧';sp.style.color=type==='destroy'?'#ff6f8b':type==='great'?'#f4c1ff':'#ffd28c';sp.style.setProperty('--dx',rand(-150,130)+'px');sp.style.setProperty('--dy',rand(-150,70)+'px');el.appendChild(sp);setTimeout(()=>sp.remove(),750)}}
+function flash(type){
+ const el=$('swordStage'),sv=$('swordArt');
+ $('impactText').textContent=({destroy:'파괴!',damage:'손상!',success:'성공!',great:'대성공!'})[type]||'유지';
+ $('impactText').className='impact-text show '+(type||'hold');
+ clearTimeout(flash._timer);flash._timer=setTimeout(()=>$('impactText').className='impact-text',620);
+ el.querySelectorAll('.damage-crack-overlay').forEach(x=>x.remove());
+ el.classList.remove('impact','flaring');sv.classList.remove('hit');
+ if(type==='damage'){
+  showDamageCracks();
+  return; // damage gets cracks only: no hammer animation, sparks, or steel hit sound
+ }
+ void el.offsetWidth;el.classList.add('impact');
+ void sv.offsetWidth;sv.classList.add('hit');
+ void el.offsetWidth;el.classList.add('flaring');
+ for(let i=0;i<9;i++){
+  const sp=document.createElement('div');sp.className='spark';
+  sp.textContent=type==='destroy'?'✕':type==='great'?'✦':'✧';
+  sp.style.color=type==='destroy'?'#ff6f8b':type==='great'?'#f4c1ff':'#ffd28c';
+  sp.style.setProperty('--dx',rand(-150,130)+'px');sp.style.setProperty('--dy',rand(-150,70)+'px');
+  el.appendChild(sp);setTimeout(()=>sp.remove(),750);
+ }
+}
 function forge(){
  if(s.phase!=='play')return;
  let w=selected();if(!w)return;
  const feverWas=(w.fever||0)>0;
  let milestoneReached=0;
- playHammerStrike();
  s.stats.attempts++;
  const p=prob(w),r=Math.random()*100;
  const pendingBuffs=[...s.activeBuffs];s.activeBuffs=[];
  let sum=0,o=4;
  for(let i=0;i<5;i++){sum+=p[i];if(r<sum){o=i;break}}
  const protection=applyPassiveResult(o);o=protection.outcome;
+ if(o===1)playDamageCrackle();else playHammerStrike();
  const words=['💀 파괴!','💔 손상!','🔩 유지','✨ 성공!','🌟 대성공!!'];
  s.outcomeType=['destroy','damage','','success','great'][o];let msg=protection.notice?' '+protection.notice:'';
  if(o===0){
@@ -942,7 +1008,7 @@ function forge(){
    if(w.fever===0)say('🔥 검 #'+w.id+' 피버 종료. 이 검을 다시 무파괴 강화하면 재발동합니다.');
   }
  }
- flash(s.outcomeType);playSound(milestoneReached?'breakthrough':s.outcomeType||'hold');render();if(milestoneReached)celebrateMilestone(milestoneReached);
+ flash(s.outcomeType);if(s.outcomeType!=='damage')playSound(milestoneReached?'breakthrough':s.outcomeType||'hold');render();if(milestoneReached)celebrateMilestone(milestoneReached);
  if(s.swords.length===0&&!s.pledged.length)failContract('모든 검이 파괴되어 납품할 수 없습니다.');
 }
 
@@ -1265,4 +1331,5 @@ window.addEventListener('keydown',e=>{if($('forgeView').hidden)return;if((e.code
 view('login');
 })();
 </script>
+</body></html>
 </body></html>
